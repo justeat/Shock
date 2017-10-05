@@ -1,0 +1,202 @@
+# Customise this file, documentation can be found here:
+# https://github.com/fastlane/fastlane/tree/master/fastlane/docs
+# All available actions: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Actions.md
+# can also be listed using the `fastlane actions` command
+
+# Change the syntax highlighting to Ruby
+# All lines starting with a # are ignored when running `fastlane`
+
+# If you want to automatically update fastlane if a new version is available:
+# update_fastlane
+
+# This is the minimum version number required.
+# Update this, if you use features of a newer version
+fastlane_version "2.89.0"
+
+default_platform :ios
+
+platform :ios do
+
+  before_all do
+    $pod_name = ENV['POD_NAME']
+    if $pod_name.nil?
+      $pod_name = prompt(text: "Environment variable POD_NAME is not defined. Please provide a value:")
+    end
+
+    UI.user_error!("POD_NAME variable undefined") if $pod_name.nil?
+    
+    # should be "`git rev-parse --abbrev-ref HEAD`" but Jenkins is not happy about it
+    $branch_name = "master"
+    $podspec_repo_private = "git@github.com:justeat/iOS.Specs.git"
+    $podspec_repo_master = "https://github.com/CocoaPods/Specs"
+    $code_coverage_output_dir = "./code_coverage"
+    $codecov_token = "<codecov.io_token>"
+    $local_podspec_repo_name = "global"
+    if ENV['BITRISE_GIT_BRANCH']
+      $branch_name = ENV['BITRISE_GIT_BRANCH']
+    end
+  end
+
+  desc "Run all the Unit Test"
+  lane :unit_tests do
+    sh "pod install --project-directory='../Example/'"
+    scan(
+      scheme: "#{$pod_name}-Example",
+      workspace: "./Example/#{$pod_name}.xcworkspace"
+      )
+  end
+
+  desc "Generate Code Coverage HTML files (via Slather)"
+  lane :generate_code_coverage do
+    clear_derived_data
+    unit_tests
+    slather(
+      html: true,
+      show: true,
+      output_directory: "#{$code_coverage_output_dir}",
+      scheme: "#{$pod_name}-Example",
+      binary_basename: "#{$pod_name}",
+      workspace: "./Example/#{$pod_name}.xcworkspace",
+      proj: "./Example/#{$pod_name}.xcodeproj"
+      )
+    #equivalent to:
+    #sh "slather coverage --html --show --output-directory #{$code_coverage_output_dir} --scheme #{$pod_name}-Example --binary-basename #{$pod_name} --workspace ../Example/#{$pod_name}.xcworkspace ../Example/#{$pod_name}.xcodeproj"
+  end
+
+  desc "Generate (via Slather) and submit Code Coverage to codecov.io"
+  lane :submit_code_coverage_to_codecov do
+    clear_derived_data
+    unit_tests
+    slather(
+      cobertura_xml: true,
+      output_directory: "#{$code_coverage_output_dir}",
+      scheme: "#{$pod_name}-Example",
+      binary_basename: "#{$pod_name}",
+      workspace: "./Example/#{$pod_name}.xcworkspace",
+      proj: "./Example/#{$pod_name}.xcodeproj"
+      )
+    #equivalent to:
+    #sh "slather coverage --cobertura-xml --verbose --output-directory #{$code_coverage_output_dir} --scheme #{$pod_name}-Example --binary-basename #{$pod_name} --workspace ../Example/#{$pod_name}.xcworkspace ../Example/#{$pod_name}.xcodeproj"
+    sh "bash <(curl -s https://codecov.io/bash) -f #{$code_coverage_output_dir}/cobertura.xml -X coveragepy -X gcov -X xcode -t #{$codecov_token}"
+  end
+  
+  desc "Update the patch number"
+  lane :bump_patch_version do
+    pull_branch_changes()
+    pod_repo_update()
+    bump_patch()
+    commit_pod_version_change()
+    create_version_tag()
+  end
+
+  desc "Publish the podspec"
+  lane :publish_podspec do
+    pull_branch_changes()
+    pod_repo_update()
+    create_version_tag()
+    pod_repo_publish_podspec()
+  end
+
+  desc "Update the patch number and publish the podspec"
+  lane :patch_and_publish_podspec do
+    pull_branch_changes()
+    pod_repo_update()
+    bump_patch()
+    commit_pod_version_change()
+    create_version_tag()
+    pod_repo_publish_podspec()
+  end
+
+  def pull_branch_changes
+    sh "git show-ref"
+  
+    # -------------------
+    desc "Git preparation"
+    sh "git checkout -b #{$branch_name} --track origin/#{$branch_name} || git pull origin #{$branch_name}"
+  end
+
+  def bump_patch
+    desc "Bump the podspec patch version"
+    newVersion = version_bump_podspec(path: "#{$pod_name}.podspec", bump_type: "patch")
+    increment_version_number(
+        version_number: newVersion,
+        xcodeproj: "./Example/#{$pod_name}.xcodeproj"
+    )
+  end
+
+  def commit_pod_version_change
+    desc "Commit changes"
+    sh "git add --all"
+    newVersion = version_get_podspec(path: "#{$pod_name}.podspec")
+    sh "git commit -am 'Patch version bump to #{newVersion} [skip ci]'"
+
+    desc "Push tag"
+    desc "Push branch '#{$branch_name}'"
+    sh "git push origin #{$branch_name}"
+  end
+
+  def create_version_tag
+    desc "Tag version"
+    newVersion = version_get_podspec(path: "#{$pod_name}.podspec")
+    sh "git tag #{newVersion}"
+    
+    desc "Push tag"
+    desc "Push branch '#{$branch_name}' and '#{newVersion}' tag"
+    sh "git push origin #{$branch_name} --tags"
+  end
+
+  def pod_repo_update
+    desc "Pod repo add"
+    if !File.directory?(ENV['HOME']+"/.cocoapods/repos/#{$local_podspec_repo_name}")
+        desc "Pod repo add"
+        sh "pod repo add #{$local_podspec_repo_name} #{$podspec_repo_private}"
+    end
+    
+    desc "Pod repo update"
+    sh "pod repo update"
+  end
+
+  def pod_repo_publish_podspec
+    desc "Pod repo push"
+    pod_push(
+      path: "#{$pod_name}.podspec",
+      repo: "#{$local_podspec_repo_name}",
+      sources: ["#{$podspec_repo_private}", "#{$podspec_repo_master}"],
+      allow_warnings: true,
+      verbose: true
+      )
+  end
+
+  # Only post messages on HipChat if the process is run from a CI
+  def should_post_message
+    return !ENV["HIPCHAT_API_TOKEN"].nil? && is_ci?
+  end
+
+  # Posts a message on HipChat with details about the performed operations
+  def notify_hipchat(success = true, error_message)
+  
+  return unless should_post_message
+  if success
+      message = "#{$pod_name} version #{newVersion} released"
+  else
+      message = "#{$pod_name} version #{newVersion} release failed: #{error_message}"
+  end
+  hipchat(message: message, channel: ENV["HIPCHAT_CHANNEL"], success: success)
+  end
+
+  after_all do |lane|
+    # This block is called, only if the executed lane was successful
+    notify_hipchat(true)
+  end
+
+  error do |lane, exception|
+    notify_hipchat(false, exception)
+  end
+end
+
+
+# More information about multiple platforms in fastlane: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Platforms.md
+# All available actions: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Actions.md
+
+# fastlane reports which actions are used
+# No personal data is recorded. Learn more at https://github.com/fastlane/enhancer

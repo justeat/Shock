@@ -1,0 +1,11 @@
+platform :ios, '9.0'
+
+use_frameworks!
+
+target 'Shock_Example' do
+  pod 'Shock', :path => '../'
+
+  target 'Shock_Tests' do
+    inherit! :search_paths
+  end
+end
