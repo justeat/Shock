@@ -14,6 +14,12 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
+		6D718E371F8777660070B764 /* testSimpleRoute.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6D718E361F8777660070B764 /* testSimpleRoute.txt */; };
+		6D718E391F877AB30070B764 /* testRedirectRoute.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6D718E381F877AB30070B764 /* testRedirectRoute.txt */; };
+		6DE276E91F8761F300C9F194 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE276E81F8761F300C9F194 /* HTTPClient.swift */; };
+		6DF676FC1F8793F700E1783A /* testTemplatedRoute.mustache in Resources */ = {isa = PBXBuildFile; fileRef = 6DF676FB1F8793F700E1783A /* testTemplatedRoute.mustache */; };
+		6DF677011F87CC8500E1783A /* MyRoutes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF676FF1F87CC8200E1783A /* MyRoutes.swift */; };
+		6DF677041F87CF0100E1783A /* helloworld.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6DF677031F87CF0100E1783A /* helloworld.txt */; };
 		AED1F3F6A7E2F3CE6580EE5D /* Pods_Shock_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF96B6D5EA1A806DC03BC3FF /* Pods_Shock_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -29,7 +35,7 @@
 
 /* Begin PBXFileReference section */
 		2AF495106DF32828591B5E10 /* Pods-Shock_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shock_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Shock_Tests/Pods-Shock_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		2DEE7FFDC29CFACFFE3400E0 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		2DEE7FFDC29CFACFFE3400E0 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		4A7A38CD9EF252172E5C9478 /* Pods-Shock_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shock_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Shock_Example/Pods-Shock_Example.release.xcconfig"; sourceTree = "<group>"; };
 		504237DD0DF4E81BD4C74B63 /* Pods_Shock_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Shock_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* Shock_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shock_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -42,10 +48,16 @@
 		607FACE51AFB9204008FA782 /* Shock_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Shock_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
+		6D718E361F8777660070B764 /* testSimpleRoute.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testSimpleRoute.txt; sourceTree = "<group>"; };
+		6D718E381F877AB30070B764 /* testRedirectRoute.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testRedirectRoute.txt; sourceTree = "<group>"; };
+		6DE276E81F8761F300C9F194 /* HTTPClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		6DF676FB1F8793F700E1783A /* testTemplatedRoute.mustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testTemplatedRoute.mustache; sourceTree = "<group>"; };
+		6DF676FF1F87CC8200E1783A /* MyRoutes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyRoutes.swift; sourceTree = "<group>"; };
+		6DF677031F87CF0100E1783A /* helloworld.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = helloworld.txt; sourceTree = "<group>"; };
 		80CFA7CB8BE3BF594CE240EC /* Pods-Shock_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shock_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Shock_Example/Pods-Shock_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		8F256468ADABF7F27A3F94C1 /* Shock.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = Shock.podspec; path = ../Shock.podspec; sourceTree = "<group>"; };
+		8F256468ADABF7F27A3F94C1 /* Shock.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Shock.podspec; path = ../Shock.podspec; sourceTree = "<group>"; };
 		BAEA53249A2F84CEFE92ED63 /* Pods-Shock_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shock_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Shock_Tests/Pods-Shock_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		F4C361D0B990A1E623A12117 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		F4C361D0B990A1E623A12117 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		FF96B6D5EA1A806DC03BC3FF /* Pods_Shock_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Shock_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -109,7 +121,9 @@
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
+				6DF677021F87CEDA00E1783A /* Data */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
+				6DF676FF1F87CC8200E1783A /* MyRoutes.swift */,
 			);
 			name = "Example for Shock";
 			path = Shock;
@@ -126,8 +140,10 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6DE276E71F868DDC00C9F194 /* Fixtures */,
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
+				6DE276E81F8761F300C9F194 /* HTTPClient.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -148,6 +164,24 @@
 				F4C361D0B990A1E623A12117 /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		6DE276E71F868DDC00C9F194 /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				6DF676FB1F8793F700E1783A /* testTemplatedRoute.mustache */,
+				6D718E361F8777660070B764 /* testSimpleRoute.txt */,
+				6D718E381F877AB30070B764 /* testRedirectRoute.txt */,
+			);
+			path = Fixtures;
+			sourceTree = "<group>";
+		};
+		6DF677021F87CEDA00E1783A /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				6DF677031F87CF0100E1783A /* helloworld.txt */,
+			);
+			path = Data;
 			sourceTree = "<group>";
 		};
 		747986CFF487B14CD9CD26D2 /* Frameworks */ = {
@@ -248,6 +282,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6DF677041F87CF0100E1783A /* helloworld.txt in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
@@ -258,6 +293,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6DF676FC1F8793F700E1783A /* testTemplatedRoute.mustache in Resources */,
+				6D718E391F877AB30070B764 /* testRedirectRoute.txt in Resources */,
+				6D718E371F8777660070B764 /* testSimpleRoute.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -352,11 +390,17 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Shock_Example/Pods-Shock_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/GRMustache/GRMustache.framework",
+				"${BUILT_PRODUCTS_DIR}/JRSwizzle/JRSwizzle.framework",
 				"${BUILT_PRODUCTS_DIR}/Shock/Shock.framework",
+				"${BUILT_PRODUCTS_DIR}/Swifter/Swifter.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRMustache.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JRSwizzle.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Shock.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Swifter.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -371,6 +415,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
+				6DF677011F87CC8500E1783A /* MyRoutes.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -379,6 +424,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6DE276E91F8761F300C9F194 /* HTTPClient.swift in Sources */,
 				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -494,6 +540,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
@@ -506,6 +553,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Shock/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -520,6 +568,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Shock/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -545,6 +594,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Shock_Example.app/Shock_Example";
 			};
 			name = Debug;
 		};
@@ -561,6 +611,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Shock_Example.app/Shock_Example";
 			};
 			name = Release;
 		};

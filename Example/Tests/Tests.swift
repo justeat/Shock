@@ -1,29 +1,82 @@
 import UIKit
 import XCTest
-import Shock
+@testable import Shock
 
 class Tests: XCTestCase {
+	
+	let server = MockServer(port: 9090, bundle: Bundle(for: Tests.self))
     
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
+		server.start()
+	}
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
+		server.stop()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        XCTAssert(true, "Pass")
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure() {
-            // Put the code you want to measure the time of here.
-        }
-    }
+	func testSimpleRoute() {
+		
+		let route: MockHTTPRoute = .simple(method: .GET, url: "/simple", filename: "testSimpleRoute.txt")
+		server.setupRoute(route: route)
+		
+		let expectation = self.expectation(description: "Expect 200 response with response body")
+		
+		HTTPClient.get(url: "\(server.hostURL)/simple") { (code, responseBody) in
+			XCTAssertEqual(code, 200)
+			XCTAssertEqual(responseBody, "testSimpleRoute test fixture\n")
+			expectation.fulfill()
+		}
+		self.waitForExpectations(timeout: 2.0, handler: nil)
+	}
+	
+	func testRedirectRoute() {
+		
+		let route: MockHTTPRoute = .collection(routes: [
+			.redirect(url: "/redirect", destination: "/destination"),
+			.simple(method: .GET, url: "/redirect", filename: "testRedirectRoute.txt")
+		])
+		server.setupRoute(route: route)
+		
+		let expectation = self.expectation(description: "Expect 200 response with response body after redirect")
+		
+		HTTPClient.get(url: "\(server.hostURL)/redirect") { (code, responseBody) in
+			XCTAssertEqual(code, 200)
+			XCTAssertEqual(responseBody, "testRedirectRoute test fixture\n")
+			expectation.fulfill()
+		}
+		self.waitForExpectations(timeout: 2.0, handler: nil)
+	}
+	
+	func testTemplatedRoute() {
+		let route: MockHTTPRoute = .template(method: .GET, url: "/template", filename: "testTemplatedRoute", data: [
+			"list": [ "Item #1", "Item #2" ],
+			"text": "text"
+		])
+		server.setupRoute(route: route)
+		
+		let expectation = self.expectation(description: "Expect 200 response with valid generated response body")
+		
+		HTTPClient.get(url: "\(server.hostURL)/template") { code, responseBody in
+			let data = responseBody.data(using: .utf8)!
+			let dict = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any?]
+			let list = dict["list"] as! [String]
+			XCTAssertEqual(dict["text"] as! String, "text")
+			XCTAssertEqual(list[0], "Item #1")
+			XCTAssertEqual(list[1], "Item #2")
+			expectation.fulfill()
+		}
+		self.waitForExpectations(timeout: 2.0, handler: nil)
+	}
+	
+	func testRouteProperties() {
+		
+		let emptyRoute: MockHTTPRoute = .collection(routes: [])
+		XCTAssertNil(emptyRoute.url)
+		XCTAssertNil(emptyRoute.method)
+		
+	}
     
 }
