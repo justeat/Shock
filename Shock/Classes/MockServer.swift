@@ -38,10 +38,6 @@ public class MockServer {
 		server.stop()
 	}
 	
-	public var isRunning: Bool {
-		return server.operating
-	}
-	
 	public var hostURL: String {
 		return "http://localhost:\(port)"
 	}
@@ -82,7 +78,8 @@ public class MockServer {
                     }
 				}
 
-				if let routeDict = route.query, let url = URL(string: url), let query = url.query {
+				if let routeDict = route.query, let url = URL(string: url) {
+                    let query = url.query ?? ""
 					let dict = dictionary(from: query)
 					if dict != routeDict  {
 						return .notFound
@@ -103,7 +100,6 @@ fileprivate func dictionary(from query: String) -> [String: String] {
 	let components = query.components(separatedBy: "&")
 	var dict = [String: String]()
 	components.forEach {
-		assert($0.contains("="))
 		let kvp = $0.components(separatedBy: "=")
 		if kvp.count == 2 {
 			dict[kvp[0]] = kvp[1]
