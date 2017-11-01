@@ -11,10 +11,11 @@ import XCTest
 
 class CustomRouteTests: XCTestCase {
     
-    let server = MockServer(port: 9090, bundle: Bundle(for: Tests.self))
+    var server: MockServer!
     
     override func setUp() {
         super.setUp()
+        server = MockServer(port: 9090, bundle: Bundle(for: Tests.self))
         server.start()
     }
     

@@ -78,12 +78,10 @@ public class MockServer {
                     }
 				}
 
-				if let routeDict = route.query, let url = URL(string: url) {
-                    let query = url.query ?? ""
-					let dict = dictionary(from: query)
-					if dict != routeDict  {
-						return .notFound
-					}
+				if let routeDict = route.query {
+                    if dictionary(from: request.queryParams) != routeDict {
+                        return .notFound
+                    }
 				}
 
 				print("Executing request for route: \(request.method) \(request.path)")
@@ -96,14 +94,8 @@ public class MockServer {
 
 // MARK: Utils
 
-fileprivate func dictionary(from query: String) -> [String: String] {
-	let components = query.components(separatedBy: "&")
-	var dict = [String: String]()
-	components.forEach {
-		let kvp = $0.components(separatedBy: "=")
-		if kvp.count == 2 {
-			dict[kvp[0]] = kvp[1]
-		}
-	}
-	return dict
+fileprivate func dictionary(from query: [(String, String)]) -> [String: String] {
+    var dict = [String: String]()
+    query.forEach { dict[$0.0] = $0.1 }
+    return dict
 }

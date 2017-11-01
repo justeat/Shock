@@ -11,10 +11,11 @@ import XCTest
 
 class TemplatedRouteTests: XCTestCase {
     
-    let server = MockServer(port: 9090, bundle: Bundle(for: Tests.self))
+    var server: MockServer!
     
     override func setUp() {
         super.setUp()
+        server = MockServer(port: 9090, bundle: Bundle(for: Tests.self))
         server.start()
     }
     
@@ -33,13 +34,13 @@ class TemplatedRouteTests: XCTestCase {
         let expectation = self.expectation(description: "Expect 200 response with valid generated response body")
         
         HTTPClient.get(url: "\(server.hostURL)/template") { code, responseBody in
+            expectation.fulfill()
             let data = responseBody.data(using: .utf8)!
             let dict = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any?]
             let list = dict["list"] as! [String]
             XCTAssertEqual(dict["text"] as! String, "text")
             XCTAssertEqual(list[0], "Item #1")
             XCTAssertEqual(list[1], "Item #2")
-            expectation.fulfill()
         }
         self.waitForExpectations(timeout: 2.0, handler: nil)
     }
