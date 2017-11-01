@@ -53,11 +53,12 @@ public class MockServer {
 		let response: HttpResponse?
 		
 		switch route {
-		case .simple(let method, let url, let jsonFilename):
-			response = factory.create(url: url, jsonFilename: jsonFilename, method: method.rawValue)
+		case .simple(let method, let url, let code, let jsonFilename),
+		     .custom(let method, let url, _, _, let code, let jsonFilename):
+			response = factory.create(url: url, jsonFilename: jsonFilename, method: method.rawValue, code: code)
 			break
-		case .template(let method, let url, let jsonFileName, let data):
-			response = factory.create(url: url, templateFilename: jsonFileName, data: data, method: method.rawValue)
+		case .template(let method, let url, let code, let jsonFileName, let data):
+			response = factory.create(url: url, templateFilename: jsonFileName, data: data, method: method.rawValue, code: code)
 			break
 		case .redirect(let url, let destination):
 			response = factory.create(url: url, destination: destination)
@@ -73,10 +74,40 @@ public class MockServer {
 			
 			router[url] = { request in
 				assert(method == route.method)
+                
+                if let headers = route.headers {
+                    let match = headers.map({ request.headers[$0.key.lowercased()] == $0.value }).reduce(true, { $0 && $1 })
+                    if !match {
+                        return .notFound
+                    }
+				}
+
+				if let routeDict = route.query, let url = URL(string: url), let query = url.query {
+					let dict = dictionary(from: query)
+					if dict != routeDict  {
+						return .notFound
+					}
+				}
+
 				print("Executing request for route: \(request.method) \(request.path)")
 				return response
 			}
 		}
 	}
 	
+}
+
+// MARK: Utils
+
+fileprivate func dictionary(from query: String) -> [String: String] {
+	let components = query.components(separatedBy: "&")
+	var dict = [String: String]()
+	components.forEach {
+		assert($0.contains("="))
+		let kvp = $0.components(separatedBy: "=")
+		if kvp.count == 2 {
+			dict[kvp[0]] = kvp[1]
+		}
+	}
+	return dict
 }

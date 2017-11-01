@@ -15,10 +15,11 @@ typealias HTTPClientResult = (_ code: Int, _ response: String) -> Void
 
 class HTTPClient {
 
-	static func get(url: String, completion: @escaping HTTPClientResult) {
+    static func get(url: String, headers: [String: String] = [:], completion: @escaping HTTPClientResult) {
 		
-		let _url = URL(string: url)!
-		let task = session.dataTask(with: _url) { data, response, error in
+        var request = URLRequest(url: URL(string: url)!)
+        headers.forEach { request.addValue($0.value, forHTTPHeaderField: $0.key) }
+		let task = session.dataTask(with: request) { data, response, error in
 			let response = response as! HTTPURLResponse
 			completion(response.statusCode, String(data: data!, encoding: .utf8)!)
 		}

@@ -16,6 +16,7 @@
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		6D718E371F8777660070B764 /* testSimpleRoute.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6D718E361F8777660070B764 /* testSimpleRoute.txt */; };
 		6D718E391F877AB30070B764 /* testRedirectRoute.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6D718E381F877AB30070B764 /* testRedirectRoute.txt */; };
+		6D7BDCF61FA72BC300488DB5 /* testCustomRoute.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6D7BDCF51FA72BC300488DB5 /* testCustomRoute.txt */; };
 		6DE276E91F8761F300C9F194 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE276E81F8761F300C9F194 /* HTTPClient.swift */; };
 		6DF676FC1F8793F700E1783A /* testTemplatedRoute.mustache in Resources */ = {isa = PBXBuildFile; fileRef = 6DF676FB1F8793F700E1783A /* testTemplatedRoute.mustache */; };
 		6DF677011F87CC8500E1783A /* MyRoutes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF676FF1F87CC8200E1783A /* MyRoutes.swift */; };
@@ -50,6 +51,7 @@
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		6D718E361F8777660070B764 /* testSimpleRoute.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testSimpleRoute.txt; sourceTree = "<group>"; };
 		6D718E381F877AB30070B764 /* testRedirectRoute.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testRedirectRoute.txt; sourceTree = "<group>"; };
+		6D7BDCF51FA72BC300488DB5 /* testCustomRoute.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testCustomRoute.txt; sourceTree = "<group>"; };
 		6DE276E81F8761F300C9F194 /* HTTPClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
 		6DF676FB1F8793F700E1783A /* testTemplatedRoute.mustache */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testTemplatedRoute.mustache; sourceTree = "<group>"; };
 		6DF676FF1F87CC8200E1783A /* MyRoutes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyRoutes.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				6DF676FB1F8793F700E1783A /* testTemplatedRoute.mustache */,
 				6D718E361F8777660070B764 /* testSimpleRoute.txt */,
 				6D718E381F877AB30070B764 /* testRedirectRoute.txt */,
+				6D7BDCF51FA72BC300488DB5 /* testCustomRoute.txt */,
 			);
 			path = Fixtures;
 			sourceTree = "<group>";
@@ -296,6 +299,7 @@
 				6DF676FC1F8793F700E1783A /* testTemplatedRoute.mustache in Resources */,
 				6D718E391F877AB30070B764 /* testRedirectRoute.txt in Resources */,
 				6D718E371F8777660070B764 /* testSimpleRoute.txt in Resources */,
+				6D7BDCF61FA72BC300488DB5 /* testCustomRoute.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -18,7 +18,7 @@ class MyRoutes {
 	init() {
 		
 		routes = [
-			.simple(method: .GET, url: "/helloworld", filename: "helloworld.txt")
+			.simple(method: .GET, url: "/helloworld", code: 200, filename: "helloworld.txt")
 		]
 		
 		server.setupRoute(route: .collection(routes: routes))
