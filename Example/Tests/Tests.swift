@@ -1,25 +1,24 @@
-import UIKit
 import XCTest
 @testable import Shock
 
 class Tests: XCTestCase {
 	
-	let server = MockServer(port: 9090, bundle: Bundle(for: Tests.self))
+    var server: MockServer!
     
     override func setUp() {
         super.setUp()
+        server = MockServer(port: 9090, bundle: Bundle(for: Tests.self))
 		server.start()
 	}
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
 		server.stop()
     }
     
 	func testSimpleRoute() {
 		
-		let route: MockHTTPRoute = .simple(method: .GET, url: "/simple", filename: "testSimpleRoute.txt")
+		let route: MockHTTPRoute = .simple(method: .GET, url: "/simple", code: 200, filename: "testSimpleRoute.txt")
 		server.setupRoute(route: route)
 		
 		let expectation = self.expectation(description: "Expect 200 response with response body")
@@ -31,12 +30,12 @@ class Tests: XCTestCase {
 		}
 		self.waitForExpectations(timeout: 2.0, handler: nil)
 	}
-	
+    
 	func testRedirectRoute() {
 		
 		let route: MockHTTPRoute = .collection(routes: [
 			.redirect(url: "/redirect", destination: "/destination"),
-			.simple(method: .GET, url: "/redirect", filename: "testRedirectRoute.txt")
+			.simple(method: .GET, url: "/destination", code: 200, filename: "testRedirectRoute.txt")
 		])
 		server.setupRoute(route: route)
 		
@@ -45,27 +44,6 @@ class Tests: XCTestCase {
 		HTTPClient.get(url: "\(server.hostURL)/redirect") { (code, responseBody) in
 			XCTAssertEqual(code, 200)
 			XCTAssertEqual(responseBody, "testRedirectRoute test fixture\n")
-			expectation.fulfill()
-		}
-		self.waitForExpectations(timeout: 2.0, handler: nil)
-	}
-	
-	func testTemplatedRoute() {
-		let route: MockHTTPRoute = .template(method: .GET, url: "/template", filename: "testTemplatedRoute", data: [
-			"list": [ "Item #1", "Item #2" ],
-			"text": "text"
-		])
-		server.setupRoute(route: route)
-		
-		let expectation = self.expectation(description: "Expect 200 response with valid generated response body")
-		
-		HTTPClient.get(url: "\(server.hostURL)/template") { code, responseBody in
-			let data = responseBody.data(using: .utf8)!
-			let dict = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any?]
-			let list = dict["list"] as! [String]
-			XCTAssertEqual(dict["text"] as! String, "text")
-			XCTAssertEqual(list[0], "Item #1")
-			XCTAssertEqual(list[1], "Item #2")
 			expectation.fulfill()
 		}
 		self.waitForExpectations(timeout: 2.0, handler: nil)

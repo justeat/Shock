@@ -13,12 +13,23 @@ public enum MockHTTPRoute {
 	case simple(
 		method: MockHTTPMethod,
 		url: String,
+		code: Int,
+		filename: String
+	)
+	
+	case custom(
+		method: MockHTTPMethod,
+		url: String,
+		query: [String: String],
+		headers: [String: String],
+		code: Int,
 		filename: String
 	)
 	
 	case template(
 		method: MockHTTPMethod,
 		url: String,
+		code: Int,
 		filename: String,
 		data: [String: Any?]
 	)
@@ -34,8 +45,9 @@ public enum MockHTTPRoute {
 	
 	public var url: String? {
 		switch self {
-		case .simple(_, let url, _),
-		     .template(_, let url, _, _),
+		case .simple(_, let url, _, _),
+		     .custom(_, let url, _, _, _, _),
+		     .template(_, let url, _, _, _),
 		     .redirect(let url, _):
 			return url
 		default:
@@ -45,8 +57,9 @@ public enum MockHTTPRoute {
 	
 	public var method: MockHTTPMethod? {
 		switch self {
-		case .simple(let method, _, _),
-		     .template(let method, _, _, _):
+		case .simple(let method, _, _, _),
+		     .custom(let method, _, _, _, _, _),
+		     .template(let method, _, _, _, _):
 			return method
 		case .redirect:
 			return .GET
@@ -55,4 +68,22 @@ public enum MockHTTPRoute {
 		}
 	}
 	
+	public var headers: [String: String]? {
+		switch self {
+		case .custom(_, _, _, let headers, _, _):
+			return headers
+		default:
+			return nil
+		}
+	}
+
+	public var query: [String: String]? {
+		switch self {
+		case .custom(_, _, let query, _, _, _):
+			return query
+		default:
+			return nil
+		}
+	}
+
 }
