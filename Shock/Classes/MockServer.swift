@@ -66,7 +66,7 @@ public class MockServer {
 		
 		if let response = response, let url = route.url, let method = route.method {
 			
-			var router = method == .GET ? server.GET : server.POST
+			var router = httpServerMethod(for: method)
 			
 			router[url] = { request in
 				assert(method == route.method)
@@ -89,6 +89,17 @@ public class MockServer {
 			}
 		}
 	}
+    
+    // MARK: Utils
+    
+    private func httpServerMethod(for method: MockHTTPMethod) -> HttpServer.MethodRoute {
+        switch method {
+        case .GET:      return server.GET
+        case .POST:     return server.POST
+        case .PUT:      return server.PUT
+        case .DELETE:   return server.DELETE
+        }
+    }
 	
 }
 
