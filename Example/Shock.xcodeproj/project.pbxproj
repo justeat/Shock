@@ -16,6 +16,7 @@
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		6D10776D1FA9E67E006BB9C8 /* CustomRouteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D10776C1FA9E67E006BB9C8 /* CustomRouteTests.swift */; };
 		6D10776F1FA9EB21006BB9C8 /* TemplatedRouteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D10776E1FA9EB21006BB9C8 /* TemplatedRouteTests.swift */; };
+		6D410ED6206D203D00A2D79D /* MethodTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D410ED5206D203D00A2D79D /* MethodTests.swift */; };
 		6D718E371F8777660070B764 /* testSimpleRoute.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6D718E361F8777660070B764 /* testSimpleRoute.txt */; };
 		6D718E391F877AB30070B764 /* testRedirectRoute.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6D718E381F877AB30070B764 /* testRedirectRoute.txt */; };
 		6D7BDCF61FA72BC300488DB5 /* testCustomRoute.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6D7BDCF51FA72BC300488DB5 /* testCustomRoute.txt */; };
@@ -53,6 +54,7 @@
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		6D10776C1FA9E67E006BB9C8 /* CustomRouteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomRouteTests.swift; sourceTree = "<group>"; };
 		6D10776E1FA9EB21006BB9C8 /* TemplatedRouteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TemplatedRouteTests.swift; sourceTree = "<group>"; };
+		6D410ED5206D203D00A2D79D /* MethodTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MethodTests.swift; sourceTree = "<group>"; };
 		6D718E361F8777660070B764 /* testSimpleRoute.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testSimpleRoute.txt; sourceTree = "<group>"; };
 		6D718E381F877AB30070B764 /* testRedirectRoute.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testRedirectRoute.txt; sourceTree = "<group>"; };
 		6D7BDCF51FA72BC300488DB5 /* testCustomRoute.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testCustomRoute.txt; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 			children = (
 				6DE276E71F868DDC00C9F194 /* Fixtures */,
 				6D10776C1FA9E67E006BB9C8 /* CustomRouteTests.swift */,
+				6D410ED5206D203D00A2D79D /* MethodTests.swift */,
 				6D10776E1FA9EB21006BB9C8 /* TemplatedRouteTests.swift */,
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
@@ -435,6 +438,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D10776D1FA9E67E006BB9C8 /* CustomRouteTests.swift in Sources */,
+				6D410ED6206D203D00A2D79D /* MethodTests.swift in Sources */,
 				6DE276E91F8761F300C9F194 /* HTTPClient.swift in Sources */,
 				6D10776F1FA9EB21006BB9C8 /* TemplatedRouteTests.swift in Sources */,
 				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
