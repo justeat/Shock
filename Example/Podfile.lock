@@ -11,9 +11,14 @@ DEPENDENCIES:
   - Shock (from `../`)
   - Swifter (from `https://raw.githubusercontent.com/httpswift/swifter/1.4.0/Swifter.podspec`)
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - GRMustache
+    - JRSwizzle
+
 EXTERNAL SOURCES:
   Shock:
-    :path: ../
+    :path: "../"
   Swifter:
     :podspec: https://raw.githubusercontent.com/httpswift/swifter/1.4.0/Swifter.podspec
 
@@ -23,6 +28,6 @@ SPEC CHECKSUMS:
   Shock: 61b5188a4442c77339a91d5e44380647d963b396
   Swifter: 0361c3d150dbf3f162fcadf35aecfd874c614533
 
-PODFILE CHECKSUM: 942de517c3b45f6f41ad388b97652a24977a6104
+PODFILE CHECKSUM: bb5807fcc98a7e40e0eab92c6e4f2306dadf7917
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0
