@@ -40,6 +40,6 @@ TODO: Add long description of the pod here.
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
 
-  s.dependency 'Swifter', '~> 1.4.0'
+  s.dependency 'Swifter', '~> 1.4.1'
   s.dependency 'GRMustache', '~> 7.3.2'
 end

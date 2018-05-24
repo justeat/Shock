@@ -3,8 +3,6 @@ platform :ios, '9.0'
 use_frameworks!
 
 target 'Shock_Example' do
-  # Temporary until they publish their 1.4.0 spec
-  pod 'Swifter', :podspec => 'https://raw.githubusercontent.com/httpswift/swifter/1.4.0/Swifter.podspec'
   pod 'Shock', :path => '../'
 
   target 'Shock_Tests' do
