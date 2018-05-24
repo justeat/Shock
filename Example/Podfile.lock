@@ -2,32 +2,24 @@ PODS:
   - GRMustache (7.3.2):
     - JRSwizzle (~> 1.0)
   - JRSwizzle (1.0)
-  - Shock (1.0.1):
+  - Shock (1.0.2):
     - GRMustache (~> 7.3.2)
-    - Swifter (~> 1.4.0)
-  - Swifter (1.4.0)
+    - Swifter (~> 1.4.1)
+  - Swifter (1.4.1)
 
 DEPENDENCIES:
   - Shock (from `../`)
-  - Swifter (from `https://raw.githubusercontent.com/httpswift/swifter/1.4.0/Swifter.podspec`)
-
-SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
-    - GRMustache
-    - JRSwizzle
 
 EXTERNAL SOURCES:
   Shock:
-    :path: "../"
-  Swifter:
-    :podspec: https://raw.githubusercontent.com/httpswift/swifter/1.4.0/Swifter.podspec
+    :path: ../
 
 SPEC CHECKSUMS:
   GRMustache: ebe6104fd30a6d22c1f36af131e19e2dbf7cd292
   JRSwizzle: dd5ead5d913a0f29e7f558200165849f006bb1e3
-  Shock: 61b5188a4442c77339a91d5e44380647d963b396
-  Swifter: 0361c3d150dbf3f162fcadf35aecfd874c614533
+  Shock: 32e54e47400f6037763280d417e423cc4ae8649d
+  Swifter: 62d14781d34600ffb6be99d350cf271be500600f
 
-PODFILE CHECKSUM: bb5807fcc98a7e40e0eab92c6e4f2306dadf7917
+PODFILE CHECKSUM: 1fa436b09e29bf86d5ceece8bb415122d8643c76
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.4.0
