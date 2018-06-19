@@ -80,7 +80,7 @@ if isRunningUITests {
 ## Shock Route Tester
 
 <p align="center">
-	![Version](assets/example-app.png)
+	![Version](./assets/example-app.png)
 <p>
 
 The Shock Route Tester example app lets you try out the different route types.
