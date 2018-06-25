@@ -29,8 +29,7 @@ Add the following to your podfile:
 pod 'Shock', '~> x.y.z'
 ```
 
-You can find the latest version in the [releases](/releases) tab, or over on
-[cocoapods.org](http://cocoapods.org/pods/Shock)
+You can find the latest version on [cocoapods.org](http://cocoapods.org/pods/Shock)
 
 ## How does it work?
 
