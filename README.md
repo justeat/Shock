@@ -29,13 +29,12 @@ Add the following to your podfile:
 pod 'Shock', '~> x.y.z'
 ```
 
-You can find the latest version in the [releases](releases) tab, or over on
+You can find the latest version in the [releases](/releases) tab, or over on
 [cocoapods.org](http://cocoapods.org/pods/Shock)
 
 ## How does it work?
 
-Shock aims to provide as simple an interface as possible for setting up your
-mocks.
+Shock aims to provide a simple interface for setting up your mocks.
 
 Take the example below:
 
