@@ -178,4 +178,4 @@ let collectionRoute: MockHTTPRoute = .collection(routes: [ firstRoute, secondRou
 
 ## License
 
-Shock is available under Apache License 2.0.
+Shock is available under Apache License 2.0.  See the LICENSE file for more info
