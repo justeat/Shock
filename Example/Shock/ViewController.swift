@@ -49,7 +49,7 @@ class ViewController: UIViewController {
 
 }
 
-extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+extension ViewController: UIPickerViewDataSource {
 	
 	func numberOfComponents(in pickerView: UIPickerView) -> Int {
 		return 1
@@ -58,7 +58,10 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
 	func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
 		return routes.count
 	}
-	
+}
+
+extension ViewController: UIPickerViewDelegate {
+    
 	func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
 		return routes.nameForRoute(index: row)
 	}
