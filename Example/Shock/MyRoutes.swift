@@ -17,8 +17,33 @@ class MyRoutes {
 	
 	init() {
 		
+        // Add your own routes here to test them in the example app
 		routes = [
-			.simple(method: .GET, url: "/helloworld", code: 200, filename: "helloworld.txt")
+            .simple(
+                method: .GET,
+                url: "/simple",
+                code: 200,
+                filename: "simple-route"
+            ),
+            .custom(
+                method: .POST,
+                url: "/custom",
+                query: ["item": "value" ],
+                headers: [ "X-Custom-Header": "custom-header-value" ],
+                code: 200,
+                filename: "custom-route.json"
+            ),
+            .redirect(
+                url: "/redirect-to-simple",
+                destination: "/simple"
+            ),
+            .template(
+                method: .POST,
+                url: "/template",
+                code: 200,
+                filename: "template-route.json",
+                data: [ "templateKey": "A templated value" ]
+            )
 		]
 		
 		server.setupRoute(route: .collection(routes: routes))
@@ -38,12 +63,30 @@ class MyRoutes {
 	}
 	
 	func makeRequest(index: Int, completion: @escaping (HTTPURLResponse, Data) -> ()) {
-		if let routeURL = routes[index].url, let url = URL(string: "\(server.hostURL)\(routeURL)") {
-			print("Requesting \(url.absoluteString)")
-			let task = URLSession.shared.dataTask(with: url) { data, response, error in
-				completion(response as! HTTPURLResponse, data ?? Data())
-			}
-			task.resume()
-		}
+
+        guard let routeURL = routes[index].url, var urlComponents = URLComponents(string: "\(server.hostURL)\(routeURL)") else {
+            print("ERROR: failed to derive URL from mock route")
+            return
+        }
+        
+        if let query = routes[index].query {
+            urlComponents.queryItems = query.keys.map({ URLQueryItem(name: $0, value: query[$0]) })
+        }
+        
+        guard let url = urlComponents.url else {
+            print("ERROR: Couldn't construct URL from components - \(urlComponents)")
+            return
+        }
+        
+        var urlRequest = URLRequest(url: url)
+        urlRequest.allHTTPHeaderFields = routes[index].headers
+        urlRequest.httpMethod = routes[index].method?.rawValue ?? "GET"
+        
+        print("Requesting \(url.absoluteString)")
+
+        let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            completion(response as! HTTPURLResponse, data ?? Data())
+        }
+        task.resume()
 	}
 }

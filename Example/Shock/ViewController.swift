@@ -27,6 +27,12 @@ class ViewController: UIViewController {
 		
 		pickerView.dataSource = self
 		pickerView.delegate = self
+        
+        button.layer.cornerRadius = 8.0
+        scrollView.layer.cornerRadius = 8.0
+        pickerView.layer.cornerRadius = 8.0
+        pickerView.layer.borderWidth = 0.5
+        pickerView.layer.borderColor = UIColor.gray.withAlphaComponent(0.5).cgColor
     }
 
     override func didReceiveMemoryWarning() {
