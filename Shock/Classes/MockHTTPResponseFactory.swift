@@ -1,9 +1,8 @@
 //
 //  HTTPResponseFactory.swift
-//  JustEat
+//  Shock
 //
 //  Created by Jack Newcombe on 29/09/2017.
-//  Copyright © 2017 JUST EAT. All rights reserved.
 //
 
 import Foundation

@@ -1,9 +1,8 @@
 //
 //  MockHTTPRoute.swift
-//  Pods
+//  Shock
 //
 //  Created by Jack Newcombe on 05/10/2017.
-//
 //
 
 import Foundation

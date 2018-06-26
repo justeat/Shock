@@ -2,8 +2,7 @@
 //  ViewController.swift
 //  Shock
 //
-//  Created by jnewc on 10/05/2017.
-//  Copyright (c) 2017 jnewc. All rights reserved.
+//  Created by Jack Newcombe on 10/05/2017.
 //
 
 import UIKit

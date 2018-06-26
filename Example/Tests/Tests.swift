@@ -1,3 +1,10 @@
+//
+//  Tests.swift
+//  Shock
+//
+//  Created by Jack Newcombe on 01/11/2017.
+//
+
 import XCTest
 @testable import Shock
 

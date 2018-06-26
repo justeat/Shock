@@ -1,9 +1,8 @@
 //
 //  MethodTests.swift
-//  Shock_Tests
+//  Shock
 //
 //  Created by Jack Newcombe on 29/03/2018.
-//  Copyright © 2018 CocoaPods. All rights reserved.
 //
 
 import XCTest
