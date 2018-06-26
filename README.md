@@ -53,7 +53,7 @@ class HappyPathTests: XCUITestCase {
 			filename: "my-test-data.json"
 		)
 
-		mockServer.setupRoute(route: route)
+		mockServer.setup(route: route)
 
 		/* ... Your UI test code ... */
 	}
