@@ -13,7 +13,7 @@ fileprivate typealias Template = GRMustacheTemplate
 
 class MockHTTPResponseFactory {
 	
-	let bundle: Bundle
+	private let bundle: Bundle
 	
 	init(bundle: Bundle = Bundle.main) {
 		self.bundle = bundle
@@ -44,7 +44,7 @@ class MockHTTPResponseFactory {
 	
 	// MARK: Utilities
 	
-	func loadJson(named name: String) -> String? {
+	private func loadJson(named name: String) -> String? {
 		
 		let components = name.components(separatedBy: ".")
 		let url: URL

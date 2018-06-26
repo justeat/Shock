@@ -14,11 +14,11 @@ import Swifter
 
 public class MockServer {
 
-	let port: UInt16
+	private let port: UInt16
 	
-	let server = HttpServer()
+	private let server = HttpServer()
 	
-	let factory: MockHTTPResponseFactory
+	private let factory: MockHTTPResponseFactory
 	
 	public var priority: DispatchQoS.QoSClass = .default
 	
