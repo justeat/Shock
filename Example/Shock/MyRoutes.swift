@@ -62,12 +62,14 @@ class MyRoutes {
 	
 	func performRequest(index: Int, completion: @escaping (HTTPURLResponse, Data) -> ()) {
 
-        guard let routeURL = routes[index].url, var urlComponents = URLComponents(string: "\(server.hostURL)\(routeURL)") else {
+        let route = routes[index]
+        
+        guard let routeURL = route.url, var urlComponents = URLComponents(string: "\(server.hostURL)\(routeURL)") else {
             print("ERROR: failed to derive URL from mock route")
             return
         }
         
-        if let query = routes[index].query {
+        if let query = route.query {
             urlComponents.queryItems = query.keys.map({ URLQueryItem(name: $0, value: query[$0]) })
         }
         
@@ -77,8 +79,8 @@ class MyRoutes {
         }
         
         var urlRequest = URLRequest(url: url)
-        urlRequest.allHTTPHeaderFields = routes[index].headers
-        urlRequest.httpMethod = routes[index].method?.rawValue ?? "GET"
+        urlRequest.allHTTPHeaderFields = route.headers
+        urlRequest.httpMethod = route.method?.rawValue ?? "GET"
         
         print("Requesting \(url.absoluteString)")
 
