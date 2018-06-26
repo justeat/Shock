@@ -41,7 +41,7 @@ public class MockServer {
 	
 	// MARK: Mock setup
 	
-	public func setupRoute(route: MockHTTPRoute) {
+	public func setup(route: MockHTTPRoute) {
 		
 		let response: HttpResponse?
 		
@@ -57,7 +57,7 @@ public class MockServer {
 			response = factory.create(url: url, destination: destination)
 			break
 		case .collection(let routes):
-			routes.forEach { self.setupRoute(route: $0) }
+			routes.forEach { self.setup(route: $0) }
 			return
 		}
 		

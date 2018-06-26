@@ -45,7 +45,7 @@ class MyRoutes {
             )
 		]
 		
-		server.setupRoute(route: .collection(routes: routes))
+		server.setup(route: .collection(routes: routes))
 		server.start(priority: DispatchQoS.QoSClass.background)
 	}
 	

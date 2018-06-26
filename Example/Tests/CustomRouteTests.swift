@@ -25,7 +25,7 @@ class CustomRouteTests: XCTestCase {
     
     func testCustomRoute() {
         let route: MockHTTPRoute = .custom(method: .GET, url: "/custom", query: [:], headers: [:], code: 200, filename: "testCustomRoute.txt")
-        server.setupRoute(route: route)
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
@@ -50,7 +50,7 @@ class CustomRouteTests: XCTestCase {
             code: 200,
             filename: "testCustomRoute.txt"
         )
-        server.setupRoute(route: route)
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
@@ -74,7 +74,7 @@ class CustomRouteTests: XCTestCase {
             code: 200,
             filename: "testCustomRoute.txt"
         )
-        server.setupRoute(route: route)
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 404 response with empty response body")
         
@@ -98,7 +98,7 @@ class CustomRouteTests: XCTestCase {
             code: 200,
             filename: "testCustomRoute.txt"
         )
-        server.setupRoute(route: route)
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
@@ -120,7 +120,7 @@ class CustomRouteTests: XCTestCase {
             code: 200,
             filename: "testCustomRoute.txt"
         )
-        server.setupRoute(route: route)
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 404 response with empty response body")
         

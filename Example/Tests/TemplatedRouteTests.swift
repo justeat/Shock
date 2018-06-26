@@ -28,7 +28,7 @@ class TemplatedRouteTests: XCTestCase {
             "list": [ "Item #1", "Item #2" ],
             "text": "text"
             ])
-        server.setupRoute(route: route)
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with valid generated response body")
         
