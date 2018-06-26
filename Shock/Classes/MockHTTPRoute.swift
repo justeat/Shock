@@ -49,7 +49,7 @@ public enum MockHTTPRoute {
 		     .template(_, let url, _, _, _),
 		     .redirect(let url, _):
 			return url
-		default:
+		case .collection:
 			return nil
 		}
 	}
@@ -62,7 +62,7 @@ public enum MockHTTPRoute {
 			return method
 		case .redirect:
 			return .GET
-		default:
+        case .collection:
 			return nil
 		}
 	}
@@ -71,7 +71,7 @@ public enum MockHTTPRoute {
 		switch self {
 		case .custom(_, _, _, let headers, _, _):
 			return headers
-		default:
+        case .simple, .template, .redirect, .collection:
 			return nil
 		}
 	}
@@ -80,8 +80,8 @@ public enum MockHTTPRoute {
 		switch self {
 		case .custom(_, _, let query, _, _, _):
 			return query
-		default:
-			return nil
+        case .simple, .template, .redirect, .collection:
+             return nil
 		}
 	}
 
