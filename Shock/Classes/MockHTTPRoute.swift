@@ -11,14 +11,14 @@ public enum MockHTTPRoute {
 	
 	case simple(
 		method: MockHTTPMethod,
-		url: String,
+		urlPath: String,
 		code: Int,
 		filename: String
 	)
 	
 	case custom(
 		method: MockHTTPMethod,
-		url: String,
+		urlPath: String,
 		query: [String: String],
 		headers: [String: String],
 		code: Int,
@@ -27,14 +27,14 @@ public enum MockHTTPRoute {
 	
 	case template(
 		method: MockHTTPMethod,
-		url: String,
+		urlPath: String,
 		code: Int,
 		filename: String,
 		data: [String: Any?]
 	)
 	
 	case redirect(
-		url: String,
+		urlPath: String,
 		destination: String
 	)
 	
@@ -42,13 +42,13 @@ public enum MockHTTPRoute {
 		routes: [MockHTTPRoute]
 	)
 	
-	public var url: String? {
+	public var urlPath: String? {
 		switch self {
-		case .simple(_, let url, _, _),
-		     .custom(_, let url, _, _, _, _),
-		     .template(_, let url, _, _, _),
-		     .redirect(let url, _):
-			return url
+		case .simple(_, let urlPath, _, _),
+		     .custom(_, let urlPath, _, _, _, _),
+		     .template(_, let urlPath, _, _, _),
+		     .redirect(let urlPath, _):
+			return urlPath
 		case .collection:
 			return nil
 		}

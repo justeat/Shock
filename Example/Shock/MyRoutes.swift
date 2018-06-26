@@ -20,25 +20,25 @@ class MyRoutes {
 		routes = [
             .simple(
                 method: .GET,
-                url: "/simple",
+                urlPath: "/simple",
                 code: 200,
                 filename: "simple-route"
             ),
             .custom(
                 method: .POST,
-                url: "/custom",
+                urlPath: "/custom",
                 query: ["item": "value" ],
                 headers: [ "X-Custom-Header": "custom-header-value" ],
                 code: 200,
                 filename: "custom-route.json"
             ),
             .redirect(
-                url: "/redirect-to-simple",
+                urlPath: "/redirect-to-simple",
                 destination: "/simple"
             ),
             .template(
                 method: .POST,
-                url: "/template",
+                urlPath: "/template",
                 code: 200,
                 filename: "template-route.json",
                 data: [ "templateKey": "A templated value" ]
@@ -50,8 +50,8 @@ class MyRoutes {
 	}
 	
 	func nameOfRoute(at index: Int) -> String {
-		if let url = routes[index].url, let method = routes[index].method {
-			return "\(method) \(url)"
+        if let urlPath = routes[index].urlPath, let method = routes[index].method {
+            return "\(method) \(urlPath)"
 		}
 		return ""
 	}
@@ -64,7 +64,7 @@ class MyRoutes {
 
         let route = routes[index]
         
-        guard let routeURL = route.url, var urlComponents = URLComponents(string: "\(server.hostURL)\(routeURL)") else {
+        guard let urlPath = route.urlPath, var urlComponents = URLComponents(string: "\(server.hostURL)\(urlPath)") else {
             print("ERROR: failed to derive URL from mock route")
             return
         }

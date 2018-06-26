@@ -46,26 +46,26 @@ public class MockServer {
 		let response: HttpResponse
 		
 		switch route {
-		case .simple(let method, let url, let code, let jsonFilename),
-		     .custom(let method, let url, _, _, let code, let jsonFilename):
-			response = factory.create(url: url, jsonFilename: jsonFilename, method: method.rawValue, code: code)
+		case .simple(let method, let urlPath, let code, let jsonFilename),
+		     .custom(let method, let urlPath, _, _, let code, let jsonFilename):
+			response = factory.create(urlPath: urlPath, jsonFilename: jsonFilename, method: method.rawValue, code: code)
 			break
-		case .template(let method, let url, let code, let jsonFileName, let data):
-			response = factory.create(url: url, templateFilename: jsonFileName, data: data, method: method.rawValue, code: code)
+		case .template(let method, let urlPath, let code, let jsonFileName, let data):
+			response = factory.create(urlPath: urlPath, templateFilename: jsonFileName, data: data, method: method.rawValue, code: code)
 			break
-		case .redirect(let url, let destination):
-			response = factory.create(url: url, destination: destination)
+		case .redirect(let urlPath, let destination):
+			response = factory.create(urlPath: urlPath, destination: destination)
 			break
 		case .collection(let routes):
 			routes.forEach { self.setup(route: $0) }
 			return
 		}
 		
-        if let url = route.url, let method = route.method {
+        if let urlPath = route.urlPath, let method = route.method {
 			
 			var router = httpServerMethod(for: method)
 			
-			router[url] = { request in
+			router[urlPath] = { request in
 				assert(method == route.method)
                 
                 if let headers = route.headers {

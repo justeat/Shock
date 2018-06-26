@@ -24,7 +24,7 @@ class CustomRouteTests: XCTestCase {
     }
     
     func testCustomRoute() {
-        let route: MockHTTPRoute = .custom(method: .GET, url: "/custom", query: [:], headers: [:], code: 200, filename: "testCustomRoute.txt")
+        let route: MockHTTPRoute = .custom(method: .GET, urlPath: "/custom", query: [:], headers: [:], code: 200, filename: "testCustomRoute.txt")
         server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
@@ -44,7 +44,7 @@ class CustomRouteTests: XCTestCase {
         
         let route: MockHTTPRoute = .custom(
             method: .GET,
-            url: "/custom-with-header",
+            urlPath: "/custom-with-header",
             query: [:],
             headers: customHeaders,
             code: 200,
@@ -68,7 +68,7 @@ class CustomRouteTests: XCTestCase {
         
         let route: MockHTTPRoute = .custom(
             method: .GET,
-            url: "/custom-with-header",
+            urlPath: "/custom-with-header",
             query: [:],
             headers: customHeaders,
             code: 200,
@@ -92,7 +92,7 @@ class CustomRouteTests: XCTestCase {
         
         let route: MockHTTPRoute = .custom(
             method: .GET,
-            url: "/custom-with-query",
+            urlPath: "/custom-with-query",
             query: [ "item1": "value1", "item2": "value2" ],
             headers: [:],
             code: 200,
@@ -114,7 +114,7 @@ class CustomRouteTests: XCTestCase {
         
         let route: MockHTTPRoute = .custom(
             method: .GET,
-            url: "/custom-with-query",
+            urlPath: "/custom-with-query",
             query: [ "item1": "value1", "item2": "value2" ],
             headers: [:],
             code: 200,
