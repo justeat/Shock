@@ -19,14 +19,14 @@ class MockHTTPResponseFactory {
 		self.bundle = bundle
 	}
 	
-	func create(urlPath: String, jsonFilename: String, method: String = "GET", code: Int = 200) -> HttpResponse {
+	func makeResponse(urlPath: String, jsonFilename: String, method: String = "GET", code: Int = 200) -> HttpResponse {
 		return HttpResponse.raw(code, urlPath, nil) { writer in
 			let responseBody = self.loadJson(named: jsonFilename)!
 			try! writer.write(responseBody.data(using: String.Encoding.utf8)!)
 		}
 	}
 	
-	func create(urlPath: String, templateFilename: String, data: [String: Any?] = [:], method: String = "GET", code: Int = 200) -> HttpResponse {
+	func makeResponse(urlPath: String, templateFilename: String, data: [String: Any?] = [:], method: String = "GET", code: Int = 200) -> HttpResponse {
 		
 		return HttpResponse.raw(code, urlPath, nil) { writer in
 			
@@ -38,7 +38,7 @@ class MockHTTPResponseFactory {
 		}
 	}
 	
-	func create(urlPath: String, destination: String) -> HttpResponse {
+	func makeResponse(urlPath: String, destination: String) -> HttpResponse {
 		return HttpResponse.movedPermanently(destination)
 	}
 	

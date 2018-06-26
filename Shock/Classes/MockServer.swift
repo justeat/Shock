@@ -18,11 +18,11 @@ public class MockServer {
 	
 	private let server = HttpServer()
 	
-	private let factory: MockHTTPResponseFactory
+	private let responseFactory: MockHTTPResponseFactory
 	
 	public init(port: UInt16 = 9000, bundle: Bundle = Bundle.main) {
 		self.port = port
-		self.factory = MockHTTPResponseFactory(bundle: bundle)
+		self.responseFactory = MockHTTPResponseFactory(bundle: bundle)
 	}
 	
 	// MARK: Server managements
@@ -48,13 +48,13 @@ public class MockServer {
 		switch route {
 		case .simple(let method, let urlPath, let code, let jsonFilename),
 		     .custom(let method, let urlPath, _, _, let code, let jsonFilename):
-			response = factory.create(urlPath: urlPath, jsonFilename: jsonFilename, method: method.rawValue, code: code)
+			response = responseFactory.makeResponse(urlPath: urlPath, jsonFilename: jsonFilename, method: method.rawValue, code: code)
 			break
 		case .template(let method, let urlPath, let code, let jsonFileName, let data):
-			response = factory.create(urlPath: urlPath, templateFilename: jsonFileName, data: data, method: method.rawValue, code: code)
+			response = responseFactory.makeResponse(urlPath: urlPath, templateFilename: jsonFileName, data: data, method: method.rawValue, code: code)
 			break
 		case .redirect(let urlPath, let destination):
-			response = factory.create(urlPath: urlPath, destination: destination)
+			response = responseFactory.makeResponse(urlPath: urlPath, destination: destination)
 			break
 		case .collection(let routes):
 			routes.forEach { self.setup(route: $0) }
