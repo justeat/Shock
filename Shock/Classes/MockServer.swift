@@ -20,8 +20,6 @@ public class MockServer {
 	
 	private let factory: MockHTTPResponseFactory
 	
-	public var priority: DispatchQoS.QoSClass = .default
-	
 	public init(port: UInt16 = 9000, bundle: Bundle = Bundle.main) {
 		self.port = port
 		self.factory = MockHTTPResponseFactory(bundle: bundle)
@@ -29,7 +27,7 @@ public class MockServer {
 	
 	// MARK: Server managements
 	
-	public func start() {
+	public func start(priority: DispatchQoS.QoSClass = .default) {
 		try! server.start(port, forceIPv4: true, priority: priority)
 	}
 	

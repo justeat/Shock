@@ -46,8 +46,7 @@ class MyRoutes {
 		]
 		
 		server.setupRoute(route: .collection(routes: routes))
-		server.priority = DispatchQoS.QoSClass.background
-		server.start()
+		server.start(priority: DispatchQoS.QoSClass.background)
 	}
 	
 	func nameForRoute(index: Int) -> String {
