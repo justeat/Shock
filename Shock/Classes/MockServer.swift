@@ -43,7 +43,7 @@ public class MockServer {
 	
 	public func setup(route: MockHTTPRoute) {
 		
-		let response: HttpResponse?
+		let response: HttpResponse
 		
 		switch route {
 		case .simple(let method, let url, let code, let jsonFilename),
@@ -61,7 +61,7 @@ public class MockServer {
 			return
 		}
 		
-		if let response = response, let url = route.url, let method = route.method {
+        if let url = route.url, let method = route.method {
 			
 			var router = httpServerMethod(for: method)
 			
