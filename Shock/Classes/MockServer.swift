@@ -9,7 +9,7 @@
 // if server unavailable
 // swiftlint:disable force_try
 
-import UIKit
+import Foundation
 import Swifter
 
 public class MockServer {
