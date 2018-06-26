@@ -10,19 +10,14 @@ import UIKit
 class ViewController: UIViewController {
 	
 	@IBOutlet var pickerView: UIPickerView!
-	
 	@IBOutlet var scrollView: UIScrollView!
-	
 	@IBOutlet var label: UILabel!
-	
 	@IBOutlet var button: UIButton!
-	
 	
 	let routes = MyRoutes()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
 		
 		pickerView.dataSource = self
 		pickerView.delegate = self
@@ -34,11 +29,6 @@ class ViewController: UIViewController {
         pickerView.layer.borderColor = UIColor.gray.withAlphaComponent(0.5).cgColor
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-	
 	@IBAction func makeRequest(sender: UIButton) {
 		
 		routes.makeRequest(index: pickerView.selectedRow(inComponent: 0)) { response, data in
