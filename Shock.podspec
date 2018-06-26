@@ -9,36 +9,22 @@
 Pod::Spec.new do |s|
   s.name             = 'Shock'
   s.version          = '1.0.2'
-  s.summary          = 'A short description of Shock.'
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
+  s.summary          = 'A HTTP mocking framework written in Swift.'
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+Shock lets you quickly and painlessly provided mock responses for web requests made by your iOS app.
                        DESC
 
-  s.homepage         = 'https://github.com/jnewc/Shock'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
+  s.homepage         = 'https://github.je-labs.com/iOSI18N-dev-Pods/Pod-Shock'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'jnewc' => 'jack.newcombe@just-eat.com' }
+  s.author           = { 'Just Eat iOS team' => 'justeat.ios.team@gmail.com', 'Jack Newcombe' => 'jack.newcombe@just-eat.com' }
   s.source           = { :git => 'git@github.je-labs.com:iOSI18N-dev-Pods/Pod-Shock.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.social_media_url = 'https://twitter.com/justeat_tech'
 
   s.ios.deployment_target = '8.0'
+  s.swift_version = '4.1'
 
   s.source_files = 'Shock/Classes/**/*'
-
-  # s.resource_bundles = {
-  #   'Shock' => ['Shock/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 
   s.dependency 'Swifter', '~> 1.4.1'
   s.dependency 'GRMustache', '~> 7.3.2'
