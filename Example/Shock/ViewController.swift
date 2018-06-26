@@ -29,9 +29,9 @@ class ViewController: UIViewController {
         pickerView.layer.borderColor = UIColor.gray.withAlphaComponent(0.5).cgColor
     }
 
-	@IBAction func makeRequest(sender: UIButton) {
+	@IBAction func performRequest(sender: UIButton) {
 		
-		routes.makeRequest(index: pickerView.selectedRow(inComponent: 0)) { response, data in
+		routes.performRequest(index: pickerView.selectedRow(inComponent: 0)) { response, data in
 			var text = ""
 			response.allHeaderFields.keys.forEach { key in
 				text += "\(key): \(response.allHeaderFields[key] ?? String())\n"

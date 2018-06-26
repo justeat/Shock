@@ -60,11 +60,11 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="N7m-wD-zb6"/>
                                 </constraints>
-                                <state key="normal" title="Make Request">
+                                <state key="normal" title="Perform Request">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
-                                    <action selector="makeRequestWithSender:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="hNC-JR-dVl"/>
+                                    <action selector="performRequestWithSender:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="hNC-JR-dVl"/>
                                 </connections>
                             </button>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RY0-v3-8QJ">

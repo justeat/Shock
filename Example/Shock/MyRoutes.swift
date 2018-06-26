@@ -60,7 +60,7 @@ class MyRoutes {
 		return routes.count
 	}
 	
-	func makeRequest(index: Int, completion: @escaping (HTTPURLResponse, Data) -> ()) {
+	func performRequest(index: Int, completion: @escaping (HTTPURLResponse, Data) -> ()) {
 
         guard let routeURL = routes[index].url, var urlComponents = URLComponents(string: "\(server.hostURL)\(routeURL)") else {
             print("ERROR: failed to derive URL from mock route")
