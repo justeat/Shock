@@ -49,7 +49,7 @@ class MyRoutes {
 		server.start(priority: DispatchQoS.QoSClass.background)
 	}
 	
-	func nameForRoute(index: Int) -> String {
+	func nameOfRoute(at index: Int) -> String {
 		if let url = routes[index].url, let method = routes[index].method {
 			return "\(method) \(url)"
 		}
