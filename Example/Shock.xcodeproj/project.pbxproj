@@ -129,13 +129,13 @@
 			isa = PBXGroup;
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
+				6DF676FF1F87CC8200E1783A /* MyRoutes.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				6DF677021F87CEDA00E1783A /* Data */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
-				6DF676FF1F87CC8200E1783A /* MyRoutes.swift */,
 			);
 			name = "Example for Shock";
 			path = Shock;
@@ -154,11 +154,11 @@
 			children = (
 				6DE276E71F868DDC00C9F194 /* Fixtures */,
 				6D10776C1FA9E67E006BB9C8 /* CustomRouteTests.swift */,
+				6DE276E81F8761F300C9F194 /* HTTPClient.swift */,
 				6D410ED5206D203D00A2D79D /* MethodTests.swift */,
 				6D10776E1FA9EB21006BB9C8 /* TemplatedRouteTests.swift */,
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
-				6DE276E81F8761F300C9F194 /* HTTPClient.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
