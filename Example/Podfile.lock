@@ -10,9 +10,15 @@ PODS:
 DEPENDENCIES:
   - Shock (from `../`)
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - GRMustache
+    - JRSwizzle
+    - Swifter
+
 EXTERNAL SOURCES:
   Shock:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
   GRMustache: ebe6104fd30a6d22c1f36af131e19e2dbf7cd292
@@ -22,4 +28,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 1fa436b09e29bf86d5ceece8bb415122d8643c76
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.3
