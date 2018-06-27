@@ -2,7 +2,8 @@
 //  MyRoutes.swift
 //  Shock
 //
-//  Created by Jack Newcombe on 06/10/2017.
+//  Created by Jack Newcombe on 27/06/2018.
+//  Copyright © 2018 Just Eat. All rights reserved.
 //
 
 import Foundation

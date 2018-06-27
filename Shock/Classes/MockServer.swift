@@ -2,7 +2,8 @@
 //  MockAPI.swift
 //  Shock
 //
-//  Created by Jack Newcombe on 31/10/2016.
+//  Created by Jack Newcombe on 27/06/2018.
+//  Copyright © 2018 Just Eat. All rights reserved.
 //
 
 // Force tries are bad in the app but in a test-case it's good to have a crash
