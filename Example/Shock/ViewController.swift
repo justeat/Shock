@@ -2,8 +2,8 @@
 //  ViewController.swift
 //  Shock
 //
-//  Created by jnewc on 10/05/2017.
-//  Copyright (c) 2017 jnewc. All rights reserved.
+//  Created by Jack Newcombe on 27/06/2018.
+//  Copyright © 2018 Just Eat. All rights reserved.
 //
 
 import UIKit
@@ -11,19 +11,14 @@ import UIKit
 class ViewController: UIViewController {
 	
 	@IBOutlet var pickerView: UIPickerView!
-	
 	@IBOutlet var scrollView: UIScrollView!
-	
 	@IBOutlet var label: UILabel!
-	
 	@IBOutlet var button: UIButton!
-	
 	
 	let routes = MyRoutes()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
 		
 		pickerView.dataSource = self
 		pickerView.delegate = self
@@ -35,14 +30,9 @@ class ViewController: UIViewController {
         pickerView.layer.borderColor = UIColor.gray.withAlphaComponent(0.5).cgColor
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-	
-	@IBAction func makeRequest(sender: UIButton) {
+	@IBAction func performRequest(sender: UIButton) {
 		
-		routes.makeRequest(index: pickerView.selectedRow(inComponent: 0)) { response, data in
+		routes.performRequest(index: pickerView.selectedRow(inComponent: 0)) { response, data in
 			var text = ""
 			response.allHeaderFields.keys.forEach { key in
 				text += "\(key): \(response.allHeaderFields[key] ?? String())\n"
@@ -60,7 +50,7 @@ class ViewController: UIViewController {
 
 }
 
-extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+extension ViewController: UIPickerViewDataSource {
 	
 	func numberOfComponents(in pickerView: UIPickerView) -> Int {
 		return 1
@@ -69,9 +59,12 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
 	func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
 		return routes.count
 	}
-	
+}
+
+extension ViewController: UIPickerViewDelegate {
+    
 	func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-		return routes.nameForRoute(index: row)
+		return routes.nameOfRoute(at: row)
 	}
 	
 }

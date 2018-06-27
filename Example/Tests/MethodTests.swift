@@ -1,9 +1,9 @@
 //
 //  MethodTests.swift
-//  Shock_Tests
+//  Shock
 //
-//  Created by Jack Newcombe on 29/03/2018.
-//  Copyright © 2018 CocoaPods. All rights reserved.
+//  Created by Jack Newcombe on 27/06/2018.
+//  Copyright © 2018 Just Eat. All rights reserved.
 //
 
 import XCTest
@@ -26,8 +26,8 @@ class MethodTests: XCTestCase {
 
     func testGETRequest() {
         
-        let route: MockHTTPRoute = .simple(method: .GET, url: "/simple", code: 200, filename: "testSimpleRoute.txt")
-        server.setupRoute(route: route)
+        let route: MockHTTPRoute = .simple(method: .GET, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
@@ -42,8 +42,8 @@ class MethodTests: XCTestCase {
     
     func testPOSTRequest() {
         
-        let route: MockHTTPRoute = .simple(method: .POST, url: "/simple", code: 200, filename: "testSimpleRoute.txt")
-        server.setupRoute(route: route)
+        let route: MockHTTPRoute = .simple(method: .POST, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
@@ -58,8 +58,8 @@ class MethodTests: XCTestCase {
     
     func testPUTRequest() {
         
-        let route: MockHTTPRoute = .simple(method: .PUT, url: "/simple", code: 200, filename: "testSimpleRoute.txt")
-        server.setupRoute(route: route)
+        let route: MockHTTPRoute = .simple(method: .PUT, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
@@ -74,8 +74,8 @@ class MethodTests: XCTestCase {
     
     func testDELETERequest() {
         
-        let route: MockHTTPRoute = .simple(method: .DELETE, url: "/simple", code: 200, filename: "testSimpleRoute.txt")
-        server.setupRoute(route: route)
+        let route: MockHTTPRoute = .simple(method: .DELETE, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         

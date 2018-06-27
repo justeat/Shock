@@ -2,8 +2,8 @@
 //  MyRoutes.swift
 //  Shock
 //
-//  Created by Jack Newcombe on 06/10/2017.
-//  Copyright © 2017 CocoaPods. All rights reserved.
+//  Created by Jack Newcombe on 27/06/2018.
+//  Copyright © 2018 Just Eat. All rights reserved.
 //
 
 import Foundation
@@ -21,39 +21,38 @@ class MyRoutes {
 		routes = [
             .simple(
                 method: .GET,
-                url: "/simple",
+                urlPath: "/simple",
                 code: 200,
                 filename: "simple-route"
             ),
             .custom(
                 method: .POST,
-                url: "/custom",
+                urlPath: "/custom",
                 query: ["item": "value" ],
                 headers: [ "X-Custom-Header": "custom-header-value" ],
                 code: 200,
                 filename: "custom-route.json"
             ),
             .redirect(
-                url: "/redirect-to-simple",
+                urlPath: "/redirect-to-simple",
                 destination: "/simple"
             ),
             .template(
                 method: .POST,
-                url: "/template",
+                urlPath: "/template",
                 code: 200,
                 filename: "template-route.json",
                 data: [ "templateKey": "A templated value" ]
             )
 		]
 		
-		server.setupRoute(route: .collection(routes: routes))
-		server.priority = DispatchQoS.QoSClass.background
-		server.start()
+		server.setup(route: .collection(routes: routes))
+		server.start(priority: DispatchQoS.QoSClass.background)
 	}
 	
-	func nameForRoute(index: Int) -> String {
-		if let url = routes[index].url, let method = routes[index].method {
-			return "\(method) \(url)"
+	func nameOfRoute(at index: Int) -> String {
+        if let urlPath = routes[index].urlPath, let method = routes[index].method {
+            return "\(method) \(urlPath)"
 		}
 		return ""
 	}
@@ -62,14 +61,16 @@ class MyRoutes {
 		return routes.count
 	}
 	
-	func makeRequest(index: Int, completion: @escaping (HTTPURLResponse, Data) -> ()) {
+	func performRequest(index: Int, completion: @escaping (HTTPURLResponse, Data) -> ()) {
 
-        guard let routeURL = routes[index].url, var urlComponents = URLComponents(string: "\(server.hostURL)\(routeURL)") else {
+        let route = routes[index]
+        
+        guard let urlPath = route.urlPath, var urlComponents = URLComponents(string: "\(server.hostURL)\(urlPath)") else {
             print("ERROR: failed to derive URL from mock route")
             return
         }
         
-        if let query = routes[index].query {
+        if let query = route.query {
             urlComponents.queryItems = query.keys.map({ URLQueryItem(name: $0, value: query[$0]) })
         }
         
@@ -79,8 +80,8 @@ class MyRoutes {
         }
         
         var urlRequest = URLRequest(url: url)
-        urlRequest.allHTTPHeaderFields = routes[index].headers
-        urlRequest.httpMethod = routes[index].method?.rawValue ?? "GET"
+        urlRequest.allHTTPHeaderFields = route.headers
+        urlRequest.httpMethod = route.method?.rawValue ?? "GET"
         
         print("Requesting \(url.absoluteString)")
 

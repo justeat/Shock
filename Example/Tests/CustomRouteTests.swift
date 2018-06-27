@@ -2,8 +2,8 @@
 //  CustomRouteTests.swift
 //  Shock
 //
-//  Created by Jack Newcombe on 01/11/2017.
-//  Copyright © 2017 CocoaPods. All rights reserved.
+//  Created by Jack Newcombe on 27/06/2018.
+//  Copyright © 2018 Just Eat. All rights reserved.
 //
 
 import XCTest
@@ -25,8 +25,8 @@ class CustomRouteTests: XCTestCase {
     }
     
     func testCustomRoute() {
-        let route: MockHTTPRoute = .custom(method: .GET, url: "/custom", query: [:], headers: [:], code: 200, filename: "testCustomRoute.txt")
-        server.setupRoute(route: route)
+        let route: MockHTTPRoute = .custom(method: .GET, urlPath: "/custom", query: [:], headers: [:], code: 200, filename: "testCustomRoute.txt")
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
@@ -45,13 +45,13 @@ class CustomRouteTests: XCTestCase {
         
         let route: MockHTTPRoute = .custom(
             method: .GET,
-            url: "/custom-with-header",
+            urlPath: "/custom-with-header",
             query: [:],
             headers: customHeaders,
             code: 200,
             filename: "testCustomRoute.txt"
         )
-        server.setupRoute(route: route)
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
@@ -69,13 +69,13 @@ class CustomRouteTests: XCTestCase {
         
         let route: MockHTTPRoute = .custom(
             method: .GET,
-            url: "/custom-with-header",
+            urlPath: "/custom-with-header",
             query: [:],
             headers: customHeaders,
             code: 200,
             filename: "testCustomRoute.txt"
         )
-        server.setupRoute(route: route)
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 404 response with empty response body")
         
@@ -93,13 +93,13 @@ class CustomRouteTests: XCTestCase {
         
         let route: MockHTTPRoute = .custom(
             method: .GET,
-            url: "/custom-with-query",
+            urlPath: "/custom-with-query",
             query: [ "item1": "value1", "item2": "value2" ],
             headers: [:],
             code: 200,
             filename: "testCustomRoute.txt"
         )
-        server.setupRoute(route: route)
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
@@ -115,13 +115,13 @@ class CustomRouteTests: XCTestCase {
         
         let route: MockHTTPRoute = .custom(
             method: .GET,
-            url: "/custom-with-query",
+            urlPath: "/custom-with-query",
             query: [ "item1": "value1", "item2": "value2" ],
             headers: [:],
             code: 200,
             filename: "testCustomRoute.txt"
         )
-        server.setupRoute(route: route)
+        server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 404 response with empty response body")
         

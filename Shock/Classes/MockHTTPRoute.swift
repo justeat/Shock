@@ -1,9 +1,9 @@
 //
 //  MockHTTPRoute.swift
-//  Pods
+//  Shock
 //
-//  Created by Jack Newcombe on 05/10/2017.
-//
+//  Created by Jack Newcombe on 27/06/2018.
+//  Copyright © 2018 Just Eat. All rights reserved.
 //
 
 import Foundation
@@ -12,14 +12,14 @@ public enum MockHTTPRoute {
 	
 	case simple(
 		method: MockHTTPMethod,
-		url: String,
+		urlPath: String,
 		code: Int,
 		filename: String
 	)
 	
 	case custom(
 		method: MockHTTPMethod,
-		url: String,
+		urlPath: String,
 		query: [String: String],
 		headers: [String: String],
 		code: Int,
@@ -28,14 +28,14 @@ public enum MockHTTPRoute {
 	
 	case template(
 		method: MockHTTPMethod,
-		url: String,
+		urlPath: String,
 		code: Int,
 		filename: String,
 		data: [String: Any?]
 	)
 	
 	case redirect(
-		url: String,
+		urlPath: String,
 		destination: String
 	)
 	
@@ -43,14 +43,14 @@ public enum MockHTTPRoute {
 		routes: [MockHTTPRoute]
 	)
 	
-	public var url: String? {
+	public var urlPath: String? {
 		switch self {
-		case .simple(_, let url, _, _),
-		     .custom(_, let url, _, _, _, _),
-		     .template(_, let url, _, _, _),
-		     .redirect(let url, _):
-			return url
-		default:
+		case .simple(_, let urlPath, _, _),
+		     .custom(_, let urlPath, _, _, _, _),
+		     .template(_, let urlPath, _, _, _),
+		     .redirect(let urlPath, _):
+			return urlPath
+		case .collection:
 			return nil
 		}
 	}
@@ -63,7 +63,7 @@ public enum MockHTTPRoute {
 			return method
 		case .redirect:
 			return .GET
-		default:
+        case .collection:
 			return nil
 		}
 	}
@@ -72,7 +72,7 @@ public enum MockHTTPRoute {
 		switch self {
 		case .custom(_, _, _, let headers, _, _):
 			return headers
-		default:
+        case .simple, .template, .redirect, .collection:
 			return nil
 		}
 	}
@@ -81,8 +81,8 @@ public enum MockHTTPRoute {
 		switch self {
 		case .custom(_, _, let query, _, _, _):
 			return query
-		default:
-			return nil
+        case .simple, .template, .redirect, .collection:
+             return nil
 		}
 	}
 

@@ -1,3 +1,11 @@
+//
+//  Tests.swift
+//  Shock
+//
+//  Created by Jack Newcombe on 27/06/2018.
+//  Copyright © 2018 Just Eat. All rights reserved.
+//
+
 import XCTest
 @testable import Shock
 
@@ -18,8 +26,8 @@ class Tests: XCTestCase {
     
 	func testSimpleRoute() {
 		
-		let route: MockHTTPRoute = .simple(method: .GET, url: "/simple", code: 200, filename: "testSimpleRoute.txt")
-		server.setupRoute(route: route)
+		let route: MockHTTPRoute = .simple(method: .GET, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+		server.setup(route: route)
 		
 		let expectation = self.expectation(description: "Expect 200 response with response body")
 		
@@ -34,10 +42,10 @@ class Tests: XCTestCase {
 	func testRedirectRoute() {
 		
 		let route: MockHTTPRoute = .collection(routes: [
-			.redirect(url: "/redirect", destination: "/destination"),
-			.simple(method: .GET, url: "/destination", code: 200, filename: "testRedirectRoute.txt")
+			.redirect(urlPath: "/redirect", destination: "/destination"),
+			.simple(method: .GET, urlPath: "/destination", code: 200, filename: "testRedirectRoute.txt")
 		])
-		server.setupRoute(route: route)
+		server.setup(route: route)
 		
 		let expectation = self.expectation(description: "Expect 200 response with response body after redirect")
 		
@@ -52,7 +60,7 @@ class Tests: XCTestCase {
 	func testRouteProperties() {
 		
 		let emptyRoute: MockHTTPRoute = .collection(routes: [])
-		XCTAssertNil(emptyRoute.url)
+		XCTAssertNil(emptyRoute.urlPath)
 		XCTAssertNil(emptyRoute.method)
 		
 	}

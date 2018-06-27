@@ -1,36 +1,34 @@
 //
 //  MockAPI.swift
-//  JustEat
+//  Shock
 //
-//  Created by Jack Newcombe on 31/10/2016.
-//  Copyright © 2016 JUST EAT. All rights reserved.
+//  Created by Jack Newcombe on 27/06/2018.
+//  Copyright © 2018 Just Eat. All rights reserved.
 //
 
 // Force tries are bad in the app but in a test-case it's good to have a crash
 // if server unavailable
 // swiftlint:disable force_try
 
-import UIKit
+import Foundation
 import Swifter
 
 public class MockServer {
 
-	let port: UInt16
+	private let port: UInt16
 	
-	let server = HttpServer()
+	private let server = HttpServer()
 	
-	let factory: MockHTTPResponseFactory
-	
-	public var priority: DispatchQoS.QoSClass = .default
+	private let responseFactory: MockHTTPResponseFactory
 	
 	public init(port: UInt16 = 9000, bundle: Bundle = Bundle.main) {
 		self.port = port
-		self.factory = MockHTTPResponseFactory(bundle: bundle)
+		self.responseFactory = MockHTTPResponseFactory(bundle: bundle)
 	}
 	
 	// MARK: Server managements
 	
-	public func start() {
+	public func start(priority: DispatchQoS.QoSClass = .default) {
 		try! server.start(port, forceIPv4: true, priority: priority)
 	}
 	
@@ -44,31 +42,31 @@ public class MockServer {
 	
 	// MARK: Mock setup
 	
-	public func setupRoute(route: MockHTTPRoute) {
+	public func setup(route: MockHTTPRoute) {
 		
-		let response: HttpResponse?
+		let response: HttpResponse
 		
 		switch route {
-		case .simple(let method, let url, let code, let jsonFilename),
-		     .custom(let method, let url, _, _, let code, let jsonFilename):
-			response = factory.create(url: url, jsonFilename: jsonFilename, method: method.rawValue, code: code)
+		case .simple(let method, let urlPath, let code, let jsonFilename),
+		     .custom(let method, let urlPath, _, _, let code, let jsonFilename):
+			response = responseFactory.makeResponse(urlPath: urlPath, jsonFilename: jsonFilename, method: method.rawValue, code: code)
 			break
-		case .template(let method, let url, let code, let jsonFileName, let data):
-			response = factory.create(url: url, templateFilename: jsonFileName, data: data, method: method.rawValue, code: code)
+		case .template(let method, let urlPath, let code, let jsonFileName, let data):
+			response = responseFactory.makeResponse(urlPath: urlPath, templateFilename: jsonFileName, data: data, method: method.rawValue, code: code)
 			break
-		case .redirect(let url, let destination):
-			response = factory.create(url: url, destination: destination)
+		case .redirect(let urlPath, let destination):
+			response = responseFactory.makeResponse(urlPath: urlPath, destination: destination)
 			break
 		case .collection(let routes):
-			routes.forEach { self.setupRoute(route: $0) }
+			routes.forEach { self.setup(route: $0) }
 			return
 		}
 		
-		if let response = response, let url = route.url, let method = route.method {
+        if let urlPath = route.urlPath, let method = route.method {
 			
 			var router = httpServerMethod(for: method)
 			
-			router[url] = { request in
+			router[urlPath] = { request in
 				assert(method == route.method)
                 
                 if let headers = route.headers {
