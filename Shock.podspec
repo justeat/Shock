@@ -21,7 +21,7 @@ Shock lets you quickly and painlessly provided mock responses for web requests m
   s.source           = { :git => 'git@github.com:justeat/Shock.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/justeat_tech'
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '9.0'
   s.swift_version = '4.1'
 
   s.source_files = 'Shock/Classes/**/*'
