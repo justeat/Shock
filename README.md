@@ -38,25 +38,25 @@ Shock aims to provide a simple interface for setting up your mocks.
 Take the example below:
 
 ```swift
-class HappyPathTests: XCUITestCase {
+class HappyPathTests: XCTestCase {
 
-	// MARK: - Scenario: Log in with non-existing user.
+    // MARK: - Scenario: Log in with non-existing user.
 
-	func testHappyPath() {
+    func testHappyPath() {
 
-		mockServer = MockServer(port: 6789, bundle: Bundle(for: HappyPathTests.self))
+        mockServer = MockServer(port: 6789, bundle: Bundle(for: HappyPathTests.self))
 
-		let route = simple(
-			method: .GET,
-			urlPath: "/my/api/endpoint",
-			code: 200,
-			filename: "my-test-data.json"
-		)
+        let route = .simple(
+            method: .GET,
+            urlPath: "/my/api/endpoint",
+            code: 200,
+            filename: "my-test-data.json"
+        )
 
-		mockServer.setup(route: route)
+        mockServer.setup(route: route)
 
-		/* ... Your UI test code ... */
-	}
+        /* ... Your UI test code ... */
+    }
 }
 ```
 
@@ -71,14 +71,14 @@ indicates which endpoint to use. For example:
 ```swift
 let isRunningUITests = ProcessInfo.processInfo.arguments.contains("UITests")
 if isRunningUITests {
-	apiConfiguration.setHostname("http://localhost:6789/")
+    apiConfiguration.setHostname("http://localhost:6789/")
 }
 ```
 
 ## Shock Route Tester
 
 <p align="center">
-	<img src="./assets/example-app.png" alt="Example app screenshot" />
+    <img src="./assets/example-app.png" alt="Example app screenshot" />
 <p>
 
 The Shock Route Tester example app lets you try out the different route types.
@@ -96,10 +96,10 @@ mock declaration like so:
 
 ```swift
 let route: MockHTTPRoute = .simple(
-	method: .GET,
-	urlPath: "/my/api/endpoint",
-	code: 200,
-	filename: "my-test-data.json"
+    method: .GET,
+    urlPath: "/my/api/endpoint",
+    code: 200,
+    filename: "my-test-data.json"
 )
 ```
 
@@ -116,12 +116,12 @@ ensure that you add custom routes for all variations of these values.
 
 ```swift
 let route = MockHTTPRoute = .custom(
-	method: .GET,
-	urlPath: "/my/api/endpoint",
-	query: [ "queryKey": "queryValue" ],
-	headers: [ "X-Custom-Header": "custom-header-value" ],
-	code: 200,
-	filename: "my-test-data.json"
+    method: .GET,
+    urlPath: "/my/api/endpoint",
+    query: [ "queryKey": "queryValue" ],
+    headers: [ "X-Custom-Header": "custom-header-value" ],
+    code: 200,
+    filename: "my-test-data.json"
 )
 ```
 
@@ -132,7 +132,7 @@ allows you to return a 301 redirect to another URL or endpoint.
 
 ```swift
 let route: MockHTTPRoute = .redirect(
-	.redirect(urlPath: "/source", destination: "/destination")
+    .redirect(urlPath: "/source", destination: "/destination")
 )
 ```
 
@@ -150,11 +150,11 @@ more comprehensive example.
 
 ```swift
 let route = MockHTTPRoute = .template(
-	method: .GET,
-	urlPath: "/template",
-	code: 200,
-	filename: "my-templated-data.json",
-	data: [
+    method: .GET,
+    urlPath: "/template",
+    code: 200,
+    filename: "my-templated-data.json",
+    data: [
         "list": [ "Item #1", "Item #2" ],
         "text": "text"
     ])
