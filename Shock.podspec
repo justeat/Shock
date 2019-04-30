@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Shock'
-  s.version          = '1.0.0'
+  s.version          = '1.0.1'
   s.summary          = 'A HTTP mocking framework written in Swift.'
 
   s.description      = <<-DESC
@@ -26,6 +26,6 @@ Shock lets you quickly and painlessly provided mock responses for web requests m
 
   s.source_files = 'Shock/Classes/**/*'
 
-  s.dependency 'Swifter', '~> 1.4.5'
+  s.dependency 'Swifter', '1.4.5'
   s.dependency 'GRMustache', '~> 7.3.2'
 end
