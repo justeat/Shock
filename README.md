@@ -1,5 +1,6 @@
 # Shock
 
+[![Build Status](https://app.bitrise.io/app/309cf5cee1e63a83/status.svg?token=jjpd53RImy6M-XOiwo4HGA&branch=master)](https://app.bitrise.io/app/309cf5cee1e63a83)
 [![Version](https://img.shields.io/cocoapods/v/Shock.svg?style=flat)](http://cocoapods.org/pods/Shock)
 [![License](https://img.shields.io/cocoapods/l/Shock.svg?style=flat)](http://cocoapods.org/pods/Shock)
 [![Platform](https://img.shields.io/cocoapods/p/Shock.svg?style=flat)](http://cocoapods.org/pods/Shock)
