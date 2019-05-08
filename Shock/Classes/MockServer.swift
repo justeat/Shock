@@ -11,29 +11,50 @@
 // swiftlint:disable force_try
 
 import Foundation
-import Swifter
+import NIO
+import NIOHTTP1
 
 public class MockServer {
 
 	private let port: UInt16
+    
+    private let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
+    
+    private let bundle: Bundle
 	
-	private let server = HttpServer()
-	
-	private let responseFactory: MockHTTPResponseFactory
+    private var mockRoutes = [MockHTTPRoute]()
 	
 	public init(port: UInt16 = 9000, bundle: Bundle = Bundle.main) {
 		self.port = port
-		self.responseFactory = MockHTTPResponseFactory(bundle: bundle)
+        self.bundle = bundle
 	}
 	
 	// MARK: Server managements
 	
 	public func start(priority: DispatchQoS.QoSClass = .default) {
-		try! server.start(port, forceIPv4: true, priority: priority)
+        let bootStrap = ServerBootstrap(group: self.group)
+            .serverChannelOption(ChannelOptions.backlog, value: 256)
+            .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
+            .childChannelInitializer { channel -> EventLoopFuture<Void> in
+                channel.pipeline.configureHTTPServerPipeline().flatMap() {
+                    channel.pipeline.addHandler(MockHTTPHandler(bundle: self.bundle))
+                }
+            }
+            // I'm sure these are incredibly important, must work out why
+            .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(IPPROTO_IP), TCP_NODELAY), value: 1)
+            .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
+            .serverChannelOption(ChannelOptions.maxMessagesPerRead, value: 1)
+            .serverChannelOption(ChannelOptions.allowRemoteHalfClosure, value: true)
+        let channel = try! bootStrap.bind(host: self.hostURL, port: Int(self.port)).wait()
+        guard let localAddress = channel.localAddress else {
+            fatalError("Unable to bind port \(port)")
+        }
+        print("Starting listening on \(localAddress)")
 	}
 	
 	public func stop() {
-		server.stop()
+		try! group.syncShutdownGracefully()
+        print("Server closed")
 	}
 	
 	public var hostURL: String {
@@ -108,3 +129,4 @@ fileprivate func dictionary(from query: [(String, String)]) -> [String: String] 
     query.forEach { dict[$0.0] = $0.1 }
     return dict
 }
+ 

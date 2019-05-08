@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Swifter
 import GRMustache
 
 fileprivate typealias Template = GRMustacheTemplate
