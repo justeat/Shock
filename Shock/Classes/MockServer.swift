@@ -15,6 +15,8 @@ import NIO
 import NIOHTTP1
 
 public class MockServer {
+    
+    private let host = "localhost"
 
 	private let port: UInt16
     
@@ -32,24 +34,27 @@ public class MockServer {
 	// MARK: Server managements
 	
 	public func start(priority: DispatchQoS.QoSClass = .default) {
-        let bootStrap = ServerBootstrap(group: self.group)
-            .serverChannelOption(ChannelOptions.backlog, value: 256)
-            .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
-            .childChannelInitializer { channel -> EventLoopFuture<Void> in
-                channel.pipeline.configureHTTPServerPipeline().flatMap() {
-                    channel.pipeline.addHandler(MockHTTPHandler(bundle: self.bundle))
+        DispatchQueue.global().async {
+            let bootStrap = ServerBootstrap(group: self.group)
+                .serverChannelOption(ChannelOptions.backlog, value: 256)
+                .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
+                .childChannelInitializer { channel -> EventLoopFuture<Void> in
+                    channel.pipeline.configureHTTPServerPipeline().flatMap() { _ in
+                        channel.pipeline.addHandler(MockHTTPHandler(bundle: self.bundle, routes: self.mockRoutes))
+                    }
                 }
+                // I'm sure these are incredibly important, must work out why
+                .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(IPPROTO_IP), TCP_NODELAY), value: 1)
+                .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
+                .serverChannelOption(ChannelOptions.maxMessagesPerRead, value: 1)
+            let channel = try! bootStrap.bind(host: self.host, port: Int(self.port)).wait()
+            guard let localAddress = channel.localAddress else {
+                fatalError("Unable to bind port \(self.port)")
             }
-            // I'm sure these are incredibly important, must work out why
-            .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(IPPROTO_IP), TCP_NODELAY), value: 1)
-            .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
-            .serverChannelOption(ChannelOptions.maxMessagesPerRead, value: 1)
-            .serverChannelOption(ChannelOptions.allowRemoteHalfClosure, value: true)
-        let channel = try! bootStrap.bind(host: self.hostURL, port: Int(self.port)).wait()
-        guard let localAddress = channel.localAddress else {
-            fatalError("Unable to bind port \(port)")
+            print("Starting listening on \(localAddress)")
+            try! channel.closeFuture.wait()
+            print("Server shut down")
         }
-        print("Starting listening on \(localAddress)")
 	}
 	
 	public func stop() {
@@ -58,13 +63,14 @@ public class MockServer {
 	}
 	
 	public var hostURL: String {
-		return "http://localhost:\(port)"
+		return "http://\(host):\(port)"
 	}
 	
 	// MARK: Mock setup
 	
 	public func setup(route: MockHTTPRoute) {
-		
+		self.mockRoutes.append(route)
+        /*
 		let response: HttpResponse
 		
 		switch route {
@@ -107,26 +113,27 @@ public class MockServer {
 				return response
 			}
 		}
+        */
 	}
     
     // MARK: Utils
     
-    private func httpServerMethod(for method: MockHTTPMethod) -> HttpServer.MethodRoute {
-        switch method {
-        case .GET:      return server.GET
-        case .POST:     return server.POST
-        case .PUT:      return server.PUT
-        case .DELETE:   return server.DELETE
-        }
-    }
+//    private func httpServerMethod(for method: MockHTTPMethod) -> HttpServer.MethodRoute {
+//        switch method {
+//        case .GET:      return server.GET
+//        case .POST:     return server.POST
+//        case .PUT:      return server.PUT
+//        case .DELETE:   return server.DELETE
+//        }
+//    }
 	
 }
 
 // MARK: Utils
 
-fileprivate func dictionary(from query: [(String, String)]) -> [String: String] {
-    var dict = [String: String]()
-    query.forEach { dict[$0.0] = $0.1 }
-    return dict
-}
- 
+//fileprivate func dictionary(from query: [(String, String)]) -> [String: String] {
+//    var dict = [String: String]()
+//    query.forEach { dict[$0.0] = $0.1 }
+//    return dict
+//}
+
