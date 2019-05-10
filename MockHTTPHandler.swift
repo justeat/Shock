@@ -8,6 +8,9 @@
 import Foundation
 import NIO
 import NIOHTTP1
+import GRMustache
+
+fileprivate typealias Template = GRMustacheTemplate
 
 final class MockHTTPHandler: ChannelInboundHandler {
     typealias InboundIn = HTTPServerRequestPart
@@ -21,13 +24,25 @@ final class MockHTTPHandler: ChannelInboundHandler {
         self.routes = routes
     }
  
-//    fileprivate func completeResponse(_ context: ChannelHandlerContext) {
-//        let promise = context.eventLoop.makePromise(of: Void.self)
-//        promise.futureResult.whenComplete { (_) in
-//            context.close(promise: nil)
-//        }
-//        context.writeAndFlush(self.wrapOutboundOut(.end(nil)), promise: promise)
-//    }
+    fileprivate func completeResponse(_ ctx: ChannelHandlerContext) {
+        _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
+            ctx.channel.close()
+        }
+    }
+    
+    fileprivate func returnDataToClient(_ data: String,
+                                        withHttpVersion httpVersion: HTTPVersion,
+                                        context ctx: ChannelHandlerContext) {
+        var responseHead = HTTPResponseHead(version: httpVersion, status: HTTPResponseStatus.ok)
+        responseHead.headers.add(name: "Content-Length", value: "\(data.utf8.count)")
+        responseHead.headers.add(name: "Content-Type", value: "text/plain; charset=utf-8")
+        var responseBody = ctx.channel.allocator.buffer(capacity: 0)
+        responseBody.write(string: data)
+        _ = ctx.channel.write(HTTPServerResponsePart.head(responseHead))
+        _ = ctx.channel.write(HTTPServerResponsePart.body(.byteBuffer(responseBody)))
+        completeResponse(ctx)
+    }
+    
     func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
         let requestPart = self.unwrapInboundIn(data)
         
@@ -39,9 +54,7 @@ final class MockHTTPHandler: ChannelInboundHandler {
                 let responseHead = HTTPResponseHead(version: request.version, status: HTTPResponseStatus.badRequest)
                 let response = HTTPServerResponsePart.head(responseHead)
                 _ = ctx.channel.write(response)
-                _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
-                    ctx.channel.close()
-                }
+                completeResponse(ctx)
                 return
             }
             var filterClosure: ((MockHTTPRoute) -> [MockHTTPRoute])! = nil
@@ -62,35 +75,36 @@ final class MockHTTPHandler: ChannelInboundHandler {
             let mockRoutes = self.routes.flatMap(filterClosure)
             if let mockRoute = mockRoutes.first {
                 switch mockRoute {
-                case .simple(let method, let urlPath, let code, let filename):
+                case .simple(_, _, _, let filename),
+                     .custom(_, _, _, _, _, let filename):
                     let body = self.loadJson(named: filename)!
-                    var responseHead = HTTPResponseHead(version: request.version, status: HTTPResponseStatus.ok)
-                    responseHead.headers.add(name: "Content-Length", value: "\(body.utf8.count)")
-                    responseHead.headers.add(name: "Content-Type", value: "text/plain; charset=utf-8")
-                    var responseBody = ctx.channel.allocator.buffer(capacity: 0)
-                    responseBody.write(string: body)
-                    _ = ctx.channel.write(HTTPServerResponsePart.head(responseHead))
-                    _ = ctx.channel.write(HTTPServerResponsePart.body(.byteBuffer(responseBody)))
-                    _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
-                        ctx.channel.close()
-                    }
+                    returnDataToClient(body, withHttpVersion: request.version, context: ctx)
                     break
-                case .custom(let method, let urlPath, let query, let headers, let code, let filename):
+                case .template(_, _, _, let filename, let data):
+                    let template = try! Template(fromResource: filename, bundle: self.bundle)
+                    let responseBody = try! template.renderObject(data)
+                    returnDataToClient(responseBody, withHttpVersion: request.version, context: ctx)
                     break
-                case .template(let method, let urlPath, let code, let filename, let data):
+                case .redirect(_, let destination):
+                    var responseHead = HTTPResponseHead(version: request.version, status: HTTPResponseStatus.permanentRedirect)
+                    responseHead.headers.add(name: "Location", value: destination)
+                    let response = HTTPServerResponsePart.head(responseHead)
+                    _ = ctx.channel.write(response)
+                    completeResponse(ctx)
                     break
-                case .redirect(let urlPath, let destination):
-                    break
-                case .collection(let routes):
+                case .collection(_):
+                    // collections should have been flatmapped out
+                    let responseHead = HTTPResponseHead(version: request.version, status: HTTPResponseStatus.internalServerError)
+                    let response = HTTPServerResponsePart.head(responseHead)
+                    _ = ctx.channel.write(response)
+                    completeResponse(ctx)
                     break
                 }
             } else {
                 let responseHead = HTTPResponseHead(version: request.version, status: HTTPResponseStatus.notFound)
                 let response = HTTPServerResponsePart.head(responseHead)
                 _ = ctx.channel.write(response)
-                _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
-                    ctx.channel.close()
-                }
+                completeResponse(ctx)
             }
             break
         case .body:
@@ -100,10 +114,6 @@ final class MockHTTPHandler: ChannelInboundHandler {
             break
         }
     }
-    
-//    func channelReadComplete(context: ChannelHandlerContext) {
-//        context.channel.flush()
-//    }
     
     // MARK: Utilities
     
