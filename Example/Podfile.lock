@@ -8,7 +8,7 @@ PODS:
   - GRMustache (7.3.2):
     - JRSwizzle (~> 1.0)
   - JRSwizzle (1.0)
-  - Shock (1.1.0):
+  - Shock (2.0.0):
     - GRMustache (~> 7.3.2)
     - SwiftNIOHTTP1 (~> 1.9.5)
   - SwiftNIO (1.9.5):
@@ -55,7 +55,7 @@ SPEC CHECKSUMS:
   CNIOZlib: 3a32236ebad47da71e7bc390894ce5293baeb85b
   GRMustache: ebe6104fd30a6d22c1f36af131e19e2dbf7cd292
   JRSwizzle: dd5ead5d913a0f29e7f558200165849f006bb1e3
-  Shock: 73db35e629f937f10b79271ce61dd765f334a286
+  Shock: a30a5b7f2e3e0462b4f5451a9ff6cb2f01e347e7
   SwiftNIO: 822cd7f084035c3023a072da66f39afdda40a1d9
   SwiftNIOConcurrencyHelpers: cc9ad4889a6cd1172810f31a08d6cd5bfa0fd0b8
   SwiftNIOHTTP1: 5d487c36d052efc51895c7bf7cef6fdff6848ef4
