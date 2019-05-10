@@ -23,6 +23,37 @@ final class MockHTTPHandler: ChannelInboundHandler {
         self.bundle = bundle
         self.routes = routes
     }
+    
+    fileprivate func dictionary(from query: String) -> [String: String] {
+        var dict = [String: String]()
+        for param in query.components(separatedBy: "&") {
+            let pair = param.split(separator: "=", maxSplits: 2, omittingEmptySubsequences: false)
+            if let pairKey = pair.first, let pairValue = pair.last {
+                let key = String(pairKey)
+                let value = String(pairValue)
+                if key != value && !key.isEmpty {
+                    dict[String(key)] = String(value).replacingOccurrences(of: "+", with: " ").removingPercentEncoding
+                }
+            }
+        }
+        return dict
+    }
+    
+    fileprivate func routeHeadersMatchRequest(_ route: MockHTTPRoute, request:(HTTPRequestHead)) -> Bool {
+        guard let headers = route.headers, headers.count > 0 else {
+            return true
+        }
+        return headers.map({ request.headers[$0.key].first ?? "" == $0.value }).reduce(true, { $0 && $1 })
+    }
+    
+    fileprivate func routeParametersMatchRequest(_ route: MockHTTPRoute, request:(HTTPRequestHead)) -> Bool {
+        guard let routeDict = route.query else {
+            return true
+        }
+        let requestQueryString = URL(string: request.uri)?.query ?? ""
+        let requestDict = dictionary(from: requestQueryString)
+        return requestDict == routeDict
+    }
  
     fileprivate func completeResponse(_ ctx: ChannelHandlerContext) {
         _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
@@ -58,22 +89,26 @@ final class MockHTTPHandler: ChannelInboundHandler {
                 return
             }
             var filterClosure: ((MockHTTPRoute) -> [MockHTTPRoute])! = nil
-            filterClosure = {
-                switch $0 {
+            filterClosure = { (route: MockHTTPRoute) -> [MockHTTPRoute] in
+                switch route {
                 case .simple(_, let urlPath, _, _):
-                    return urlPath == requestUrlPath ? [$0] : []
+                    return urlPath == requestUrlPath ? [route] : []
                 case .custom(_, let urlPath, _, _, _, _):
-                    return urlPath == requestUrlPath ? [$0] : []
+                    return urlPath == requestUrlPath ? [route] : []
                 case .template(_, let urlPath, _, _, _):
-                    return urlPath == requestUrlPath ? [$0] : []
+                    return urlPath == requestUrlPath ? [route] : []
                 case .redirect(let urlPath, _):
-                    return urlPath == requestUrlPath ? [$0] : []
+                    return urlPath == requestUrlPath ? [route] : []
                 case .collection(let routes):
                     return routes.flatMap(filterClosure)
                 }
             }
             let mockRoutes = self.routes.flatMap(filterClosure)
-            if let mockRoute = mockRoutes.first {
+            if
+                let mockRoute = mockRoutes.first,
+                routeHeadersMatchRequest(mockRoute, request: request),
+                routeParametersMatchRequest(mockRoute, request: request)
+            {
                 switch mockRoute {
                 case .simple(_, _, _, let filename),
                      .custom(_, _, _, _, _, let filename):
