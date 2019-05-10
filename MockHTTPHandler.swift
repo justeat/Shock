@@ -28,8 +28,7 @@ final class MockHTTPHandler: ChannelInboundHandler {
 //        }
 //        context.writeAndFlush(self.wrapOutboundOut(.end(nil)), promise: promise)
 //    }
-    
-    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+    func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
         let requestPart = self.unwrapInboundIn(data)
         
         switch requestPart {
@@ -39,23 +38,42 @@ final class MockHTTPHandler: ChannelInboundHandler {
                 print("Could not determine request path")
                 let responseHead = HTTPResponseHead(version: request.version, status: HTTPResponseStatus.badRequest)
                 let response = HTTPServerResponsePart.head(responseHead)
-                _ = context.channel.write(response)
+                _ = ctx.channel.write(response)
+                _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
+                    ctx.channel.close()
+                }
                 return
             }
-            let mockRoutes = self.routes.filter() { ($0.urlPath ?? "") == requestUrlPath }
+            var filterClosure: ((MockHTTPRoute) -> [MockHTTPRoute])! = nil
+            filterClosure = {
+                switch $0 {
+                case .simple(_, let urlPath, _, _):
+                    return urlPath == requestUrlPath ? [$0] : []
+                case .custom(_, let urlPath, _, _, _, _):
+                    return urlPath == requestUrlPath ? [$0] : []
+                case .template(_, let urlPath, _, _, _):
+                    return urlPath == requestUrlPath ? [$0] : []
+                case .redirect(let urlPath, _):
+                    return urlPath == requestUrlPath ? [$0] : []
+                case .collection(let routes):
+                    return routes.flatMap(filterClosure)
+                }
+            }
+            let mockRoutes = self.routes.flatMap(filterClosure)
             if let mockRoute = mockRoutes.first {
                 switch mockRoute {
                 case .simple(let method, let urlPath, let code, let filename):
                     let body = self.loadJson(named: filename)!
                     var responseHead = HTTPResponseHead(version: request.version, status: HTTPResponseStatus.ok)
-                    responseHead.headers.add(name: "Content-Length", value: "\(body.utf8.endIndex)")
+                    responseHead.headers.add(name: "Content-Length", value: "\(body.utf8.count)")
                     responseHead.headers.add(name: "Content-Type", value: "text/plain; charset=utf-8")
-                    var responseBody = context.channel.allocator.buffer(capacity: 0)
-                    responseBody.writeString(body)
-                    _ = context.channel.write(HTTPServerResponsePart.head(responseHead))
-                    _ = context.channel.write(HTTPServerResponsePart.body(.byteBuffer(responseBody)))
-                    _ = context.channel.write(HTTPServerResponsePart.end(nil))
-                    _ = context.channel.close()
+                    var responseBody = ctx.channel.allocator.buffer(capacity: 0)
+                    responseBody.write(string: body)
+                    _ = ctx.channel.write(HTTPServerResponsePart.head(responseHead))
+                    _ = ctx.channel.write(HTTPServerResponsePart.body(.byteBuffer(responseBody)))
+                    _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
+                        ctx.channel.close()
+                    }
                     break
                 case .custom(let method, let urlPath, let query, let headers, let code, let filename):
                     break
@@ -69,8 +87,10 @@ final class MockHTTPHandler: ChannelInboundHandler {
             } else {
                 let responseHead = HTTPResponseHead(version: request.version, status: HTTPResponseStatus.notFound)
                 let response = HTTPServerResponsePart.head(responseHead)
-                _ = context.channel.writeAndFlush(response)
-                _ = context.channel.close()
+                _ = ctx.channel.write(response)
+                _ = ctx.channel.writeAndFlush(HTTPServerResponsePart.end(nil)).then {
+                    ctx.channel.close()
+                }
             }
             break
         case .body:

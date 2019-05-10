@@ -38,9 +38,9 @@ public class MockServer {
             let bootStrap = ServerBootstrap(group: self.group)
                 .serverChannelOption(ChannelOptions.backlog, value: 256)
                 .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
-                .childChannelInitializer { channel -> EventLoopFuture<Void> in
-                    channel.pipeline.configureHTTPServerPipeline().flatMap() { _ in
-                        channel.pipeline.addHandler(MockHTTPHandler(bundle: self.bundle, routes: self.mockRoutes))
+                .childChannelInitializer { channel in
+                    channel.pipeline.configureHTTPServerPipeline().then {_ in
+                        channel.pipeline.add(handler: MockHTTPHandler(bundle: self.bundle, routes: self.mockRoutes))
                     }
                 }
                 // I'm sure these are incredibly important, must work out why
