@@ -103,12 +103,10 @@ final class MockHTTPHandler: ChannelInboundHandler {
                     return routes.flatMap(filterClosure)
                 }
             }
-            let mockRoutes = self.routes.flatMap(filterClosure)
-            if
-                let mockRoute = mockRoutes.first,
-                routeHeadersMatchRequest(mockRoute, request: request),
-                routeParametersMatchRequest(mockRoute, request: request)
-            {
+            let mockRoutesForPath = self.routes.flatMap(filterClosure)
+            let filteredRoutes = mockRoutesForPath.filter{ routeHeadersMatchRequest($0, request: request) &&
+                                                           routeParametersMatchRequest($0, request: request) }
+            if let mockRoute = filteredRoutes.first {
                 switch mockRoute {
                 case .simple(_, _, _, let filename),
                      .custom(_, _, _, _, _, let filename):
