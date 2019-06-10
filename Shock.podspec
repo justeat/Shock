@@ -17,7 +17,7 @@ Shock lets you quickly and painlessly provided mock responses for web requests m
 
   s.homepage         = 'https://github.com/justeat/Shock'
   s.license          = { :type => 'Apache 2.0', :file => 'LICENSE' }
-  s.author           = { 'Just Eat iOS team' => 'justeat.ios.team@gmail.com', 'Jack Newcombe' => 'jack.newcombe@just-eat.com' }
+  s.author           = { 'Jack Newcombe' => 'jack.newcombe@just-eat.com' }
   s.source           = { :git => 'https://github.com/justeat/Shock.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/justeat_tech'
 

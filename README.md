@@ -1,11 +1,13 @@
 # Shock
 
-[![Build Status](https://app.bitrise.io/app/309cf5cee1e63a83/status.svg?token=jjpd53RImy6M-XOiwo4HGA&branch=master)](https://app.bitrise.io/app/309cf5cee1e63a83)
+[![Build Status](https://travis-ci.org/justeat/Shock.svg?branch=master)](https://travis-ci.org/justeat/Shock)
 [![Version](https://img.shields.io/cocoapods/v/Shock.svg?style=flat)](http://cocoapods.org/pods/Shock)
 [![License](https://img.shields.io/cocoapods/l/Shock.svg?style=flat)](http://cocoapods.org/pods/Shock)
 [![Platform](https://img.shields.io/cocoapods/p/Shock.svg?style=flat)](http://cocoapods.org/pods/Shock)
 
 A HTTP mocking framework written in Swift.
+
+- [Just Eat Tech blog](https://tech.just-eat.com/2019/03/05/shock-better-automation-testing-for-ios/)
 
 ## Summary
 
