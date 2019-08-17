@@ -26,7 +26,7 @@ class MethodTests: XCTestCase {
 
     func testGETRequest() {
         
-        let route: MockHTTPRoute = .simple(method: .GET, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+        let route: MockHTTPRoute = .simple(method: .get, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
         server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
@@ -42,7 +42,7 @@ class MethodTests: XCTestCase {
     
     func testPOSTRequest() {
         
-        let route: MockHTTPRoute = .simple(method: .POST, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+        let route: MockHTTPRoute = .simple(method: .post, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
         server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
@@ -58,7 +58,7 @@ class MethodTests: XCTestCase {
     
     func testPUTRequest() {
         
-        let route: MockHTTPRoute = .simple(method: .PUT, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+        let route: MockHTTPRoute = .simple(method: .put, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
         server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
@@ -74,7 +74,7 @@ class MethodTests: XCTestCase {
     
     func testDELETERequest() {
         
-        let route: MockHTTPRoute = .simple(method: .DELETE, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+        let route: MockHTTPRoute = .simple(method: .delete, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
         server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")

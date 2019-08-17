@@ -54,7 +54,7 @@ class HappyPathTests: XCTestCase {
     func testExample() {
 
         let route: MockHTTPRoute = .simple(
-            method: .GET,
+            method: .get,
             urlPath: "/my/api/endpoint",
             code: 200,
             filename: "my-test-data.json"
@@ -101,7 +101,7 @@ mock declaration like so:
 
 ```swift
 let route: MockHTTPRoute = .simple(
-    method: .GET,
+    method: .get,
     urlPath: "/my/api/endpoint",
     code: 200,
     filename: "my-test-data.json"
@@ -121,7 +121,7 @@ ensure that you add custom routes for all variations of these values.
 
 ```swift
 let route = MockHTTPRoute = .custom(
-    method: .GET,
+    method: .get,
     urlPath: "/my/api/endpoint",
     query: [ "queryKey": "queryValue" ],
     headers: [ "X-Custom-Header": "custom-header-value" ],
@@ -155,7 +155,7 @@ more comprehensive example.
 
 ```swift
 let route = MockHTTPRoute = .template(
-    method: .GET,
+    method: .get,
     urlPath: "/template",
     code: 200,
     filename: "my-templated-data.json",
@@ -176,8 +176,8 @@ Collection routes are added recursively, so a given collection route can be
 included in another collection route safely.
 
 ```swift
-let firstRoute: MockHTTPRoute = .simple(method: .GET, urlPath: "/route1", code: 200, filename: "data1.json")
-let secondRoute: MockHTTPRoute = .simple(method: .GET, urlPath: "/route2", code: 200, filename: "data2.json")
+let firstRoute: MockHTTPRoute = .simple(method: .get, urlPath: "/route1", code: 200, filename: "data1.json")
+let secondRoute: MockHTTPRoute = .simple(method: .get, urlPath: "/route2", code: 200, filename: "data2.json")
 let collectionRoute: MockHTTPRoute = .collection(routes: [ firstRoute, secondRoute ])
 ```
 

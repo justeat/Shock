@@ -9,8 +9,10 @@
 import Foundation
 
 public enum MockHTTPMethod: String {
-	case GET	= "GET"
-	case POST	= "POST"
-	case DELETE	= "DELETE"
-	case PUT	= "PUT"
+    case get     = "GET"
+    case head    = "HEAD"
+    case post    = "POST"
+    case put     = "PUT"
+    case patch   = "PATCH"
+    case delete  = "DELETE"
 }

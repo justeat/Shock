@@ -92,10 +92,12 @@ public class MockServer {
     
     private func httpServerMethod(for method: MockHTTPMethod) -> HttpServer.MethodRoute {
         switch method {
-        case .GET:      return server.GET
-        case .POST:     return server.POST
-        case .PUT:      return server.PUT
-        case .DELETE:   return server.DELETE
+        case .get:      return server.GET
+        case .head:     return server.HEAD
+        case .post:     return server.POST
+        case .put:      return server.PUT
+        case .patch:    return server.PATCH
+        case .delete:   return server.DELETE
         }
     }
 	

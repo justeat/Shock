@@ -62,7 +62,7 @@ public enum MockHTTPRoute {
 		     .template(let method, _, _, _, _):
 			return method
 		case .redirect:
-			return .GET
+			return .get
         case .collection:
 			return nil
 		}
