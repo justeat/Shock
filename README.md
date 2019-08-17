@@ -11,18 +11,13 @@ A HTTP mocking framework written in Swift.
 
 ## Summary
 
-Shock lets you quickly and painlessly provided mock responses for web requests
-made by your iOS app.
+Shock lets you quickly and painlessly provided mock responses for web requests made by your iOS app.
 
-This is particularly useful for UI tests where you often want to receive
-staged responses to allow reliable testing of all of your features.
+This is particularly useful when writing both unit and UI tests where you often want to receive staged responses to allow reliable testing of all of your features.
 
-It also provides an alternative to hitting live APIs and avoids the uncertainty
-of receiving unexpected failures or response content as a result.
+It also provides an alternative to hitting live APIs and avoids the uncertainty of receiving unexpected failures or response content as a result.
 
-When used with UI tests, Shock runs its server within the UI test process and
-stores all its responses within the UI tests target - so there is no need to
-pollute your app target with lots of test data and logic!
+When used with UI tests, Shock runs its server within the UI test process and stores all its responses within the UI tests target - so there is no need to pollute your app target with lots of test data and logic.
 
 ## Installation
 
@@ -43,13 +38,22 @@ Take the example below:
 ```swift
 class HappyPathTests: XCTestCase {
 
-    // MARK: - Scenario: Log in with non-existing user.
+    var mockServer: MockServer!
 
-    func testHappyPath() {
+    override func setUp() {
+        super.setUp()
+        mockServer = MockServer(port: 6789, bundle: Bundle(for: type(of: self)))
+        mockServer.start()
+    }
 
-        mockServer = MockServer(port: 6789, bundle: Bundle(for: HappyPathTests.self))
+    override func tearDown() {
+        mockServer.stop()
+        super.tearDown()
+    }
 
-        let route = .simple(
+    func testExample() {
+
+        let route: MockHTTPRoute = .simple(
             method: .GET,
             urlPath: "/my/api/endpoint",
             code: 200,
@@ -58,18 +62,16 @@ class HappyPathTests: XCTestCase {
 
         mockServer.setup(route: route)
 
-        /* ... Your UI test code ... */
+        /* ... Your test code ... */
     }
 }
 ```
 
-Bear in mind that you will need to replace your API endpoint hostname with
-'localhost' and the port you specify in the setup method during test runs.
+Bear in mind that you will need to replace your API endpoint hostname with 'localhost' and the port you specify in the setup method during test runs.
 
 e.g. ```https://localhost:6789/my/api/endpoint```
 
-This is most quickly accomplished by passing a launch argument to your app that
-indicates which endpoint to use. For example:
+In the case or UI tests, this is most quickly accomplished by passing a launch argument to your app that indicates which endpoint to use. For example:
 
 ```swift
 let isRunningUITests = ProcessInfo.processInfo.arguments.contains("UITests")
@@ -181,4 +183,4 @@ let collectionRoute: MockHTTPRoute = .collection(routes: [ firstRoute, secondRou
 
 ## License
 
-Shock is available under Apache License 2.0.  See the LICENSE file for more info
+Shock is available under Apache License 2.0.  See the LICENSE file for more info.
