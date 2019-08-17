@@ -14,7 +14,7 @@ public enum MockHTTPRoute {
 		method: MockHTTPMethod,
 		urlPath: String,
 		code: Int,
-		filename: String
+		filename: String?
 	)
 	
 	case custom(
@@ -23,15 +23,15 @@ public enum MockHTTPRoute {
 		query: [String: String],
 		headers: [String: String],
 		code: Int,
-		filename: String
+		filename: String?
 	)
 	
 	case template(
 		method: MockHTTPMethod,
 		urlPath: String,
 		code: Int,
-		filename: String,
-		data: [String: Any?]
+		filename: String?,
+		data: [String: Any?]?
 	)
 	
 	case redirect(

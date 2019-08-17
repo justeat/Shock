@@ -20,23 +20,21 @@ class MockHTTPResponseFactory {
 		self.bundle = bundle
 	}
 	
-	func makeResponse(urlPath: String, jsonFilename: String, method: String = "GET", code: Int = 200) -> HttpResponse {
-		return HttpResponse.raw(code, urlPath, nil) { writer in
-			let responseBody = self.loadJson(named: jsonFilename)!
-			try! writer.write(responseBody.data(using: String.Encoding.utf8)!)
+	func makeResponse(urlPath: String, jsonFilename: String?, method: String = "GET", code: Int = 200) -> HttpResponse {
+        return HttpResponse.raw(code, urlPath, nil) { writer in
+            guard let jsonFilename = jsonFilename,let responseBody = self.loadJson(named: jsonFilename) else { return }
+            try! writer.write(responseBody.data(using: String.Encoding.utf8)!)
 		}
 	}
 	
-	func makeResponse(urlPath: String, templateFilename: String, data: [String: Any?] = [:], method: String = "GET", code: Int = 200) -> HttpResponse {
+	func makeResponse(urlPath: String, templateFilename: String?, data: [String: Any?]? = nil, method: String = "GET", code: Int = 200) -> HttpResponse {
 		
 		return HttpResponse.raw(code, urlPath, nil) { writer in
-			
-			let responseBody: String?
-			let template = try! Template(fromResource: templateFilename, bundle: self.bundle)
-			responseBody = try! template.renderObject(data)
-
-			try! writer.write(responseBody!.data(using: String.Encoding.utf8)!)
-		}
+            guard let templateFilename = templateFilename, let data = data else { return }
+            let template = try! Template(fromResource: templateFilename, bundle: self.bundle)
+            let responseBody: String = try! template.renderObject(data)
+            try! writer.write(responseBody.data(using: String.Encoding.utf8)!)
+        }
 	}
 	
 	func makeResponse(urlPath: String, destination: String) -> HttpResponse {
@@ -49,16 +47,18 @@ class MockHTTPResponseFactory {
 		
 		let components = name.components(separatedBy: ".")
 		let url: URL
-		if components.count == 1 {
-			url = bundle.url(forResource: components[0], withExtension: "json")!
-		} else if components.count > 1 {
-			var components = components
-			let ext = components.removeLast()
-			url = bundle.url(forResource: components.joined(separator: "."), withExtension: ext)!
-		} else {
-			url = URL(string: name)!
-		}
-		
+        
+        switch components.count {
+        case 0:
+            url = URL(string: name)!
+        case 1:
+            url = bundle.url(forResource: components[0], withExtension: "json")!
+        default:
+            var components = components
+            let ext = components.removeLast()
+            url = bundle.url(forResource: components.joined(separator: "."), withExtension: ext)!
+        }
+        
 		return try? String(contentsOf: url)
 	}
 	
