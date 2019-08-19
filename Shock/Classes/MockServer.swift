@@ -15,13 +15,13 @@ import Swifter
 
 public class MockServer {
 
-	private let port: UInt16
+	private let port: Int
 	
 	private let server = HttpServer()
 	
 	private let responseFactory: MockHTTPResponseFactory
 	
-	public init(port: UInt16 = 9000, bundle: Bundle = Bundle.main) {
+	public init(port: Int = 9000, bundle: Bundle = Bundle.main) {
 		self.port = port
 		self.responseFactory = MockHTTPResponseFactory(bundle: bundle)
 	}
@@ -29,7 +29,7 @@ public class MockServer {
 	// MARK: Server managements
 	
 	public func start(priority: DispatchQoS.QoSClass = .default) {
-		try! server.start(port, forceIPv4: true, priority: priority)
+		try! server.start(UInt16(port), forceIPv4: true, priority: priority)
 	}
 	
 	public func stop() {
@@ -92,10 +92,12 @@ public class MockServer {
     
     private func httpServerMethod(for method: MockHTTPMethod) -> HttpServer.MethodRoute {
         switch method {
-        case .GET:      return server.GET
-        case .POST:     return server.POST
-        case .PUT:      return server.PUT
-        case .DELETE:   return server.DELETE
+        case .get:      return server.GET
+        case .head:     return server.HEAD
+        case .post:     return server.POST
+        case .put:      return server.PUT
+        case .patch:    return server.PATCH
+        case .delete:   return server.DELETE
         }
     }
 	

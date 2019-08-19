@@ -26,7 +26,7 @@ class Tests: XCTestCase {
     
 	func testSimpleRoute() {
 		
-		let route: MockHTTPRoute = .simple(method: .GET, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+		let route: MockHTTPRoute = .simple(method: .get, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
 		server.setup(route: route)
 		
 		let expectation = self.expectation(description: "Expect 200 response with response body")
@@ -43,7 +43,7 @@ class Tests: XCTestCase {
 		
 		let route: MockHTTPRoute = .collection(routes: [
 			.redirect(urlPath: "/redirect", destination: "/destination"),
-			.simple(method: .GET, urlPath: "/destination", code: 200, filename: "testRedirectRoute.txt")
+			.simple(method: .get, urlPath: "/destination", code: 200, filename: "testRedirectRoute.txt")
 		])
 		server.setup(route: route)
 		

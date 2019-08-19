@@ -20,13 +20,13 @@ class MyRoutes {
         // Add your own routes here to test them in the example app
 		routes = [
             .simple(
-                method: .GET,
+                method: .get,
                 urlPath: "/simple",
                 code: 200,
                 filename: "simple-route"
             ),
             .custom(
-                method: .POST,
+                method: .post,
                 urlPath: "/custom",
                 query: ["item": "value" ],
                 headers: [ "X-Custom-Header": "custom-header-value" ],
@@ -38,7 +38,7 @@ class MyRoutes {
                 destination: "/simple"
             ),
             .template(
-                method: .POST,
+                method: .post,
                 urlPath: "/template",
                 code: 200,
                 filename: "template-route.json",

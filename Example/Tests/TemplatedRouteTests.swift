@@ -25,7 +25,7 @@ class TemplatedRouteTests: XCTestCase {
     }
     
     func testTemplatedRoute() {
-        let route: MockHTTPRoute = .template(method: .GET, urlPath: "/template", code: 200, filename: "testTemplatedRoute", data: [
+        let route: MockHTTPRoute = .template(method: .get, urlPath: "/template", code: 200, filename: "testTemplatedRoute", data: [
             "list": [ "Item #1", "Item #2" ],
             "text": "text"
             ])
