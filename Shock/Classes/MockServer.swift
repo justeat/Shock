@@ -20,6 +20,8 @@ public class MockServer {
 	private let server = HttpServer()
 	
 	private let responseFactory: MockHTTPResponseFactory
+    
+    public var onRequestReceived: ((MockHTTPRoute, CacheableRequest) -> Void)?
 	
 	public init(port: Int = 9000, bundle: Bundle = Bundle.main) {
 		self.port = port
@@ -69,6 +71,9 @@ public class MockServer {
 			router[urlPath] = { request in
 				assert(method == route.method)
                 
+                // API Request data can be accessible by the testcase
+                self.onRequestReceived?(route, request)
+                
                 if let headers = route.headers {
                     let match = headers.map({ request.headers[$0.key.lowercased()] == $0.value }).reduce(true, { $0 && $1 })
                     if !match {
@@ -110,3 +115,15 @@ fileprivate func dictionary(from query: [(String, String)]) -> [String: String] 
     query.forEach { dict[$0.0] = $0.1 }
     return dict
 }
+
+public protocol CacheableRequest {
+    var path: String { get }
+    var queryParams: [(String, String)] { get }
+    var method: String { get }
+    var headers: [String: String] { get }
+    var body: [UInt8] { get }
+    var address: String? { get }
+    var params: [String: String] { get }
+}
+
+extension HttpRequest: CacheableRequest {}
