@@ -3,7 +3,7 @@
 //  Shock_Example
 //
 //  Created by Sneha Swamy on 21/08/2019.
-//  Copyright © 2019 CocoaPods. All rights reserved.
+//  Copyright © 2019 Just Eat. All rights reserved.
 //
 
 import XCTest
@@ -18,7 +18,6 @@ class ApiCallRequestDataTests: XCTestCase {
         var cache: [(route: MockHTTPRoute, request: CacheableRequest)] = []
     }
     
-    
     override func setUp() {
         super.setUp()
         server = MockServer(port: 9090, bundle: Bundle(for: Tests.self))
@@ -29,8 +28,8 @@ class ApiCallRequestDataTests: XCTestCase {
     }
     
     override func tearDown() {
-        super.tearDown()
         server.stop()
+        super.tearDown()
     }
     
     func testGetApiCallRequestData() {
@@ -39,9 +38,9 @@ class ApiCallRequestDataTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/simple") { (code, responseBody) in
+        HTTPClient.get(url: "\(server.hostURL)/simple") { code, body, headers in
             XCTAssertEqual(code, 200)
-            XCTAssertEqual(responseBody, "testSimpleRoute test fixture\n")
+            XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
         }
         self.waitForExpectations(timeout: 2.0, handler: nil)
@@ -52,5 +51,4 @@ class ApiCallRequestDataTests: XCTestCase {
             XCTAssertTrue(request.path == "/simple")
         }
     }
-    
 }

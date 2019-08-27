@@ -28,8 +28,9 @@ class MyRoutes {
             .custom(
                 method: .post,
                 urlPath: "/custom",
-                query: ["item": "value" ],
-                headers: [ "X-Custom-Header": "custom-header-value" ],
+                query: ["item": "value"],
+                requestHeaders: ["X-Custom-Header": "custom-header-value"],
+                responseHeaders: [:],
                 code: 200,
                 filename: "custom-route.json"
             ),
@@ -42,7 +43,7 @@ class MyRoutes {
                 urlPath: "/template",
                 code: 200,
                 filename: "template-route.json",
-                data: [ "templateKey": "A templated value" ]
+                templateInfo: ["templateKey": "A templated value"]
             )
 		]
 		
@@ -80,7 +81,7 @@ class MyRoutes {
         }
         
         var urlRequest = URLRequest(url: url)
-        urlRequest.allHTTPHeaderFields = route.headers
+        urlRequest.allHTTPHeaderFields = route.requestHeaders
         urlRequest.httpMethod = route.method?.rawValue ?? "GET"
         
         print("Requesting \(url.absoluteString)")

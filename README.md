@@ -123,8 +123,8 @@ ensure that you add custom routes for all variations of these values.
 let route = MockHTTPRoute = .custom(
     method: .get,
     urlPath: "/my/api/endpoint",
-    query: [ "queryKey": "queryValue" ],
-    headers: [ "X-Custom-Header": "custom-header-value" ],
+    query: ["queryKey": "queryValue"],
+    headers: ["X-Custom-Header": "custom-header-value"],
     code: 200,
     filename: "my-test-data.json"
 )
@@ -160,7 +160,7 @@ let route = MockHTTPRoute = .template(
     code: 200,
     filename: "my-templated-data.json",
     data: [
-        "list": [ "Item #1", "Item #2" ],
+        "list": ["Item #1", "Item #2"],
         "text": "text"
     ])
 )
