@@ -20,72 +20,75 @@ class MethodTests: XCTestCase {
     }
     
     override func tearDown() {
-        super.tearDown()
         server.stop()
+        super.tearDown()
     }
-
+    
     func testGETRequest() {
-        
-        let route: MockHTTPRoute = .simple(method: .get, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+        let route: MockHTTPRoute = .simple(method: .get,
+                                           urlPath: "/simple",
+                                           code: 200,
+                                           filename: "testSimpleRoute.txt")
         server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/simple") { (code, responseBody) in
+        HTTPClient.get(url: "\(server.hostURL)/simple") { code, body, headers in
             XCTAssertEqual(code, 200)
-            XCTAssertEqual(responseBody, "testSimpleRoute test fixture\n")
+            XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
         }
         self.waitForExpectations(timeout: 2.0, handler: nil)
-        
     }
     
     func testPOSTRequest() {
-        
-        let route: MockHTTPRoute = .simple(method: .post, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+        let route: MockHTTPRoute = .simple(method: .post,
+                                           urlPath: "/simple",
+                                           code: 200,
+                                           filename: "testSimpleRoute.txt")
         server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.post(url: "\(server.hostURL)/simple") { (code, responseBody) in
+        HTTPClient.post(url: "\(server.hostURL)/simple") { code, body, headers in
             XCTAssertEqual(code, 200)
-            XCTAssertEqual(responseBody, "testSimpleRoute test fixture\n")
+            XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
         }
         self.waitForExpectations(timeout: 2.0, handler: nil)
-        
     }
     
     func testPUTRequest() {
-        
-        let route: MockHTTPRoute = .simple(method: .put, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+        let route: MockHTTPRoute = .simple(method: .put,
+                                           urlPath: "/simple",
+                                           code: 200,
+                                           filename: "testSimpleRoute.txt")
         server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.put(url: "\(server.hostURL)/simple") { (code, responseBody) in
+        HTTPClient.put(url: "\(server.hostURL)/simple") { code, body, headers in
             XCTAssertEqual(code, 200)
-            XCTAssertEqual(responseBody, "testSimpleRoute test fixture\n")
+            XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
         }
         self.waitForExpectations(timeout: 2.0, handler: nil)
-        
     }
     
     func testDELETERequest() {
-        
-        let route: MockHTTPRoute = .simple(method: .delete, urlPath: "/simple", code: 200, filename: "testSimpleRoute.txt")
+        let route: MockHTTPRoute = .simple(method: .delete,
+                                           urlPath: "/simple",
+                                           code: 200,
+                                           filename: "testSimpleRoute.txt")
         server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.delete(url: "\(server.hostURL)/simple") { (code, responseBody) in
+        HTTPClient.delete(url: "\(server.hostURL)/simple") { code, body, headers in
             XCTAssertEqual(code, 200)
-            XCTAssertEqual(responseBody, "testSimpleRoute test fixture\n")
+            XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
         }
         self.waitForExpectations(timeout: 2.0, handler: nil)
-        
     }
-    
 }
