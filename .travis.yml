@@ -11,5 +11,5 @@ language: swift
 
 script:
 - bundle exec pod install --repo-update --project-directory=Example
-- set -o pipefail && xcodebuild test -enableCodeCoverage YES -workspace Example/Shock.xcworkspace -scheme Shock-Example ONLY_ACTIVE_ARCH=NO -destination 'platform=iOS Simulator,OS=12.2,name=iPhone X'
+- set -o pipefail && xcodebuild test -enableCodeCoverage YES -workspace Example/Shock.xcworkspace -scheme Shock-Example ONLY_ACTIVE_ARCH=NO -destination 'platform=iOS Simulator,OS=13.1,name=iPhone 11'
 - bundle exec pod lib lint --allow-warnings
