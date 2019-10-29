@@ -80,7 +80,7 @@ DEPENDENCIES
   cocoapods (~> 1.8.4)
 
 RUBY VERSION
-   ruby 2.6.3p62
+   ruby 2.5.3p105
 
 BUNDLED WITH
    1.17.3
