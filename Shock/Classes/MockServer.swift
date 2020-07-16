@@ -38,6 +38,13 @@ public class MockServer {
         server.stop()
     }
     
+    public func forceAllCallsToBeMocked() {
+        server.notFoundHandler = { request in
+            assertionFailure("Not handled: \(request.method) \(request.path)")
+            return .internalServerError
+        }
+    }
+    
     public var hostURL: String {
         return "http://localhost:\(port)"
     }
