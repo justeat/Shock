@@ -37,7 +37,7 @@ class CustomRouteTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/custom") { code, body, headers in
+        HTTPClient.get(url: "\(server.hostURL)/custom") { code, body, headers, error in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testCustomRoute test fixture\n")
             expectation.fulfill()
@@ -60,7 +60,7 @@ class CustomRouteTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/custom-with-header", headers: customHeaders) { code, body, headers in
+        HTTPClient.get(url: "\(server.hostURL)/custom-with-header", headers: customHeaders) { code, body, headers, error in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testCustomRoute test fixture\n")
             expectation.fulfill()
@@ -83,7 +83,7 @@ class CustomRouteTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 404 response with empty response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/custom-with-header") { code, body, headers in
+        HTTPClient.get(url: "\(server.hostURL)/custom-with-header") { code, body, headers, error in
             expectation.fulfill()
             XCTAssertEqual(code, 404)
             XCTAssertEqual(body, "")
@@ -106,7 +106,7 @@ class CustomRouteTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/custom-with-header") { code, body, headers in
+        HTTPClient.get(url: "\(server.hostURL)/custom-with-header") { code, body, headers, error in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testCustomRoute test fixture\n")
             for (k, v) in customHeaders {
@@ -132,7 +132,7 @@ class CustomRouteTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/custom-with-query?\(query)") { code, body, headers in
+        HTTPClient.get(url: "\(server.hostURL)/custom-with-query?\(query)") { code, body, headers, error in
             expectation.fulfill()
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testCustomRoute test fixture\n")
@@ -154,7 +154,7 @@ class CustomRouteTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 404 response with empty response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/custom-with-query") { code, body, headers in
+        HTTPClient.get(url: "\(server.hostURL)/custom-with-query") { code, body, headers, error in
             expectation.fulfill()
             XCTAssertEqual(code, 404)
             XCTAssertEqual(body, "")
@@ -176,7 +176,7 @@ class CustomRouteTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with no response body")
 
-        HTTPClient.get(url: "\(server.hostURL)/custom-with-query") { code, body, headers in
+        HTTPClient.get(url: "\(server.hostURL)/custom-with-query") { code, body, headers, error in
             expectation.fulfill()
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "")

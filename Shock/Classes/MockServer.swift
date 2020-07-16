@@ -67,20 +67,19 @@ public class MockServer {
                                                     method: method.rawValue,
                                                     code: code,
                                                     headers: responseHeaders)
-            break
         case .template(let method, let urlPath, let code, let jsonFileName, let data):
             response = responseFactory.makeResponse(urlPath: urlPath,
                                                     templateFilename: jsonFileName,
                                                     data: data,
                                                     method: method.rawValue,
                                                     code: code)
-            break
         case .redirect(let urlPath, let destination):
             response = responseFactory.makeResponse(urlPath: urlPath, destination: destination)
-            break
         case .collection(let routes):
             routes.forEach { self.setup(route: $0) }
             return
+        case .timeout(let method, let urlPath, let timeoutInSeconds):
+            response = responseFactory.makeResponse(urlPath: urlPath, method: method.rawValue, timeout: timeoutInSeconds)
         }
         
         if let urlPath = route.urlPath, let method = route.method {

@@ -2,7 +2,7 @@ PODS:
   - GRMustache (7.3.2):
     - JRSwizzle (~> 1.0)
   - JRSwizzle (1.0)
-  - Shock (3.1.0):
+  - Shock (4.0.0):
     - GRMustache (~> 7.3.2)
     - Swifter (~> 1.4.7)
   - Swifter (1.4.7)
@@ -23,7 +23,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   GRMustache: ebe6104fd30a6d22c1f36af131e19e2dbf7cd292
   JRSwizzle: dd5ead5d913a0f29e7f558200165849f006bb1e3
-  Shock: d5a053f70f75be97950f78568e3a9e24591638c7
+  Shock: a92e14ac44d4ee9c956c33a8649d4a77c80d45a9
   Swifter: 2327ef5d872c638aebab79646ce494af508b0c8f
 
 PODFILE CHECKSUM: f2aa1fe1bd8633dab49f7d1b56c94fb4c395c003

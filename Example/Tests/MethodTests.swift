@@ -33,7 +33,7 @@ class MethodTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/simple") { code, body, headers in
+        HTTPClient.get(url: "\(server.hostURL)/simple") { code, body, headers, error in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
@@ -50,7 +50,7 @@ class MethodTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.post(url: "\(server.hostURL)/simple") { code, body, headers in
+        HTTPClient.post(url: "\(server.hostURL)/simple") { code, body, headers, error in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
@@ -67,7 +67,7 @@ class MethodTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.put(url: "\(server.hostURL)/simple") { code, body, headers in
+        HTTPClient.put(url: "\(server.hostURL)/simple") { code, body, headers, error in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
@@ -84,7 +84,7 @@ class MethodTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.delete(url: "\(server.hostURL)/simple") { code, body, headers in
+        HTTPClient.delete(url: "\(server.hostURL)/simple") { code, body, headers, error in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()

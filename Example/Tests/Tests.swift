@@ -30,7 +30,7 @@ class Tests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/simple") { code, body, headers in
+        HTTPClient.get(url: "\(server.hostURL)/simple") { code, body, headers, error in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
@@ -47,7 +47,7 @@ class Tests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body after redirect")
         
-        HTTPClient.get(url: "\(server.hostURL)/redirect") { code, body, headers in
+        HTTPClient.get(url: "\(server.hostURL)/redirect") { code, body, headers, error in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testRedirectRoute test fixture\n")
             expectation.fulfill()
@@ -59,5 +59,18 @@ class Tests: XCTestCase {
         let emptyRoute: MockHTTPRoute = .collection(routes: [])
         XCTAssertNil(emptyRoute.urlPath)
         XCTAssertNil(emptyRoute.method)
+    }
+    
+    func testTimeoutRoute() {
+        let route: MockHTTPRoute = .timeout(method: .get, urlPath: "/timeouttest")
+        server.setup(route: route)
+        
+        let expectation = self.expectation(description: "This expectation should NOT be fulfilled")
+        
+        HTTPClient.get(url: "\(server.hostURL)/timeouttest", timeout: 2) { _,_,_,error in
+            XCTAssertNotNil(error, "Request should have errored")
+            expectation.fulfill()
+        }
+        self.waitForExpectations(timeout: 2.5, handler: nil)
     }
 }

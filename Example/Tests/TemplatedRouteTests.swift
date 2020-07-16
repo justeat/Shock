@@ -37,7 +37,7 @@ class TemplatedRouteTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with valid generated response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/template") { code, body, headers in
+        HTTPClient.get(url: "\(server.hostURL)/template") { code, body, headers, error in
             expectation.fulfill()
             let data = body.data(using: .utf8)!
             let dict = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any?]
