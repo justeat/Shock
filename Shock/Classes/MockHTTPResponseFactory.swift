@@ -41,6 +41,14 @@ class MockHTTPResponseFactory {
         return HttpResponse.movedPermanently(destination)
     }
     
+    func makeResponse(urlPath: String, method: String = "GET", timeout: Int = 120) -> HttpResponse {
+        return HttpResponse.raw(200, urlPath, [:]) { writer in
+            // don't write anything, instead wait
+            sleep(UInt32(timeout))
+            print("timeout")
+        }
+    }
+    
     // MARK: Utilities
     
     private func loadJson(named name: String) -> String? {

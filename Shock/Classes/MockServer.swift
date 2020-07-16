@@ -74,6 +74,9 @@ public class MockServer {
         case .collection(let routes):
             routes.forEach { self.setup(route: $0) }
             return
+        case .timeout(let method, let urlPath, let timeoutInSeconds):
+            response = responseFactory.makeResponse(urlPath: urlPath, method: method.rawValue, timeout: timeoutInSeconds)
+            break
         }
         
         if let urlPath = route.urlPath, let method = route.method {

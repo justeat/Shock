@@ -38,7 +38,7 @@ class ApiCallRequestDataTests: XCTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/simple") { code, body, headers in
+        HTTPClient.get(url: "\(server.hostURL)/simple") { code, body, headers, error in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
