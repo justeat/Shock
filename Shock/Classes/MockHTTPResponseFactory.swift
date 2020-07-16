@@ -45,7 +45,6 @@ class MockHTTPResponseFactory {
         return HttpResponse.raw(200, urlPath, [:]) { writer in
             // don't write anything, instead wait
             sleep(UInt32(timeout))
-            print("timeout")
         }
     }
     

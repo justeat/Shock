@@ -44,7 +44,9 @@ class MyRoutes {
                 code: 200,
                 filename: "template-route.json",
                 templateInfo: ["templateKey": "A templated value"]
-            )
+            ),
+            .timeout(method: .get,
+                     urlPath: "/timeout")
 		]
 		
 		server.setup(route: .collection(routes: routes))
@@ -62,7 +64,7 @@ class MyRoutes {
 		return routes.count
 	}
 	
-	func performRequest(index: Int, completion: @escaping (HTTPURLResponse, Data) -> ()) {
+	func performRequest(index: Int, completion: @escaping (HTTPURLResponse, Data, Error?) -> ()) {
 
         let route = routes[index]
         
@@ -87,7 +89,11 @@ class MyRoutes {
         print("Requesting \(url.absoluteString)")
 
         let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            completion(response as! HTTPURLResponse, data ?? Data())
+            if let error = error {
+                completion(HTTPURLResponse(), Data(), error)
+            } else {
+                completion(response as! HTTPURLResponse, data ?? Data(), error)
+            }
         }
         task.resume()
 	}

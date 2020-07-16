@@ -181,6 +181,20 @@ let secondRoute: MockHTTPRoute = .simple(method: .get, urlPath: "/route2", code:
 let collectionRoute: MockHTTPRoute = .collection(routes: [ firstRoute, secondRoute ])
 ```
 
+### Timeout Route
+
+A timeout route is useful for testing client timeout code paths. 
+It simply waits a configurable amount of seconds (defaulting to 120 seconds).
+**Note** if you do specify your own timeout, please make sure it exceeds your
+client's timeout.
+
+```swift
+let route: MockHTTPRoute = .timeout(method: .get, urlPath: "/timeouttest")
+```
+```swift
+let route: MockHTTPRoute = .timeout(method: .get, urlPath: "/timeouttest", timeoutInSeconds: 5)
+```
+
 ### Force all calls to be mocked
 
 In some case you might prefer to have all the calls to be mocked so that the tests can reliably run without internet connection. You can force this behaviour like so:

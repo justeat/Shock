@@ -32,13 +32,17 @@ class ViewController: UIViewController {
 
 	@IBAction func performRequest(sender: UIButton) {
 		
-		routes.performRequest(index: pickerView.selectedRow(inComponent: 0)) { response, data in
-			var text = ""
-			response.allHeaderFields.keys.forEach { key in
-				text += "\(key): \(response.allHeaderFields[key] ?? String())\n"
-			}
-			text += "\n"
-			text += String(data: data, encoding: .utf8) ?? ""
+		routes.performRequest(index: pickerView.selectedRow(inComponent: 0)) { response, data, error in
+            var text = ""
+            if let error = error {
+                text += error.localizedDescription
+            } else {
+                response.allHeaderFields.keys.forEach { key in
+                    text += "\(key): \(response.allHeaderFields[key] ?? String())\n"
+                }
+                text += "\n"
+                text += String(data: data, encoding: .utf8) ?? ""
+            }
 			DispatchQueue.main.async {
 				self.label.text = text
 				self.label.sizeToFit()
