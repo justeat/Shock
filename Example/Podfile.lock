@@ -9,23 +9,31 @@ PODS:
 
 DEPENDENCIES:
   - Shock (from `../`)
+  - Swifter (from `https://github.com/httpswift/swifter.git`, branch `xcode12-swift5`)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - GRMustache
     - JRSwizzle
-    - Swifter
 
 EXTERNAL SOURCES:
   Shock:
     :path: "../"
+  Swifter:
+    :branch: xcode12-swift5
+    :git: https://github.com/httpswift/swifter.git
+
+CHECKOUT OPTIONS:
+  Swifter:
+    :commit: 14334e0318a919fec72d3adc85aff66b80c31a73
+    :git: https://github.com/httpswift/swifter.git
 
 SPEC CHECKSUMS:
   GRMustache: ebe6104fd30a6d22c1f36af131e19e2dbf7cd292
   JRSwizzle: dd5ead5d913a0f29e7f558200165849f006bb1e3
   Shock: a92e14ac44d4ee9c956c33a8649d4a77c80d45a9
-  Swifter: 2327ef5d872c638aebab79646ce494af508b0c8f
+  Swifter: 1c6973f7cef90e92f305db5caca72ab414d7948e
 
-PODFILE CHECKSUM: f2aa1fe1bd8633dab49f7d1b56c94fb4c395c003
+PODFILE CHECKSUM: a82710504a6dfd8bf031cba22e1abafa85c5a3fe
 
 COCOAPODS: 1.8.4
