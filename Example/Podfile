@@ -6,7 +6,6 @@ use_frameworks!
 
 target 'Shock_Example' do
   pod 'Shock', :path => '../'
-  pod 'Swifter', :git => 'https://github.com/httpswift/swifter.git', :branch => 'xcode12-swift5'
 
   target 'Shock_Tests' do
     inherit! :search_paths
