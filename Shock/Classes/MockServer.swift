@@ -14,27 +14,54 @@ import Foundation
 
 public class MockServer {
     
-    private let port: Int
+    /// The range in which to find a free port on which to launch the server
+    private let portRange: ClosedRange<Int>
     
     private var server = NIOHttpServer()
+    
+//    private let portProvider = PortProvider()
     
     private let responseFactory: MockHTTPResponseFactory
     
     public var onRequestReceived: ((MockHTTPRoute, CacheableRequest) -> Void)?
     
-    public init(port: Int = 9000, bundle: Bundle = Bundle.main) {
-        self.port = port
+    public var selectedPort = 0
+    
+    public var loggingClosure: ((String?) -> Void)?
+    
+    public convenience init(port: Int = 9000, bundle: Bundle = Bundle.main) {
+        self.init(portRange: port...port, bundle: bundle)
+    }
+    
+    public init(portRange: ClosedRange<Int>, bundle: Bundle = Bundle.main) {
+        self.portRange = portRange
         self.responseFactory = MockHTTPResponseFactory(bundle: bundle)
     }
     
     // MARK: Server managements
     
     public func start(priority: DispatchQoS.QoSClass = .default) {
-        try! server.start(port, forceIPv4: true, priority: priority)
+        for i in portRange {
+            let proposedPort = i
+            do {
+                try server.start(proposedPort, forceIPv4: true, priority: priority)
+                selectedPort = proposedPort
+                loggingClosure?("SUCCESS: Opened server on port: \(i)")
+                return
+            } catch _ {
+                loggingClosure?("NOTE: Failed to open server on port: \(i), \(portRange.upperBound - i) remaining")
+                continue
+            }
+        }
+        loggingClosure?("""
+ERROR: Failed to open server on port in range \(portRange.upperBound)...\(portRange.lowerBound).
+Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
+""")
     }
     
     public func stop() {
         server.stop()
+        loggingClosure?("SUCCESS: Closed server on port: \(selectedPort)")
     }
     
     public func forceAllCallsToBeMocked() {
@@ -45,7 +72,7 @@ public class MockServer {
     }
     
     public var hostURL: String {
-        return "http://localhost:\(port)"
+        return "http://localhost:\(selectedPort)"
     }
     
     // MARK: Mock setup
@@ -104,7 +131,7 @@ public class MockServer {
                     }
                 }
                 
-                print("Executing request for route: \(request.method) \(request.path)")
+                self.loggingClosure?("Executing request for route: \(request.method) \(request.path)")
                 return response
             }
         }

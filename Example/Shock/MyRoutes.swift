@@ -13,7 +13,9 @@ class MyRoutes {
 	
 	private let routes: [MockHTTPRoute]
 	
-	private let server = MockServer(port: 9091, bundle: Bundle.main)
+    // NOTE: Ensure this port is outside of the range used by unit tests
+    // (i.e. not in range <9090...9099> )
+	private let server = MockServer(port: 9990, bundle: Bundle.main)
 	
 	init() {
 		
