@@ -12,28 +12,11 @@
 
 import Foundation
 
-protocol HttpServer {
-    associatedtype MethodRoute
-}
-
-public protocol HttpResponseBodyWriter {
-    func write(_ data: Data) throws
-}
-
-enum HttpResponse {
-    case raw(Int, String, [String: String]?, ((HttpResponseBodyWriter) throws -> Void)?)
-    case movedPermanently(String)
-}
-
-protocol HttpRequest {
-    
-}
-
 public class MockServer {
     
     private let port: Int
     
-    private let server = HttpServer()
+    private var server = NIOHttpServer()
     
     private let responseFactory: MockHTTPResponseFactory
     
@@ -47,7 +30,7 @@ public class MockServer {
     // MARK: Server managements
     
     public func start(priority: DispatchQoS.QoSClass = .default) {
-        try! server.start(UInt16(port), forceIPv4: true, priority: priority)
+        try! server.start(port, forceIPv4: true, priority: priority)
     }
     
     public func stop() {
@@ -129,7 +112,7 @@ public class MockServer {
     
     // MARK: Utils
     
-    private func httpServerMethod(for method: MockHTTPMethod) -> HttpServer.MethodRoute {
+    private func httpServerMethod(for method: MockHTTPMethod) -> MethodRoute {
         switch method {
         case .get:      return server.GET
         case .head:     return server.HEAD
@@ -159,5 +142,3 @@ public protocol CacheableRequest {
     var address: String? { get }
     var params: [String: String] { get }
 }
-
-extension HttpRequest: CacheableRequest {}
