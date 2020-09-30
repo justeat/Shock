@@ -45,14 +45,15 @@ internal class NIOHTTPHandler: ChannelInboundHandler {
     private func requestForHTTPRequestHead(_ request: HTTPRequestHead) -> NIOHTTPRequest? {
         guard let url = URLComponents(string: request.uri) else { return nil }
         let path = url.path
-        let queryParams =  [(String, String)]()
         let method = stringForHTTPMethod(request.method)
-        let headers = request.headers.reduce(into: [String: String](), { $0[$1.0] = $1.1 })
-        var body = [UInt8]()
-        var address = url.host
+        let headers = request.headers.reduce(into: [String: String](), { $0[$1.0.lowercased()] = $1.1 })
+        let body = [UInt8]()
+        let address = url.host
         var params = [String: String]()
+        var queryParams =  [(String, String)]()
         if let queryItems = url.queryItems {
             params = queryItems.reduce(into: [String: String](), { $0[$1.name] = $1.value })
+            queryParams = queryItems.reduce(into: [(String, String)](), { $0.append(($1.name, $1.value ?? "")) })
         }
         
         return NIOHTTPRequest(path: path,
@@ -66,15 +67,22 @@ internal class NIOHTTPHandler: ChannelInboundHandler {
     
     private func handleResponse(_ response: HttpResponse, for request: HTTPRequestHead, in context: ChannelHandlerContext) {
         switch response {
-        case .raw(_, _, _, let handler):
+        case .raw(_, _, let customHeaders, let handler):
             if let handler = handler {
                 let writer = NIOHTTPResponseBodyWriter()
                 do {
                     try handler(writer)
                     var headers = HTTPHeaders()
                     headers.add(name: "content-length", value: "\(writer.contentLength)")
-                    _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .ok))))
-                    _ = context.write(self.wrapOutboundOut(.body(.byteBuffer(writer.buffer))), promise: nil)
+                    if let customHeaders = customHeaders {
+                        for (name, value) in customHeaders {
+                            headers.add(name: name, value: value)
+                        }
+                    }
+                    _ = context.write(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .ok, headers: headers))))
+                    if writer.contentLength > 0 {
+                        _ = context.writeAndFlush(self.wrapOutboundOut(.body(.byteBuffer(writer.buffer))), promise: nil)
+                    }
                 } catch {
                     _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .internalServerError))))
                 }
@@ -106,15 +114,13 @@ internal class NIOHTTPHandler: ChannelInboundHandler {
         
         switch reqPart {
         case .head(let request):
-            let method = stringForHTTPMethod(request.method)
-            let path = request.uri
             if
-                let handler = router.handlerForMethod(method, path: path),
-                let handlerRequest = requestForHTTPRequestHead(request) {
+                let handlerRequest = requestForHTTPRequestHead(request),
+                let handler = router.handlerForMethod(handlerRequest.method, path: handlerRequest.path) {
                 let response = handler(handlerRequest)
                 handleResponse(response, for: request, in: context)
             } else {
-                _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .internalServerError))))
+                _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .notFound))))
                 completeResponse(context, trailers: nil)
             }
         case .body(_):

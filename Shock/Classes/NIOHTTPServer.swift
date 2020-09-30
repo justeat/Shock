@@ -83,15 +83,18 @@ struct NIOHTTPMethodRoute: MethodRoute {
 }
 
 class NIOHTTPRouter: HttpRouter {
-    private var routes = [[String]: MethodRoute.HandlerClosure]()
+    typealias PathHandlerMapping = [String: MethodRoute.HandlerClosure]
+    private var routes = [String: PathHandlerMapping]()
     
     func handlerForMethod(_ method: String, path: String) -> MethodRoute.HandlerClosure? {
-        return routes[[method, path]]
+        let methodRoutes = routes[method] ?? PathHandlerMapping()
+        return methodRoutes[path]
     }
     
     func register(_ method: String, path: String, handler: MethodRoute.HandlerClosure?) {
-        let key = [method, path].compactMap({ $0 })
-        routes[key] = handler
+        var methodRoutes = routes[method] ?? PathHandlerMapping()
+        methodRoutes[path] = handler
+        routes[method] = methodRoutes
     }
 }
 
