@@ -15,7 +15,7 @@ class MethodTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        server = MockServer(port: 9090, bundle: Bundle(for: Tests.self))
+        server = MockServer(portRange: 9090...9099, bundle: Bundle(for: MethodTests.self))
         server.start()
     }
     
