@@ -23,7 +23,7 @@ class ParallelServerTests: XCTestCase {
         }
         
         servers.enumerated().forEach { index, server in
-            let port = UInt16(9090 + index)
+            let port = 9090 + index
             XCTAssertEqual(server.selectedPort, port)
             server.stop()
         }

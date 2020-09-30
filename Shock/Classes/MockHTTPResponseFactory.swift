@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Swifter
 import GRMustache
 
 fileprivate typealias Template = GRMustacheTemplate
@@ -44,7 +43,8 @@ class MockHTTPResponseFactory {
     func makeResponse(urlPath: String, method: String = "GET", timeout: Int = 120) -> HttpResponse {
         return HttpResponse.raw(200, urlPath, [:]) { writer in
             // don't write anything, instead wait
-            sleep(UInt32(timeout))
+            let semaphore = DispatchSemaphore(value: 0)
+            _ = semaphore.wait(timeout: DispatchTime.now() + .seconds(timeout))
         }
     }
     
