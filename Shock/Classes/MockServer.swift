@@ -11,7 +11,23 @@
 // swiftlint:disable force_try
 
 import Foundation
-import Swifter
+
+protocol HttpServer {
+    associatedtype MethodRoute
+}
+
+public protocol HttpResponseBodyWriter {
+    func write(_ data: Data) throws
+}
+
+enum HttpResponse {
+    case raw(Int, String, [String: String]?, ((HttpResponseBodyWriter) throws -> Void)?)
+    case movedPermanently(String)
+}
+
+protocol HttpRequest {
+    
+}
 
 public class MockServer {
     
