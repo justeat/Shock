@@ -1,27 +1,52 @@
 PODS:
+  - CNIOAtomics (2.22.1)
+  - CNIODarwin (2.22.1)
+  - CNIOLinux (2.22.1)
+  - CNIOSHA1 (2.22.1)
   - GRMustache (7.3.2):
     - JRSwizzle (~> 1.0)
   - JRSwizzle (1.0)
   - Shock (4.0.1):
     - GRMustache (~> 7.3.2)
+    - SwiftNIO (~> 2.22.1)
+  - SwiftNIO (2.22.1):
+    - CNIOAtomics (= 2.22.1)
+    - CNIODarwin (= 2.22.1)
+    - CNIOLinux (= 2.22.1)
+    - CNIOSHA1 (= 2.22.1)
+    - SwiftNIOConcurrencyHelpers (= 2.22.1)
+  - SwiftNIOConcurrencyHelpers (2.22.1):
+    - CNIOAtomics (= 2.22.1)
 
 DEPENDENCIES:
   - Shock (from `../`)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
+    - CNIOAtomics
+    - CNIODarwin
+    - CNIOLinux
+    - CNIOSHA1
     - GRMustache
     - JRSwizzle
+    - SwiftNIO
+    - SwiftNIOConcurrencyHelpers
 
 EXTERNAL SOURCES:
   Shock:
     :path: "../"
 
 SPEC CHECKSUMS:
+  CNIOAtomics: 55026298b0bd7524bb8ca85bd9d00983ef2b6ab5
+  CNIODarwin: 65c40ddcfa113c0cb0bf5947dbef3165a0098b59
+  CNIOLinux: 896c5715ebe479fbfcdac5340717bbbd7936901b
+  CNIOSHA1: fd4d38fb42778ed971a75d87530f842106d4b4f4
   GRMustache: ebe6104fd30a6d22c1f36af131e19e2dbf7cd292
   JRSwizzle: dd5ead5d913a0f29e7f558200165849f006bb1e3
-  Shock: 98d38084c2e8be2df73399e862d596ff9bca33c6
+  Shock: f89dae4a808e1b7afb47d74e1b6786fa47daf68c
+  SwiftNIO: 763188229de166e046cc8975383cca388832e992
+  SwiftNIOConcurrencyHelpers: 34d2e9d4d2b7886fa765086e845e6b19417be927
 
-PODFILE CHECKSUM: f2aa1fe1bd8633dab49f7d1b56c94fb4c395c003
+PODFILE CHECKSUM: 87baff71db4a1c0d4d88b98f2042777fc97b82d8
 
 COCOAPODS: 1.8.4
