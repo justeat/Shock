@@ -21,11 +21,11 @@ Shock lets you quickly and painlessly provided mock responses for web requests m
   s.source           = { :git => 'https://github.com/justeat/Shock.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/justeat_tech'
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '10.0'
   s.swift_version = '5.0'
 
   s.source_files = 'Shock/Classes/**/*'
 
-  s.dependency 'Swifter', '~> 1.5.0'
+  s.dependency 'SwiftNIOHTTP1', '~> 2.22.1'
   s.dependency 'GRMustache', '~> 7.3.2'
 end

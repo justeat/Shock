@@ -62,7 +62,7 @@ class RouteTests: XCTestCase {
     }
     
     func testTimeoutRoute() {
-        let route: MockHTTPRoute = .timeout(method: .get, urlPath: "/timeouttest")
+        let route: MockHTTPRoute = .timeout(method: .get, urlPath: "/timeouttest", timeoutInSeconds: 2)
         server.setup(route: route)
         
         let expectation = self.expectation(description: "This expectation should NOT be fulfilled")
