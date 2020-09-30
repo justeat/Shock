@@ -66,39 +66,48 @@ internal class NIOHTTPHandler: ChannelInboundHandler {
     }
     
     private func handleResponse(_ response: HttpResponse, for request: HTTPRequestHead, in context: ChannelHandlerContext) {
+        
+        func writeAndFlushInternalServerError(for request: HTTPRequestHead, in context: ChannelHandlerContext) {
+            writeAndFlushHeaderResponse(status: .internalServerError, for: request, in: context)
+        }
+        
         switch response {
         case .raw(_, _, let customHeaders, let handler):
-            if let handler = handler {
-                let writer = NIOHTTPResponseBodyWriter()
-                do {
-                    try handler(writer)
-                    var headers = HTTPHeaders()
-                    headers.add(name: "content-length", value: "\(writer.contentLength)")
-                    if let customHeaders = customHeaders {
-                        for (name, value) in customHeaders {
-                            headers.add(name: name, value: value)
-                        }
+            guard let handler = handler else {
+                writeAndFlushInternalServerError(for: request, in: context)
+                break
+            }
+            let writer = NIOHTTPResponseBodyWriter()
+            do {
+                try handler(writer)
+                var headers = HTTPHeaders()
+                headers.add(name: "content-length", value: "\(writer.contentLength)")
+                if let customHeaders = customHeaders {
+                    for (name, value) in customHeaders {
+                        headers.add(name: name, value: value)
                     }
-                    _ = context.write(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .ok, headers: headers))))
-                    if writer.contentLength > 0 {
-                        _ = context.writeAndFlush(self.wrapOutboundOut(.body(.byteBuffer(writer.buffer))), promise: nil)
-                    }
-                } catch {
-                    _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .internalServerError))))
                 }
-            } else {
-                _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .internalServerError))))
+                _ = context.write(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .ok, headers: headers))))
+                if writer.contentLength > 0 {
+                    _ = context.writeAndFlush(self.wrapOutboundOut(.body(.byteBuffer(writer.buffer))), promise: nil)
+                }
+            } catch {
+                writeAndFlushInternalServerError(for: request, in: context)
             }
         case .movedPermanently(let location):
             var headers = HTTPHeaders()
             headers.add(name: "Location", value: location)
             _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .movedPermanently, headers: headers))))
         case .notFound:
-            _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .notFound))))
+            writeAndFlushHeaderResponse(status: .notFound, for: request, in: context)
         case .internalServerError:
-            _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .internalServerError))))
+            writeAndFlushInternalServerError(for: request, in: context)
         }
         completeResponse(context, trailers: nil)
+    }
+    
+    private func writeAndFlushHeaderResponse(status: HTTPResponseStatus, for request: HTTPRequestHead, in context: ChannelHandlerContext) {
+        _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: status))))
     }
     
     init(router: NIOHTTPRouter) {
