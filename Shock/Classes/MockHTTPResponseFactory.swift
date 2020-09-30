@@ -8,9 +8,13 @@
 
 import Foundation
 import Swifter
+#if canImport(GRMustache)
 import GRMustache
-
 fileprivate typealias Template = GRMustacheTemplate
+#elseif canImport(Mustache)
+import Mustache
+#endif
+
 
 class MockHTTPResponseFactory {
     
@@ -31,8 +35,8 @@ class MockHTTPResponseFactory {
         
         return HttpResponse.raw(code, urlPath, headers) { writer in
             guard let templateFilename = templateFilename, let data = data else { return }
-            let template = try! Template(fromResource: templateFilename, bundle: self.bundle)
-            let responseBody: String = try! template.renderObject(data)
+            let template = self.loadTemplate(withFileName: templateFilename)
+            let responseBody: String = self.render(withTemplate: template, data: data)
             try! writer.write(responseBody.data(using: String.Encoding.utf8)!)
         }
     }
@@ -49,6 +53,22 @@ class MockHTTPResponseFactory {
     }
     
     // MARK: Utilities
+    
+    private func loadTemplate(withFileName templateFilename: String) -> Template {
+        #if canImport(GRMustache)
+        return try! Template(fromResource: templateFilename, bundle: bundle)
+        #elseif canImport(Mustache)
+        return try! Template(named: templateFilename, bundle: bundle)
+        #endif
+    }
+    
+    private func render(withTemplate template: Template, data: Any?) -> String {
+        #if canImport(GRMustache)
+         return try! template.renderObject(data)
+         #elseif canImport(Mustache)
+         return try! template.render(data)
+         #endif
+    }
     
     private func loadJson(named name: String) -> String? {
         
