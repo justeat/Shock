@@ -14,6 +14,8 @@ internal class NIOHTTPHandler: ChannelInboundHandler {
     typealias OutboundOut = HTTPServerResponsePart
     
     private let router: NIOHTTPRouter
+    private var httpRequest: HTTPRequestHead?
+    private var handlerRequest: NIOHTTPRequest?
     
     private func httpResponseHeadForRequestHead(_ request: HTTPRequestHead, status: HTTPResponseStatus, headers: HTTPHeaders = HTTPHeaders()) -> HTTPResponseHead {
         HTTPResponseHead(version: request.version, status: status, headers: headers)
@@ -123,8 +125,15 @@ internal class NIOHTTPHandler: ChannelInboundHandler {
         
         switch reqPart {
         case .head(let request):
+            self.httpRequest = request
+            self.handlerRequest = requestForHTTPRequestHead(request)
+        case .body(buffer: var bytes):
+            guard var handlerRequest = self.handlerRequest else { return }
+            handlerRequest.body += bytes.readBytes(length: bytes.readableBytes) ?? []
+        case .end(_):
+            guard let request = self.httpRequest else { return }
             if
-                let handlerRequest = requestForHTTPRequestHead(request),
+                let handlerRequest = self.handlerRequest,
                 let handler = router.handlerForMethod(handlerRequest.method, path: handlerRequest.path) {
                 let response = handler(handlerRequest)
                 handleResponse(response, for: request, in: context)
@@ -132,10 +141,8 @@ internal class NIOHTTPHandler: ChannelInboundHandler {
                 _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .notFound))))
                 completeResponse(context, trailers: nil)
             }
-        case .body(_):
-            break
-        case .end(_):
-            break
+            self.httpRequest = nil
+            self.handlerRequest = nil
         }
     }
 }

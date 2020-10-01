@@ -54,12 +54,6 @@ internal class NIOHttpServer: HttpServer {
             .childChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
             .childChannelOption(ChannelOptions.maxMessagesPerRead, value: 1)
             .childChannelOption(ChannelOptions.allowRemoteHalfClosure, value: allowHalfClosure)
-//        let pipeBootstrap = NIOPipeBootstrap(group: group)
-//            // Set the handlers that are applied to the accepted Channels
-//            .channelInitializer(childChannelInitializer(channel:))
-//
-//            .channelOption(ChannelOptions.maxMessagesPerRead, value: 1)
-//            .channelOption(ChannelOptions.allowRemoteHalfClosure, value: allowHalfClosure)
         
         let channel = try { () -> Channel in
             try socketBootstrap.bind(host: host, port: port).wait()
