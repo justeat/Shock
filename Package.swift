@@ -14,9 +14,8 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(name: "Swifter",
-                 url: "git@github.com:httpswift/swifter.git",
-                 from: "1.5.0"),
+        .package(url: "git@github.com:apple/swift-nio.git",
+                 from: "2.22.1"),
         .package(name: "Mustache",
                  url: "git@github.com:groue/GRMustache.swift.git",
                  from: "4.0.0")
@@ -26,7 +25,11 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "Shock",
-            dependencies: ["Swifter", "Mustache"],
+            dependencies: [
+                .product(name: "NIO", package: "swift-nio"),
+                .product(name: "NIOHTTP1", package: "swift-nio"),
+                "Mustache"
+            ],
             path: "Shock/Classes/"),
         .testTarget(
             name: "Shock-Tests",

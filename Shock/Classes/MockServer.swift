@@ -11,14 +11,13 @@
 // swiftlint:disable force_try
 
 import Foundation
-import Swifter
 
 public class MockServer {
     
     /// The range in which to find a free port on which to launch the server
     private let portRange: ClosedRange<Int>
     
-    private let server = HttpServer()
+    private var server = NIOHttpServer()
     
 //    private let portProvider = PortProvider()
     
@@ -26,7 +25,7 @@ public class MockServer {
     
     public var onRequestReceived: ((MockHTTPRoute, CacheableRequest) -> Void)?
     
-    public var selectedPort: UInt16 = 0
+    public var selectedPort = 0
     
     public var loggingClosure: ((String?) -> Void)?
     
@@ -43,7 +42,7 @@ public class MockServer {
     
     public func start(priority: DispatchQoS.QoSClass = .default) {
         for i in portRange {
-            let proposedPort = UInt16(i)
+            let proposedPort = i
             do {
                 try server.start(proposedPort, forceIPv4: true, priority: priority)
                 selectedPort = proposedPort
@@ -140,7 +139,7 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
     
     // MARK: Utils
     
-    private func httpServerMethod(for method: MockHTTPMethod) -> HttpServer.MethodRoute {
+    private func httpServerMethod(for method: MockHTTPMethod) -> MethodRoute {
         switch method {
         case .get:      return server.GET
         case .head:     return server.HEAD
@@ -170,6 +169,3 @@ public protocol CacheableRequest {
     var address: String? { get }
     var params: [String: String] { get }
 }
-
-extension HttpRequest: CacheableRequest {}
-
