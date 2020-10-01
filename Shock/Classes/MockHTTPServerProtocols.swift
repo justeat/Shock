@@ -27,12 +27,7 @@ internal extension MockMethodRoute {
 }
 
 internal protocol MockHttpServer {
-    var DELETE: MockMethodRoute { get }
-    var PATCH: MockMethodRoute { get }
-    var HEAD: MockMethodRoute { get }
-    var POST: MockMethodRoute { get }
-    var GET: MockMethodRoute { get }
-    var PUT: MockMethodRoute { get }
+    var methodRoutes: [MockHTTPMethod: NIOHTTPMethodRoute] { get }
     var notFoundHandler: ((MockHttpRequest) -> MockHttpResponse)? { get set }
     func start(_ port: Int, forceIPv4: Bool, priority: DispatchQoS.QoSClass) throws -> Void
     func stop()
@@ -49,4 +44,5 @@ internal enum MockHttpResponse {
     case internalServerError
 }
 
-internal protocol MockHttpRequest: CacheableRequest { }
+internal protocol MockHttpRequest: CacheableRequest {}
+

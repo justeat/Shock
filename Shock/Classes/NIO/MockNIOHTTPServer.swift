@@ -1,5 +1,5 @@
 //
-//  MockNIOHTTPServer.swift
+//  NIOHTTPServer.swift
 //  Shock
 //
 //  Created by Antonio Strijdom on 30/09/2020.
@@ -15,20 +15,19 @@ internal class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
     private let router = NIOHTTPRouter()
     
     var notFoundHandler: ((MockHttpRequest) -> MockHttpResponse)?
-    var HEAD, GET, POST, PUT, PATCH, DELETE: MockMethodRoute
+    var methodRoutes: [MockHTTPMethod: NIOHTTPMethodRoute] = [:]
     
     override init() {
-        self.DELETE = NIOHTTPMethodRoute(method: "DELETE", router: router)
-        self.PATCH = NIOHTTPMethodRoute(method: "PATCH", router: router)
-        self.HEAD = NIOHTTPMethodRoute(method: "HEAD", router: router)
-        self.POST = NIOHTTPMethodRoute(method: "POST", router: router)
-        self.GET = NIOHTTPMethodRoute(method: "GET", router: router)
-        self.PUT = NIOHTTPMethodRoute(method: "PUT", router: router)
+        methodRoutes[.delete] = NIOHTTPMethodRoute(method: "DELETE", router: router)
+        methodRoutes[.patch] = NIOHTTPMethodRoute(method: "PATCH", router: router)
+        methodRoutes[.head] = NIOHTTPMethodRoute(method: "HEAD", router: router)
+        methodRoutes[.post] = NIOHTTPMethodRoute(method: "POST", router: router)
+        methodRoutes[.get] = NIOHTTPMethodRoute(method: "GET", router: router)
+        methodRoutes[.patch] = NIOHTTPMethodRoute(method: "PUT", router: router)
         super.init()
     }
     
     func start(_ port: Int, forceIPv4: Bool, priority: DispatchQoS.QoSClass) throws -> Void {
-        
         try start(port) { (channel) -> EventLoopFuture<Void> in
             channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
                 channel.pipeline.addHandler(MockNIOHTTPHandler(router: self.router))

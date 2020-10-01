@@ -20,8 +20,6 @@ public class MockServer {
     private var httpServer = MockNIOHttpServer()
     private var socketServer: MockNIOSocketServer?
     
-//    private let portProvider = PortProvider()
-    
     private let responseFactory: MockHTTPResponseFactory
     
     public var onRequestReceived: ((MockHTTPRoute, CacheableRequest) -> Void)?
@@ -125,7 +123,10 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
         
         if let urlPath = route.urlPath, let method = route.method {
             
-            var router = httpServerMethod(for: method)
+            guard var router = httpServer.methodRoutes[method] else {
+                self.loggingClosure?("ERROR: couldn't find method route for \(method)")
+                return
+            }
             
             router[urlPath] = { request in
                 assert(method == route.method)
@@ -158,19 +159,6 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
             return
         }
         
-    }
-    
-    // MARK: Utils
-    
-    private func httpServerMethod(for method: MockHTTPMethod) -> MockMethodRoute {
-        switch method {
-        case .get:      return httpServer.GET
-        case .head:     return httpServer.HEAD
-        case .post:     return httpServer.POST
-        case .put:      return httpServer.PUT
-        case .patch:    return httpServer.PATCH
-        case .delete:   return httpServer.DELETE
-        }
     }
     
 }
