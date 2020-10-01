@@ -10,7 +10,7 @@ import NIO
 import NIOHTTP1
 
 /// SwiftNIO implementation of mock HTTP server
-internal class NIOHttpServer: HttpServer {
+internal class MockNIOHttpServer: HttpServer {
     
     private let host = "localhost"
     // TODO: make this an option?
@@ -22,15 +22,15 @@ internal class NIOHttpServer: HttpServer {
     
     private(set) var localAddress: String?
     var notFoundHandler: ((HttpRequest) -> HttpResponse)?
-    var HEAD, GET, POST, PUT, PATCH, DELETE: MethodRoute
+    var methodRoutes: [MockHTTPMethod: NIOHTTPMethodRoute] = [:]
     
     init() {
-        self.DELETE = NIOHTTPMethodRoute(method: "DELETE", router: router)
-        self.PATCH = NIOHTTPMethodRoute(method: "PATCH", router: router)
-        self.HEAD = NIOHTTPMethodRoute(method: "HEAD", router: router)
-        self.POST = NIOHTTPMethodRoute(method: "POST", router: router)
-        self.GET = NIOHTTPMethodRoute(method: "GET", router: router)
-        self.PUT = NIOHTTPMethodRoute(method: "PUT", router: router)
+        methodRoutes[.delete] = NIOHTTPMethodRoute(method: "DELETE", router: router)
+        methodRoutes[.patch] = NIOHTTPMethodRoute(method: "PATCH", router: router)
+        methodRoutes[.head] = NIOHTTPMethodRoute(method: "HEAD", router: router)
+        methodRoutes[.post] = NIOHTTPMethodRoute(method: "POST", router: router)
+        methodRoutes[.get] = NIOHTTPMethodRoute(method: "GET", router: router)
+        methodRoutes[.patch] = NIOHTTPMethodRoute(method: "PUT", router: router)
         self.group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
         self.threadPool = NIOThreadPool(numberOfThreads: 6)
     }

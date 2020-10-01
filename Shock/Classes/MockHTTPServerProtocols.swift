@@ -26,13 +26,8 @@ public extension MethodRoute {
     }
 }
 
-public protocol HttpServer {
-    var DELETE: MethodRoute { get }
-    var PATCH: MethodRoute { get }
-    var HEAD: MethodRoute { get }
-    var POST: MethodRoute { get }
-    var GET: MethodRoute { get }
-    var PUT: MethodRoute { get }
+protocol HttpServer {
+    var methodRoutes: [MockHTTPMethod: NIOHTTPMethodRoute] { get }
     var notFoundHandler: ((HttpRequest) -> HttpResponse)? { get set }
     func start(_ port: Int, forceIPv4: Bool, priority: DispatchQoS.QoSClass) throws -> Void
     func stop()
@@ -49,6 +44,4 @@ public enum HttpResponse {
     case internalServerError
 }
 
-public protocol HttpRequest: CacheableRequest {
-    
-}
+public protocol HttpRequest: CacheableRequest {}

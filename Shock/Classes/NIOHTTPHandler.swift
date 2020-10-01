@@ -1,5 +1,5 @@
 //
-//  NIOHTTPHander.swift
+//  NIOHTTPHandler.swift
 //  Shock
 //
 //  Created by Antonio Strijdom on 30/09/2020.
@@ -9,11 +9,15 @@ import Foundation
 import NIO
 import NIOHTTP1
 
-internal class NIOHTTPHandler: ChannelInboundHandler {
+internal class NIOHTTPHandler {
     typealias InboundIn = HTTPServerRequestPart
     typealias OutboundOut = HTTPServerResponsePart
     
     private let router: NIOHTTPRouter
+    
+    init(router: NIOHTTPRouter) {
+        self.router = router
+    }
     
     private func httpResponseHeadForRequestHead(_ request: HTTPRequestHead, status: HTTPResponseStatus, headers: HTTPHeaders = HTTPHeaders()) -> HTTPResponseHead {
         HTTPResponseHead(version: request.version, status: status, headers: headers)
@@ -67,10 +71,6 @@ internal class NIOHTTPHandler: ChannelInboundHandler {
     
     private func handleResponse(_ response: HttpResponse, for request: HTTPRequestHead, in context: ChannelHandlerContext) {
         
-        func writeAndFlushInternalServerError(for request: HTTPRequestHead, in context: ChannelHandlerContext) {
-            writeAndFlushHeaderResponse(status: .internalServerError, for: request, in: context)
-        }
-        
         switch response {
         case .raw(_, _, let customHeaders, let handler):
             guard let handler = handler else {
@@ -110,9 +110,14 @@ internal class NIOHTTPHandler: ChannelInboundHandler {
         _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: status))))
     }
     
-    init(router: NIOHTTPRouter) {
-        self.router = router
+    private func writeAndFlushInternalServerError(for request: HTTPRequestHead, in context: ChannelHandlerContext) {
+        writeAndFlushHeaderResponse(status: .internalServerError, for: request, in: context)
     }
+}
+    
+// MARK: ChannelInboundHandler
+
+extension NIOHTTPHandler: ChannelInboundHandler {
     
     func channelReadComplete(context: ChannelHandlerContext) {
         context.flush()
@@ -127,6 +132,7 @@ internal class NIOHTTPHandler: ChannelInboundHandler {
                 let handlerRequest = requestForHTTPRequestHead(request),
                 let handler = router.handlerForMethod(handlerRequest.method, path: handlerRequest.path) {
                 let response = handler(handlerRequest)
+                // TODO: <- Middleware here? pre-response
                 handleResponse(response, for: request, in: context)
             } else {
                 _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .notFound))))
