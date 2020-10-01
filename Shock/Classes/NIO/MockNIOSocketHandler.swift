@@ -18,7 +18,7 @@ class MockNIOSocketHandler: ChannelInboundHandler {
     private var loggingClosure: LoggingClosure?
     private var dataHandler: SocketDataHandler?
     
-    init(dataHandler: @escaping SocketDataHandler,
+    init(dataHandler: SocketDataHandler?,
          loggingClosure: LoggingClosure?) {
         self.dataHandler = dataHandler
         self.loggingClosure = loggingClosure
