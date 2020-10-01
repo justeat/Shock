@@ -8,7 +8,7 @@
 import Foundation
 import NIO
 
-internal class MockNIOSocketHandler: ChannelInboundHandler {
+class MockNIOSocketHandler: ChannelInboundHandler {
     public typealias InboundIn = ByteBuffer
     public typealias OutboundOut = ByteBuffer
     public typealias SocketDataHandler = (Data) -> Void

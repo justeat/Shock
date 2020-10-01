@@ -1,5 +1,5 @@
 //
-//  NIOHTTPServer.swift
+//  MockNIOHTTPServer.swift
 //  Shock
 //
 //  Created by Antonio Strijdom on 30/09/2020.
@@ -10,20 +10,20 @@ import NIO
 import NIOHTTP1
 
 /// SwiftNIO implementation of mock HTTP server
-internal class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
+class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
     
-    private let router = NIOHTTPRouter()
+    private let router = MockNIOHTTPRouter()
     
     var notFoundHandler: ((MockHttpRequest) -> MockHttpResponse)?
-    var methodRoutes: [MockHTTPMethod: NIOHTTPMethodRoute] = [:]
+    var methodRoutes: [MockHTTPMethod: MockNIOHTTPMethodRoute] = [:]
     
     override init() {
-        methodRoutes[.delete] = NIOHTTPMethodRoute(method: "DELETE", router: router)
-        methodRoutes[.patch] = NIOHTTPMethodRoute(method: "PATCH", router: router)
-        methodRoutes[.head] = NIOHTTPMethodRoute(method: "HEAD", router: router)
-        methodRoutes[.post] = NIOHTTPMethodRoute(method: "POST", router: router)
-        methodRoutes[.get] = NIOHTTPMethodRoute(method: "GET", router: router)
-        methodRoutes[.put] = NIOHTTPMethodRoute(method: "PUT", router: router)
+        methodRoutes[.delete] = MockNIOHTTPMethodRoute(method: "DELETE", router: router)
+        methodRoutes[.patch] = MockNIOHTTPMethodRoute(method: "PATCH", router: router)
+        methodRoutes[.head] = MockNIOHTTPMethodRoute(method: "HEAD", router: router)
+        methodRoutes[.post] = MockNIOHTTPMethodRoute(method: "POST", router: router)
+        methodRoutes[.get] = MockNIOHTTPMethodRoute(method: "GET", router: router)
+        methodRoutes[.put] = MockNIOHTTPMethodRoute(method: "PUT", router: router)
         super.init()
     }
     
@@ -36,12 +36,12 @@ internal class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
     }
 }
 
-struct NIOHTTPMethodRoute: MockMethodRoute {
+struct MockNIOHTTPMethodRoute: MockMethodRoute {
     let method: String
     let router: MockHttpRouter
 }
 
-class NIOHTTPRouter: MockHttpRouter {
+class MockNIOHTTPRouter: MockHttpRouter {
     typealias PathHandlerMapping = [String: MockMethodRoute.HandlerClosure]
     private var routes = [String: PathHandlerMapping]()
     
@@ -57,7 +57,7 @@ class NIOHTTPRouter: MockHttpRouter {
     }
 }
 
-class NIOHTTPResponseBodyWriter: MockHttpResponseBodyWriter {
+class MockNIOHTTPResponseBodyWriter: MockHttpResponseBodyWriter {
     var buffer = ByteBuffer()
     var contentLength: Int {
         buffer.readableBytes
@@ -67,7 +67,7 @@ class NIOHTTPResponseBodyWriter: MockHttpResponseBodyWriter {
     }
 }
 
-struct NIOHTTPRequest: MockHttpRequest {
+struct MockNIOHTTPRequest: MockHttpRequest {
     var path: String
     var queryParams: [(String, String)]
     var method: String

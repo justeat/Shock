@@ -9,15 +9,15 @@ import Foundation
 import NIO
 import NIOHTTP1
 
-internal class MockNIOHTTPHandler {
+class MockNIOHTTPHandler {
     typealias InboundIn = HTTPServerRequestPart
     typealias OutboundOut = HTTPServerResponsePart
     
-    private let router: NIOHTTPRouter
+    private let router: MockNIOHTTPRouter
     private var httpRequest: HTTPRequestHead?
-    private var handlerRequest: NIOHTTPRequest?
+    private var handlerRequest: MockNIOHTTPRequest?
     
-    init(router: NIOHTTPRouter) {
+    init(router: MockNIOHTTPRouter) {
         self.router = router
     }
     
@@ -48,7 +48,7 @@ internal class MockNIOHTTPHandler {
         }
     }
     
-    private func requestForHTTPRequestHead(_ request: HTTPRequestHead) -> NIOHTTPRequest? {
+    private func requestForHTTPRequestHead(_ request: HTTPRequestHead) -> MockNIOHTTPRequest? {
         guard let url = URLComponents(string: request.uri) else { return nil }
         let path = url.path
         let method = stringForHTTPMethod(request.method)
@@ -62,7 +62,7 @@ internal class MockNIOHTTPHandler {
             queryParams = queryItems.reduce(into: [(String, String)](), { $0.append(($1.name, $1.value ?? "")) })
         }
         
-        return NIOHTTPRequest(path: path,
+        return MockNIOHTTPRequest(path: path,
                               queryParams: queryParams,
                               method: method,
                               headers: headers,
@@ -79,7 +79,7 @@ internal class MockNIOHTTPHandler {
                 writeAndFlushInternalServerError(for: request, in: context)
                 break
             }
-            let writer = NIOHTTPResponseBodyWriter()
+            let writer = MockNIOHTTPResponseBodyWriter()
             do {
                 try handler(writer)
                 var headers = HTTPHeaders()

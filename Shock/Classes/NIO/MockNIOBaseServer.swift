@@ -8,7 +8,7 @@
 import Foundation
 import NIO
 
-internal class MockNIOBaseServer {
+class MockNIOBaseServer {
     
     private let host = "localhost"
     // TODO: make this an option?

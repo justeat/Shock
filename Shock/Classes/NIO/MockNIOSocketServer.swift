@@ -9,7 +9,7 @@ import Foundation
 import NIO
 import NIOHTTP1
 
-internal class MockNIOSocketServer: MockNIOBaseServer {
+class MockNIOSocketServer: MockNIOBaseServer {
     
     func start(_ port: Int, socketDataHandler: @escaping MockNIOSocketHandler.SocketDataHandler) throws -> Void {
         

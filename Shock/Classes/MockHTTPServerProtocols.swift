@@ -7,17 +7,17 @@
 
 import Foundation
 
-internal protocol MockHttpRouter {
+protocol MockHttpRouter {
     func register(_ method: String, path: String, handler: ((MockHttpRequest) -> MockHttpResponse)?)
 }
 
-internal protocol MockMethodRoute {
+protocol MockMethodRoute {
     typealias HandlerClosure = (MockHttpRequest) -> MockHttpResponse
     var method: String { get }
     var router: MockHttpRouter { get }
 }
 
-internal extension MockMethodRoute {
+extension MockMethodRoute {
     subscript(path: String) -> HandlerClosure? {
         set {
             router.register(method, path: path, handler: newValue)
@@ -26,23 +26,23 @@ internal extension MockMethodRoute {
     }
 }
 
-internal protocol MockHttpServer {
-    var methodRoutes: [MockHTTPMethod: NIOHTTPMethodRoute] { get }
+protocol MockHttpServer {
+    var methodRoutes: [MockHTTPMethod: MockNIOHTTPMethodRoute] { get }
     var notFoundHandler: ((MockHttpRequest) -> MockHttpResponse)? { get set }
     func start(_ port: Int, forceIPv4: Bool, priority: DispatchQoS.QoSClass) throws -> Void
     func stop()
 }
 
-internal protocol MockHttpResponseBodyWriter {
+protocol MockHttpResponseBodyWriter {
     func write(_ data: Data) throws
 }
 
-internal enum MockHttpResponse {
+enum MockHttpResponse {
     case raw(Int, String, [String: String]?, ((MockHttpResponseBodyWriter) throws -> Void)?)
     case movedPermanently(String)
     case notFound
     case internalServerError
 }
 
-internal protocol MockHttpRequest: CacheableRequest {}
+protocol MockHttpRequest: CacheableRequest {}
 
