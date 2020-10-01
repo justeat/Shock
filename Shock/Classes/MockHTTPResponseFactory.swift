@@ -73,19 +73,20 @@ class MockHTTPResponseFactory {
     private func loadJson(named name: String) -> String? {
 
         let components = name.components(separatedBy: ".")
-        let url: URL
+        let url: URL?
 
         switch components.count {
         case 0:
-            url = URL(string: name)!
+            url = URL(string: name)
         case 1:
-            url = bundle.url(forResource: components[0], withExtension: "json")!
+            url = bundle.url(forResource: components[0], withExtension: "json")
         default:
             var components = components
             let ext = components.removeLast()
             url = bundle.url(forResource: components.joined(separator: "."), withExtension: ext)!
         }
 
-        return try? String(contentsOf: url)
+        guard let _url = url else { return nil }
+        return try? String(contentsOf: _url)
     }
 }

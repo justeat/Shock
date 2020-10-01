@@ -17,10 +17,8 @@ public class MockServer {
     /// The range in which to find a free port on which to launch the server
     private let portRange: ClosedRange<Int>
     
-    private var server = NIOHttpServer()
-    
-//    private let portProvider = PortProvider()
-    
+    private var server = MockNIOHttpServer()
+        
     private let responseFactory: MockHTTPResponseFactory
     
     public var onRequestReceived: ((MockHTTPRoute, CacheableRequest) -> Void)?
@@ -110,7 +108,10 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
         
         if let urlPath = route.urlPath, let method = route.method {
             
-            var router = httpServerMethod(for: method)
+            guard var router = server.methodRoutes[method] else {
+                self.loggingClosure?("ERROR: couldn't find method route for \(method)")
+                return
+            }
             
             router[urlPath] = { request in
                 assert(method == route.method)
@@ -136,20 +137,6 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
             }
         }
     }
-    
-    // MARK: Utils
-    
-    private func httpServerMethod(for method: MockHTTPMethod) -> MethodRoute {
-        switch method {
-        case .get:      return server.GET
-        case .head:     return server.HEAD
-        case .post:     return server.POST
-        case .put:      return server.PUT
-        case .patch:    return server.PATCH
-        case .delete:   return server.DELETE
-        }
-    }
-    
 }
 
 // MARK: Utils
