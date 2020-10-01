@@ -53,7 +53,7 @@ public class MockServer {
                     httpStarted = true
                     loggingClosure?("SUCCESS: Opened HTTP server on port: \(i)")
                 } else if !socketStarted && socketServerRequired {
-//                    try socketServer?.start...
+                    try socketServer?.start(proposedPort)
                     selectedSocketPort = proposedPort
                     socketStarted = true
                     loggingClosure?("SUCCESS: Opened Socket server on port: \(i)")
@@ -158,7 +158,10 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
             self.loggingClosure?("Server socket already running")
             return
         }
-        
+        let socketServer = MockNIOSocketServer()
+        socketServer.loggingClosure = loggingClosure
+        socketServer.socketDataHandler = MockSocketResponseFactory().responseFromRoute(route: route)
+        self.socketServer = socketServer
     }
     
 }

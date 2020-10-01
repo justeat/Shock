@@ -11,13 +11,17 @@ import NIO
 class MockNIOSocketHandler: ChannelInboundHandler {
     public typealias InboundIn = ByteBuffer
     public typealias OutboundOut = ByteBuffer
-    public typealias SocketDataHandler = (Data) -> Void
+    public typealias LoggingClosure = (String?) -> Void
+    public typealias SocketDataHandler = (Data, LoggingClosure?) -> Void
     
     private var received: Data? = nil
-    public var dataHandler: SocketDataHandler?
+    private var loggingClosure: LoggingClosure?
+    private var dataHandler: SocketDataHandler?
     
-    init(dataHandler: @escaping SocketDataHandler) {
+    init(dataHandler: @escaping SocketDataHandler,
+         loggingClosure: LoggingClosure?) {
         self.dataHandler = dataHandler
+        self.loggingClosure = loggingClosure
     }
 
     public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
@@ -34,7 +38,7 @@ class MockNIOSocketHandler: ChannelInboundHandler {
 
     public func channelReadComplete(context: ChannelHandlerContext) {
         if let data = self.received {
-            dataHandler?(data)
+            dataHandler?(data, loggingClosure)
             if let separator = "\n".data(using: String.Encoding.utf8)?.first {
                 let messages = data.split(separator: separator)
                 print("Received \(messages.count) messages")
