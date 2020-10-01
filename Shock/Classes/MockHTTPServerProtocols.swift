@@ -7,17 +7,17 @@
 
 import Foundation
 
-public protocol HttpRouter {
-    func register(_ method: String, path: String, handler: ((HttpRequest) -> HttpResponse)?)
+protocol MockHttpRouter {
+    func register(_ method: String, path: String, handler: ((MockHttpRequest) -> MockHttpResponse)?)
 }
 
-public protocol MethodRoute {
-    typealias HandlerClosure = (HttpRequest) -> HttpResponse
+protocol MockMethodRoute {
+    typealias HandlerClosure = (MockHttpRequest) -> MockHttpResponse
     var method: String { get }
-    var router: HttpRouter { get }
+    var router: MockHttpRouter { get }
 }
 
-public extension MethodRoute {
+extension MockMethodRoute {
     subscript(path: String) -> HandlerClosure? {
         set {
             router.register(method, path: path, handler: newValue)
@@ -26,22 +26,23 @@ public extension MethodRoute {
     }
 }
 
-protocol HttpServer {
-    var methodRoutes: [MockHTTPMethod: NIOHTTPMethodRoute] { get }
-    var notFoundHandler: ((HttpRequest) -> HttpResponse)? { get set }
+protocol MockHttpServer {
+    var methodRoutes: [MockHTTPMethod: MockNIOHTTPMethodRoute] { get }
+    var notFoundHandler: ((MockHttpRequest) -> MockHttpResponse)? { get set }
     func start(_ port: Int, forceIPv4: Bool, priority: DispatchQoS.QoSClass) throws -> Void
     func stop()
 }
 
-public protocol HttpResponseBodyWriter {
+protocol MockHttpResponseBodyWriter {
     func write(_ data: Data) throws
 }
 
-public enum HttpResponse {
-    case raw(Int, String, [String: String]?, ((HttpResponseBodyWriter) throws -> Void)?)
+enum MockHttpResponse {
+    case raw(Int, String, [String: String]?, ((MockHttpResponseBodyWriter) throws -> Void)?)
     case movedPermanently(String)
     case notFound
     case internalServerError
 }
 
-public protocol HttpRequest: CacheableRequest {}
+protocol MockHttpRequest: CacheableRequest {}
+

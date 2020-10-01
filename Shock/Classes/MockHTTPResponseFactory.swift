@@ -23,16 +23,16 @@ class MockHTTPResponseFactory {
         self.bundle = bundle
     }
 
-    func makeResponse(urlPath: String, jsonFilename: String?, method: String = "GET", code: Int = 200, headers: [String: String] = [:]) -> HttpResponse {
-        return HttpResponse.raw(code, urlPath, headers) { writer in
+    func makeResponse(urlPath: String, jsonFilename: String?, method: String = "GET", code: Int = 200, headers: [String: String] = [:]) -> MockHttpResponse {
+        return MockHttpResponse.raw(code, urlPath, headers) { writer in
             guard let jsonFilename = jsonFilename,let responseBody = self.loadJson(named: jsonFilename) else { return }
             try! writer.write(responseBody.data(using: String.Encoding.utf8)!)
         }
     }
 
-    func makeResponse(urlPath: String, templateFilename: String?, data: [String: Any?]? = nil, method: String = "GET", code: Int = 200, headers: [String: String] = [:]) -> HttpResponse {
+    func makeResponse(urlPath: String, templateFilename: String?, data: [String: Any?]? = nil, method: String = "GET", code: Int = 200, headers: [String: String] = [:]) -> MockHttpResponse {
 
-        return HttpResponse.raw(code, urlPath, headers) { writer in
+        return MockHttpResponse.raw(code, urlPath, headers) { writer in
             guard let templateFilename = templateFilename, let data = data else { return }
             let template = self.loadTemplate(withFileName: templateFilename)
             let responseBody: String = self.render(withTemplate: template, data: data)
@@ -40,12 +40,12 @@ class MockHTTPResponseFactory {
         }
     }
 
-    func makeResponse(urlPath: String, destination: String) -> HttpResponse {
-        return HttpResponse.movedPermanently(destination)
+    func makeResponse(urlPath: String, destination: String) -> MockHttpResponse {
+        return MockHttpResponse.movedPermanently(destination)
     }
 
-    func makeResponse(urlPath: String, method: String = "GET", timeout: Int = 120) -> HttpResponse {
-        return HttpResponse.raw(200, urlPath, [:]) { writer in
+    func makeResponse(urlPath: String, method: String = "GET", timeout: Int = 120) -> MockHttpResponse {
+        return MockHttpResponse.raw(200, urlPath, [:]) { writer in
             // don't write anything, instead wait
             let semaphore = DispatchSemaphore(value: 0)
             _ = semaphore.wait(timeout: DispatchTime.now() + .seconds(timeout))

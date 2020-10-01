@@ -1,5 +1,5 @@
 //
-//  NIOHTTPHandler.swift
+//  MockNIOHTTPHandler.swift
 //  Shock
 //
 //  Created by Antonio Strijdom on 30/09/2020.
@@ -9,13 +9,15 @@ import Foundation
 import NIO
 import NIOHTTP1
 
-internal class NIOHTTPHandler {
+class MockNIOHTTPHandler {
     typealias InboundIn = HTTPServerRequestPart
     typealias OutboundOut = HTTPServerResponsePart
     
-    private let router: NIOHTTPRouter
+    private let router: MockNIOHTTPRouter
+    private var httpRequest: HTTPRequestHead?
+    private var handlerRequest: MockNIOHTTPRequest?
     
-    init(router: NIOHTTPRouter) {
+    init(router: MockNIOHTTPRouter) {
         self.router = router
     }
     
@@ -46,7 +48,7 @@ internal class NIOHTTPHandler {
         }
     }
     
-    private func requestForHTTPRequestHead(_ request: HTTPRequestHead) -> NIOHTTPRequest? {
+    private func requestForHTTPRequestHead(_ request: HTTPRequestHead) -> MockNIOHTTPRequest? {
         guard let url = URLComponents(string: request.uri) else { return nil }
         let path = url.path
         let method = stringForHTTPMethod(request.method)
@@ -60,7 +62,7 @@ internal class NIOHTTPHandler {
             queryParams = queryItems.reduce(into: [(String, String)](), { $0.append(($1.name, $1.value ?? "")) })
         }
         
-        return NIOHTTPRequest(path: path,
+        return MockNIOHTTPRequest(path: path,
                               queryParams: queryParams,
                               method: method,
                               headers: headers,
@@ -69,7 +71,7 @@ internal class NIOHTTPHandler {
                               params: params)
     }
     
-    private func handleResponse(_ response: HttpResponse, for request: HTTPRequestHead, in context: ChannelHandlerContext) {
+    private func handleResponse(_ response: MockHttpResponse, for request: HTTPRequestHead, in context: ChannelHandlerContext) {
         
         switch response {
         case .raw(_, _, let customHeaders, let handler):
@@ -77,7 +79,7 @@ internal class NIOHTTPHandler {
                 writeAndFlushInternalServerError(for: request, in: context)
                 break
             }
-            let writer = NIOHTTPResponseBodyWriter()
+            let writer = MockNIOHTTPResponseBodyWriter()
             do {
                 try handler(writer)
                 var headers = HTTPHeaders()
@@ -117,7 +119,7 @@ internal class NIOHTTPHandler {
     
 // MARK: ChannelInboundHandler
 
-extension NIOHTTPHandler: ChannelInboundHandler {
+extension MockNIOHTTPHandler: ChannelInboundHandler {
     
     func channelReadComplete(context: ChannelHandlerContext) {
         context.flush()
@@ -128,8 +130,15 @@ extension NIOHTTPHandler: ChannelInboundHandler {
         
         switch reqPart {
         case .head(let request):
+            self.httpRequest = request
+            self.handlerRequest = requestForHTTPRequestHead(request)
+        case .body(buffer: var bytes):
+            guard var handlerRequest = self.handlerRequest else { return }
+            handlerRequest.body += bytes.readBytes(length: bytes.readableBytes) ?? []
+        case .end(_):
+            guard let request = self.httpRequest else { return }
             if
-                let handlerRequest = requestForHTTPRequestHead(request),
+                let handlerRequest = self.handlerRequest,
                 let handler = router.handlerForMethod(handlerRequest.method, path: handlerRequest.path) {
                 let response = handler(handlerRequest)
                 // TODO: <- Middleware here? pre-response
@@ -138,10 +147,8 @@ extension NIOHTTPHandler: ChannelInboundHandler {
                 _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .notFound))))
                 completeResponse(context, trailers: nil)
             }
-        case .body(_):
-            break
-        case .end(_):
-            break
+            self.httpRequest = nil
+            self.handlerRequest = nil
         }
     }
 }

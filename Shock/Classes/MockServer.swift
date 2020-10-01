@@ -17,13 +17,15 @@ public class MockServer {
     /// The range in which to find a free port on which to launch the server
     private let portRange: ClosedRange<Int>
     
-    private var server = MockNIOHttpServer()
-        
+    private var httpServer = MockNIOHttpServer()
+    private var socketServer: MockNIOSocketServer?
+    
     private let responseFactory: MockHTTPResponseFactory
     
     public var onRequestReceived: ((MockHTTPRoute, CacheableRequest) -> Void)?
     
-    public var selectedPort = 0
+    public var selectedHTTPPort = 0
+    public var selectedSocketPort = 0
     
     public var loggingClosure: ((String?) -> Void)?
     
@@ -39,13 +41,26 @@ public class MockServer {
     // MARK: Server managements
     
     public func start(priority: DispatchQoS.QoSClass = .default) {
+        var httpStarted = false
+        let socketServerRequired = socketServer != nil
+        var socketStarted = false
         for i in portRange {
             let proposedPort = i
             do {
-                try server.start(proposedPort, forceIPv4: true, priority: priority)
-                selectedPort = proposedPort
-                loggingClosure?("SUCCESS: Opened server on port: \(i)")
-                return
+                if !httpStarted {
+                    try httpServer.start(proposedPort, forceIPv4: true, priority: priority)
+                    selectedHTTPPort = proposedPort
+                    httpStarted = true
+                    loggingClosure?("SUCCESS: Opened HTTP server on port: \(i)")
+                } else if !socketStarted && socketServerRequired {
+//                    try socketServer?.start...
+                    selectedSocketPort = proposedPort
+                    socketStarted = true
+                    loggingClosure?("SUCCESS: Opened Socket server on port: \(i)")
+                }
+                if httpStarted && (socketStarted || !socketServerRequired) {
+                    return
+                }
             } catch _ {
                 loggingClosure?("NOTE: Failed to open server on port: \(i), \(portRange.upperBound - i) remaining")
                 continue
@@ -58,26 +73,26 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
     }
     
     public func stop() {
-        server.stop()
-        loggingClosure?("SUCCESS: Closed server on port: \(selectedPort)")
+        httpServer.stop()
+        loggingClosure?("SUCCESS: Closed server on port: \(selectedHTTPPort)")
     }
     
     public func forceAllCallsToBeMocked() {
-        server.notFoundHandler = { request in
+        httpServer.notFoundHandler = { request in
             assertionFailure("Not handled: \(request.method) \(request.path)")
             return .internalServerError
         }
     }
     
     public var hostURL: String {
-        return "http://localhost:\(selectedPort)"
+        return "http://localhost:\(selectedHTTPPort)"
     }
     
     // MARK: Mock setup
     
     public func setup(route: MockHTTPRoute) {
         
-        let response: HttpResponse
+        let response: MockHttpResponse
         
         switch route {
         case .simple(let method, let urlPath, let code, let jsonFilename):
@@ -108,7 +123,7 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
         
         if let urlPath = route.urlPath, let method = route.method {
             
-            guard var router = server.methodRoutes[method] else {
+            guard var router = httpServer.methodRoutes[method] else {
                 self.loggingClosure?("ERROR: couldn't find method route for \(method)")
                 return
             }
@@ -137,6 +152,15 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
             }
         }
     }
+    
+    public func setupSocket(route: MockSocketRoute) {
+        guard selectedSocketPort == 0 else {
+            self.loggingClosure?("Server socket already running")
+            return
+        }
+        
+    }
+    
 }
 
 // MARK: Utils
