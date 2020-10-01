@@ -7,6 +7,8 @@ PODS:
   - GRMustache (7.3.2):
     - JRSwizzle (~> 1.0)
   - JRSwizzle (1.0)
+  - JustLog (3.1.3):
+    - SwiftyBeaver (~> 1.9.1)
   - Shock (4.0.1):
     - GRMustache (~> 7.3.2)
     - SwiftNIOHTTP1 (~> 2.22.1)
@@ -22,8 +24,10 @@ PODS:
     - CNIOHTTPParser (= 2.22.1)
     - SwiftNIO (= 2.22.1)
     - SwiftNIOConcurrencyHelpers (= 2.22.1)
+  - SwiftyBeaver (1.9.2)
 
 DEPENDENCIES:
+  - JustLog (= 3.1.3)
   - Shock (from `../`)
 
 SPEC REPOS:
@@ -35,9 +39,11 @@ SPEC REPOS:
     - CNIOSHA1
     - GRMustache
     - JRSwizzle
+    - JustLog
     - SwiftNIO
     - SwiftNIOConcurrencyHelpers
     - SwiftNIOHTTP1
+    - SwiftyBeaver
 
 EXTERNAL SOURCES:
   Shock:
@@ -51,11 +57,13 @@ SPEC CHECKSUMS:
   CNIOSHA1: fd4d38fb42778ed971a75d87530f842106d4b4f4
   GRMustache: ebe6104fd30a6d22c1f36af131e19e2dbf7cd292
   JRSwizzle: dd5ead5d913a0f29e7f558200165849f006bb1e3
+  JustLog: c1b12fe8fc6a7c22cc31dd874fe7776eaa7089d2
   Shock: 30201f93aa26f3d24f719d3c445eba167822d67a
   SwiftNIO: 763188229de166e046cc8975383cca388832e992
   SwiftNIOConcurrencyHelpers: 34d2e9d4d2b7886fa765086e845e6b19417be927
   SwiftNIOHTTP1: c0a9ce48ba256f349af4f09648a0e0939b11a65c
+  SwiftyBeaver: b8239f6bfe9e1ea3303e6139abc8c24228081d84
 
-PODFILE CHECKSUM: 87baff71db4a1c0d4d88b98f2042777fc97b82d8
+PODFILE CHECKSUM: ed997b9bf7ba443f2ea4d7136d25e8e89c630361
 
 COCOAPODS: 1.8.4
