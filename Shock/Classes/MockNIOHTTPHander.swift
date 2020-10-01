@@ -1,5 +1,5 @@
 //
-//  NIOHTTPHander.swift
+//  MockNIOHTTPHander.swift
 //  Shock
 //
 //  Created by Antonio Strijdom on 30/09/2020.
@@ -9,7 +9,7 @@ import Foundation
 import NIO
 import NIOHTTP1
 
-internal class NIOHTTPHandler: ChannelInboundHandler {
+internal class MockNIOHTTPHandler: ChannelInboundHandler {
     typealias InboundIn = HTTPServerRequestPart
     typealias OutboundOut = HTTPServerResponsePart
     
@@ -67,7 +67,7 @@ internal class NIOHTTPHandler: ChannelInboundHandler {
                               params: params)
     }
     
-    private func handleResponse(_ response: HttpResponse, for request: HTTPRequestHead, in context: ChannelHandlerContext) {
+    private func handleResponse(_ response: MockHttpResponse, for request: HTTPRequestHead, in context: ChannelHandlerContext) {
         
         func writeAndFlushInternalServerError(for request: HTTPRequestHead, in context: ChannelHandlerContext) {
             writeAndFlushHeaderResponse(status: .internalServerError, for: request, in: context)

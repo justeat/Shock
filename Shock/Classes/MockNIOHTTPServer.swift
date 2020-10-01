@@ -1,5 +1,5 @@
 //
-//  NIOHTTPServer.swift
+//  MockNIOHTTPServer.swift
 //  Shock
 //
 //  Created by Antonio Strijdom on 30/09/2020.
@@ -10,7 +10,7 @@ import NIO
 import NIOHTTP1
 
 /// SwiftNIO implementation of mock HTTP server
-internal class NIOHttpServer: HttpServer {
+internal class MockNIOHttpServer: MockHttpServer {
     
     private let host = "localhost"
     // TODO: make this an option?
@@ -21,8 +21,8 @@ internal class NIOHttpServer: HttpServer {
     private let threadPool: NIOThreadPool
     
     private(set) var localAddress: String?
-    var notFoundHandler: ((HttpRequest) -> HttpResponse)?
-    var HEAD, GET, POST, PUT, PATCH, DELETE: MethodRoute
+    var notFoundHandler: ((MockHttpRequest) -> MockHttpResponse)?
+    var HEAD, GET, POST, PUT, PATCH, DELETE: MockMethodRoute
     
     init() {
         self.DELETE = NIOHTTPMethodRoute(method: "DELETE", router: router)
@@ -46,7 +46,7 @@ internal class NIOHttpServer: HttpServer {
             // Set the handlers that are applied to the accepted Channels
             .childChannelInitializer({ (channel) -> EventLoopFuture<Void> in
                 channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
-                    channel.pipeline.addHandler(NIOHTTPHandler(router: self.router))
+                    channel.pipeline.addHandler(MockNIOHTTPHandler(router: self.router))
                 }
             })
 
@@ -71,28 +71,28 @@ internal class NIOHttpServer: HttpServer {
     }
 }
 
-struct NIOHTTPMethodRoute: MethodRoute {
+struct NIOHTTPMethodRoute: MockMethodRoute {
     let method: String
-    let router: HttpRouter
+    let router: MockHttpRouter
 }
 
-class NIOHTTPRouter: HttpRouter {
-    typealias PathHandlerMapping = [String: MethodRoute.HandlerClosure]
+class NIOHTTPRouter: MockHttpRouter {
+    typealias PathHandlerMapping = [String: MockMethodRoute.HandlerClosure]
     private var routes = [String: PathHandlerMapping]()
     
-    func handlerForMethod(_ method: String, path: String) -> MethodRoute.HandlerClosure? {
+    func handlerForMethod(_ method: String, path: String) -> MockMethodRoute.HandlerClosure? {
         let methodRoutes = routes[method] ?? PathHandlerMapping()
         return methodRoutes[path]
     }
     
-    func register(_ method: String, path: String, handler: MethodRoute.HandlerClosure?) {
+    func register(_ method: String, path: String, handler: MockMethodRoute.HandlerClosure?) {
         var methodRoutes = routes[method] ?? PathHandlerMapping()
         methodRoutes[path] = handler
         routes[method] = methodRoutes
     }
 }
 
-class NIOHTTPResponseBodyWriter: HttpResponseBodyWriter {
+class NIOHTTPResponseBodyWriter: MockHttpResponseBodyWriter {
     var buffer = ByteBuffer()
     var contentLength: Int {
         buffer.readableBytes
@@ -102,7 +102,7 @@ class NIOHTTPResponseBodyWriter: HttpResponseBodyWriter {
     }
 }
 
-struct NIOHTTPRequest: HttpRequest {
+struct NIOHTTPRequest: MockHttpRequest {
     var path: String
     var queryParams: [(String, String)]
     var method: String

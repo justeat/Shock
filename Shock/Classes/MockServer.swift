@@ -17,7 +17,7 @@ public class MockServer {
     /// The range in which to find a free port on which to launch the server
     private let portRange: ClosedRange<Int>
     
-    private var server = NIOHttpServer()
+    private var server = MockNIOHttpServer()
     
 //    private let portProvider = PortProvider()
     
@@ -79,7 +79,7 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
     
     public func setup(route: MockHTTPRoute) {
         
-        let response: HttpResponse
+        let response: MockHttpResponse
         
         switch route {
         case .simple(let method, let urlPath, let code, let jsonFilename):
@@ -139,7 +139,7 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
     
     // MARK: Utils
     
-    private func httpServerMethod(for method: MockHTTPMethod) -> MethodRoute {
+    private func httpServerMethod(for method: MockHTTPMethod) -> MockMethodRoute {
         switch method {
         case .get:      return server.GET
         case .head:     return server.HEAD
