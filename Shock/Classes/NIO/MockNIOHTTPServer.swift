@@ -23,7 +23,7 @@ internal class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
         methodRoutes[.head] = NIOHTTPMethodRoute(method: "HEAD", router: router)
         methodRoutes[.post] = NIOHTTPMethodRoute(method: "POST", router: router)
         methodRoutes[.get] = NIOHTTPMethodRoute(method: "GET", router: router)
-        methodRoutes[.patch] = NIOHTTPMethodRoute(method: "PUT", router: router)
+        methodRoutes[.put] = NIOHTTPMethodRoute(method: "PUT", router: router)
         super.init()
     }
     

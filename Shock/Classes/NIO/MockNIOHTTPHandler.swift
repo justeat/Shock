@@ -14,6 +14,8 @@ internal class MockNIOHTTPHandler {
     typealias OutboundOut = HTTPServerResponsePart
     
     private let router: NIOHTTPRouter
+    private var httpRequest: HTTPRequestHead?
+    private var handlerRequest: NIOHTTPRequest?
     
     init(router: NIOHTTPRouter) {
         self.router = router
@@ -128,8 +130,15 @@ extension MockNIOHTTPHandler: ChannelInboundHandler {
         
         switch reqPart {
         case .head(let request):
+            self.httpRequest = request
+            self.handlerRequest = requestForHTTPRequestHead(request)
+        case .body(buffer: var bytes):
+            guard var handlerRequest = self.handlerRequest else { return }
+            handlerRequest.body += bytes.readBytes(length: bytes.readableBytes) ?? []
+        case .end(_):
+            guard let request = self.httpRequest else { return }
             if
-                let handlerRequest = requestForHTTPRequestHead(request),
+                let handlerRequest = self.handlerRequest,
                 let handler = router.handlerForMethod(handlerRequest.method, path: handlerRequest.path) {
                 let response = handler(handlerRequest)
                 // TODO: <- Middleware here? pre-response
@@ -138,10 +147,8 @@ extension MockNIOHTTPHandler: ChannelInboundHandler {
                 _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .notFound))))
                 completeResponse(context, trailers: nil)
             }
-        case .body(_):
-            break
-        case .end(_):
-            break
+            self.httpRequest = nil
+            self.handlerRequest = nil
         }
     }
 }
