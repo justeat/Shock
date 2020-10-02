@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		14739D0D25262B640031286B /* SocketServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14739D0C25262B640031286B /* SocketServerTests.swift */; };
 		28CF36BB9C72A116B41A9CCA /* Pods_Shock_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504237DD0DF4E81BD4C74B63 /* Pods_Shock_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
@@ -42,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		14739D0C25262B640031286B /* SocketServerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketServerTests.swift; sourceTree = "<group>"; };
 		2AF495106DF32828591B5E10 /* Pods-Shock_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shock_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Shock_Tests/Pods-Shock_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		2DEE7FFDC29CFACFFE3400E0 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		4A7A38CD9EF252172E5C9478 /* Pods-Shock_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shock_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Shock_Example/Pods-Shock_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				6D410ED5206D203D00A2D79D /* MethodTests.swift */,
 				6D9D7BBA25248ED7000FE60F /* ParallelServerTests.swift */,
 				607FACEB1AFB9204008FA782 /* RouteTests.swift */,
+				14739D0C25262B640031286B /* SocketServerTests.swift */,
 				6D10776E1FA9EB21006BB9C8 /* TemplatedRouteTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
@@ -376,10 +379,12 @@
 				"${BUILT_PRODUCTS_DIR}/CNIOSHA1/CNIOSHA1.framework",
 				"${BUILT_PRODUCTS_DIR}/GRMustache/GRMustache.framework",
 				"${BUILT_PRODUCTS_DIR}/JRSwizzle/JRSwizzle.framework",
+				"${BUILT_PRODUCTS_DIR}/JustLog/JustLog.framework",
 				"${BUILT_PRODUCTS_DIR}/Shock/Shock.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftNIO/NIO.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftNIOConcurrencyHelpers/NIOConcurrencyHelpers.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftNIOHTTP1/NIOHTTP1.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyBeaver/SwiftyBeaver.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -390,10 +395,12 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CNIOSHA1.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRMustache.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JRSwizzle.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JustLog.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Shock.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NIO.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NIOConcurrencyHelpers.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NIOHTTP1.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyBeaver.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -422,6 +429,7 @@
 				6D410ED6206D203D00A2D79D /* MethodTests.swift in Sources */,
 				CBF416CD230DE1F20087A914 /* ApiCallRequestDataTests.swift in Sources */,
 				6DE276E91F8761F300C9F194 /* HTTPClient.swift in Sources */,
+				14739D0D25262B640031286B /* SocketServerTests.swift in Sources */,
 				6D10776F1FA9EB21006BB9C8 /* TemplatedRouteTests.swift in Sources */,
 				607FACEC1AFB9204008FA782 /* RouteTests.swift in Sources */,
 			);

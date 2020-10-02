@@ -8,7 +8,9 @@
 import Foundation
 
 public enum MockSocketRoute {
-    case echo
+    public typealias LogStashEchoClosure = (String) -> Void
+    
+    case logStashEcho(LogStashEchoClosure)
     case collection(
         routes: [MockSocketRoute]
     )
