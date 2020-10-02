@@ -83,7 +83,7 @@ struct MockNIOHTTPRequest: MockHttpRequest {
 }
 
 extension String {
-    func pathMatchesStripingVariables(_ other: String) -> Bool {
+    func pathMatchesStrippingVariables(_ other: String) -> Bool {
         let parts = self.split(separator: "/")
         let otherParts = other.split(separator: "/")
         guard parts.count == otherParts.count else { return false }
