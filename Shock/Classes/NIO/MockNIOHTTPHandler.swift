@@ -134,6 +134,7 @@ extension MockNIOHTTPHandler: ChannelInboundHandler {
         case .body(buffer: var bytes):
             guard var handlerRequest = self.handlerRequest else { return }
             handlerRequest.body += bytes.readBytes(length: bytes.readableBytes) ?? []
+            self.handlerRequest = handlerRequest
         case .end(_):
             guard let request = self.httpRequest else { return }
             if
