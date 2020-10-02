@@ -74,11 +74,12 @@ class MockNIOHTTPHandler {
     private func handleResponse(_ response: MockHttpResponse, for request: HTTPRequestHead, in context: ChannelHandlerContext) {
         
         switch response {
-        case .raw(_, _, let customHeaders, let handler):
+        case .raw(let code, _, let customHeaders, let handler):
             guard let handler = handler else {
                 writeAndFlushInternalServerError(for: request, in: context)
                 break
             }
+            let status = HTTPResponseStatus(statusCode: code)
             let writer = MockNIOHTTPResponseBodyWriter()
             do {
                 try handler(writer)
@@ -89,10 +90,8 @@ class MockNIOHTTPHandler {
                         headers.add(name: name, value: value)
                     }
                 }
-                _ = context.write(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: .ok, headers: headers))))
-                if writer.contentLength > 0 {
-                    _ = context.writeAndFlush(self.wrapOutboundOut(.body(.byteBuffer(writer.buffer))), promise: nil)
-                }
+                _ = context.write(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: status, headers: headers))))
+                _ = context.writeAndFlush(self.wrapOutboundOut(.body(.byteBuffer(writer.buffer))), promise: nil)
             } catch {
                 writeAndFlushInternalServerError(for: request, in: context)
             }
