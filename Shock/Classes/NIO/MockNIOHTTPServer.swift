@@ -58,7 +58,7 @@ class MockNIOHTTPRouter: MockHttpRouter {
 }
 
 class MockNIOHTTPResponseBodyWriter: MockHttpResponseBodyWriter {
-    var buffer = ByteBuffer()
+    var buffer = ByteBuffer(bytes: [])
     var contentLength: Int {
         buffer.readableBytes
     }
