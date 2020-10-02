@@ -75,6 +75,33 @@ class MethodTests: XCTestCase {
         self.waitForExpectations(timeout: 2.0, handler: nil)
     }
     
+    func testPOSTRequestWithPOSTRequest() {
+        let route: MockHTTPRoute = .simple(method: .post,
+                                           urlPath: "/simple",
+                                           code: 200,
+                                           filename: "")
+        server.setup(route: route)
+        
+        let auth: MockHTTPRoute = .simple(method: .post,
+                                          urlPath: "/auth",
+                                          code: 200,
+                                          filename: "testSimpleRoute.txt")
+        server.setup(route: auth)
+        
+        let expectation = self.expectation(description: "Expect 200 response with response body")
+        
+        HTTPClient.post(url: "\(server.hostURL)/auth") { code, body, headers, error in
+            XCTAssertEqual(code, 200)
+            XCTAssertEqual(body, "testSimpleRoute test fixture\n")
+            HTTPClient.post(url: "\(self.server.hostURL)/simple") { code, body, headers, error in
+                XCTAssertEqual(code, 200)
+                XCTAssertEqual(body, "")
+                expectation.fulfill()
+            }
+        }
+        self.waitForExpectations(timeout: 2.0, handler: nil)
+    }
+    
     func testPUTRequest() {
         let route: MockHTTPRoute = .simple(method: .put,
                                            urlPath: "/simple",
