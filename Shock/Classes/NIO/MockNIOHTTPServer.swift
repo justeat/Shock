@@ -48,7 +48,7 @@ class MockNIOHTTPRouter: MockHttpRouter {
     func handlerForMethod(_ method: String, path: String) -> MockMethodRoute.HandlerClosure? {
         let methodRoutes = routes[method] ?? PathHandlerMapping()
         for (candidate, handler) in methodRoutes {
-            if candidate.pathMatchesStripingVariables(path) {
+            if candidate.pathMatchesStrippingVariables(path) {
                 return handler
             }
         }
