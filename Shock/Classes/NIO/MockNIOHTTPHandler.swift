@@ -91,9 +91,7 @@ class MockNIOHTTPHandler {
                     }
                 }
                 _ = context.write(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: status, headers: headers))))
-                if writer.contentLength > 0 {
-                    _ = context.writeAndFlush(self.wrapOutboundOut(.body(.byteBuffer(writer.buffer))), promise: nil)
-                }
+                _ = context.writeAndFlush(self.wrapOutboundOut(.body(.byteBuffer(writer.buffer))), promise: nil)
             } catch {
                 writeAndFlushInternalServerError(for: request, in: context)
             }
