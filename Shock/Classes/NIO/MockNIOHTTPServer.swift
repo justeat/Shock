@@ -15,7 +15,7 @@ class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
     private let router = MockNIOHTTPRouter()
     private let middlewareService = MiddlewareService()
 
-    var notFoundHandler: ((MockHttpRequest) -> MockHttpResponse)?
+    var notFoundHandler: HandlerClosure?
     var methodRoutes: [MockHTTPMethod: MockNIOHTTPMethodRoute] = [:]
     
     
@@ -53,10 +53,10 @@ struct MockNIOHTTPMethodRoute: MockMethodRoute {
 }
 
 class MockNIOHTTPRouter: MockHttpRouter {
-    typealias PathHandlerMapping = [String: MockMethodRoute.HandlerClosure]
+    typealias PathHandlerMapping = [String: HandlerClosure]
     private var routes = [String: PathHandlerMapping]()
     
-    func handlerForMethod(_ method: String, path: String) -> MockMethodRoute.HandlerClosure? {
+    func handlerForMethod(_ method: String, path: String) -> HandlerClosure? {
         let methodRoutes = routes[method] ?? PathHandlerMapping()
         for (candidate, handler) in methodRoutes {
             if candidate.pathMatchesStrippingVariables(path) {
@@ -66,7 +66,7 @@ class MockNIOHTTPRouter: MockHttpRouter {
         return nil
     }
     
-    func register(_ method: String, path: String, handler: MockMethodRoute.HandlerClosure?) {
+    func register(_ method: String, path: String, handler: HandlerClosure?) {
         var methodRoutes = routes[method] ?? PathHandlerMapping()
         methodRoutes[path] = handler
         routes[method] = methodRoutes

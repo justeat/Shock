@@ -17,7 +17,7 @@ public protocol MiddlewareRequestContext: MockHttpRequest {
     var params: [String : String] { get }
 }
 
-public protocol MiddlewareResponseContext {
+public protocol MiddlewareResponseContext: class {
     var statusCode: Int { get set }
     var headers: [String: String] { get set }
     var responseBody: Data? { get set }
@@ -55,7 +55,7 @@ class MiddlewareService {
         }
     }
     
-    private struct _MiddlewareResponseContext: MiddlewareResponseContext {
+    private class _MiddlewareResponseContext: MiddlewareResponseContext {
         var statusCode: Int = 0
         var headers: [String : String] = [:]
         var responseBody: Data? = nil

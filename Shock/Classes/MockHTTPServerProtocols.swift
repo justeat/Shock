@@ -7,12 +7,13 @@
 
 import Foundation
 
+typealias HandlerClosure = (MiddlewareResponseContext) -> Void
+
 protocol MockHttpRouter {
-    func register(_ method: String, path: String, handler: ((MockHttpRequest) -> MockHttpResponse)?)
+    func register(_ method: String, path: String, handler: HandlerClosure?)
 }
 
 protocol MockMethodRoute {
-    typealias HandlerClosure = (MockHttpRequest) -> MockHttpResponse
     var method: String { get }
     var router: MockHttpRouter { get }
 }
@@ -28,7 +29,7 @@ extension MockMethodRoute {
 
 protocol MockHttpServer {
     var methodRoutes: [MockHTTPMethod: MockNIOHTTPMethodRoute] { get }
-    var notFoundHandler: ((MockHttpRequest) -> MockHttpResponse)? { get set }
+    var notFoundHandler: HandlerClosure? { get set }
     func start(_ port: Int, forceIPv4: Bool, priority: DispatchQoS.QoSClass) throws -> Void
     func stop()
 }
