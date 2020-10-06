@@ -38,6 +38,20 @@ class RouteTests: XCTestCase {
         self.waitForExpectations(timeout: 2.0, handler: nil)
     }
     
+    func testSimpleRouteWithVariables() {
+        let route: MockHTTPRoute = .simple(method: .get, urlPath: "/simple/:foo", code: 200, filename: "testSimpleRoute.txt")
+        server.setup(route: route)
+        
+        let expectation = self.expectation(description: "Expect 200 response with response body")
+        
+        HTTPClient.get(url: "\(server.hostURL)/simple/1") { code, body, headers, error in
+            XCTAssertEqual(code, 200)
+            XCTAssertEqual(body, "testSimpleRoute test fixture\n")
+            expectation.fulfill()
+        }
+        self.waitForExpectations(timeout: 2.0, handler: nil)
+    }
+    
     func testRedirectRoute() {
         let route: MockHTTPRoute = .collection(routes: [
             .redirect(urlPath: "/redirect", destination: "/destination"),

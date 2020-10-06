@@ -58,7 +58,12 @@ class MockNIOHTTPRouter: MockHttpRouter {
     
     func handlerForMethod(_ method: String, path: String) -> MockMethodRoute.HandlerClosure? {
         let methodRoutes = routes[method] ?? PathHandlerMapping()
-        return methodRoutes[path]
+        for (candidate, handler) in methodRoutes {
+            if candidate.pathMatchesStrippingVariables(path) {
+                return handler
+            }
+        }
+        return nil
     }
     
     func register(_ method: String, path: String, handler: MockMethodRoute.HandlerClosure?) {
@@ -69,7 +74,7 @@ class MockNIOHTTPRouter: MockHttpRouter {
 }
 
 class MockNIOHTTPResponseBodyWriter: MockHttpResponseBodyWriter {
-    var buffer = ByteBuffer()
+    var buffer = ByteBuffer(bytes: [])
     var contentLength: Int {
         buffer.readableBytes
     }
@@ -86,4 +91,27 @@ struct MockNIOHTTPRequest: MockHttpRequest {
     var body: [UInt8]
     var address: String?
     var params: [String : String]
+}
+
+extension String {
+    func pathMatchesStrippingVariables(_ other: String) -> Bool {
+        let parts = self.split(separator: "/")
+        let otherParts = other.split(separator: "/")
+        guard parts.count == otherParts.count else { return false }
+        var match = true
+        for (index, part) in parts.enumerated() {
+            if part.hasPrefix(":") {
+                continue
+            }
+            let otherPart = otherParts[index]
+            if otherPart.hasPrefix(":") {
+                continue
+            }
+            match = part == otherPart
+            if !match {
+                break
+            }
+        }
+        return match
+    }
 }
