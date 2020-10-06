@@ -91,20 +91,17 @@ class MockNIOHTTPHandler {
         channelHandlerContext.writeAndFlush(outboundHeadData, promise: nil)
         
         // Write body
-        guard let _body = body else { return }
-        let buffer = ByteBuffer(bytes: _body)
-        let outboundBodyData = self.wrapOutboundOut(.body(.byteBuffer(buffer)))
-        channelHandlerContext.writeAndFlush(outboundBodyData, promise: nil)
+        if let body = body {
+            let buffer = ByteBuffer(bytes: body)
+            let outboundBodyData = self.wrapOutboundOut(.body(.byteBuffer(buffer)))
+            channelHandlerContext.writeAndFlush(outboundBodyData, promise: nil)
+        }
         
         completeResponse(channelHandlerContext, trailers: nil)
     }
     
     private func writeAndFlushHeaderResponse(status: HTTPResponseStatus, for request: HTTPRequestHead, in context: ChannelHandlerContext) {
         _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: status))))
-    }
-    
-    private func writeAndFlushInternalServerError(for request: HTTPRequestHead, in context: ChannelHandlerContext) {
-        writeAndFlushHeaderResponse(status: .internalServerError, for: request, in: context)
     }
 }
     

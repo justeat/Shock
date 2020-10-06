@@ -16,6 +16,7 @@ class RouteTests: XCTestCase {
     override func setUp() {
         super.setUp()
         server = MockServer(portRange: 9090...9099, bundle: Bundle(for: RouteTests.self))
+        server.shouldSendNotFoundForMissingRoutes = true
         server.start()
     }
     

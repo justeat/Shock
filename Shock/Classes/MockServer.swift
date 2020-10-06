@@ -84,9 +84,17 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
         loggingClosure?("SUCCESS: Closed server on port: \(selectedHTTPPort)")
     }
     
-    public func forceAllCallsToBeMocked() {
-        httpServer.notFoundHandler = { response in
-            response.statusCode = 404
+    /// Indicates whether a 404 status should be sent for requests that do
+    /// not have a matching route
+    public var shouldSendNotFoundForMissingRoutes: Bool {
+        get {
+            httpServer.notFoundHandler != nil            
+        }
+        set {
+            httpServer.notFoundHandler = { _, response in
+                response.statusCode = 404
+                response.responseBody = nil
+            }
         }
     }
     
@@ -98,12 +106,32 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
     
     public func setup(route: MockHTTPRoute) {
         
+        switch route {
+        case .collection(let routes):
+            routes.forEach { self.setup(route: $0) }
+            return
+        default:
+            break
+        }
+
+        
         guard let method = route.method, let path = route.urlPath else {
             self.loggingClosure?("ERROR: route was missing a field")
             return
         }
         
-        middleware.router.register(method.rawValue, path: path) { response in
+        middleware.router.register(method.rawValue, path: path) { request, response in
+            
+            if let expectedHeaders = route.requestHeaders, !request.headers.contains(expectedHeaders) {
+                self.httpServer.notFoundHandler?(request, response)
+                return
+            }
+            
+            let query = request.queryParams.reduce(into: [String: String]()) { $0[$1.0] = $1.1 }
+            if let expectedQuery = route.query, !query.contains(expectedQuery) {
+                self.httpServer.notFoundHandler?(request, response)
+                return
+            }
             
             switch route {
             case .redirect(_, let destination):
@@ -111,7 +139,7 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
                 response.headers["Location"] = destination
                 return
             case .timeout(_, _, let timeoutInSeconds):
-            sleep(UInt32(timeoutInSeconds))
+                sleep(UInt32(timeoutInSeconds))
                 return
             default:
                 break
@@ -168,4 +196,18 @@ public protocol CacheableRequest {
     var body: [UInt8] { get }
     var address: String? { get }
     var params: [String: String] { get }
+}
+
+fileprivate extension Dictionary where Key == String, Value == String {
+    
+    func contains(_ dictionary: [Key: Value], caseSensitive: Bool = true) -> Bool {
+        for (key, value) in dictionary {
+            var expectedValue = self[key] ?? self[key.lowercased()]
+            if expectedValue != value {
+                return false
+            }
+        }
+        return true
+    }
+    
 }

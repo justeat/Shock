@@ -68,34 +68,28 @@ class MiddlewareService {
     }
     
     private(set) var middleware: [Middleware] = []
-    
-    private var activeMiddleware: Middleware?
-    
+        
     private var context: MiddlewareContext?
     
-    private var isExecuting: Bool = false
-    
     func executeAll(forRequest request: MockNIOHTTPRequest) -> MiddlewareContext? {
-
-        guard !isExecuting else { return nil }
-        isExecuting = true
+        executeAll(forRequest: request, middleware: middleware)
+    }
+        
+    private func executeAll(forRequest request: MockNIOHTTPRequest, middleware: [Middleware]) -> MiddlewareContext? {
         
         let requestContext = _MiddlewareRequestContext(request: request)
         let responseContext = _MiddlewareResponseContext()
         
-        context = _MiddlewareContext(requestContext: requestContext,
-                                     responseContext: responseContext,
-                                     next: next)
-                
-        next()
+        let context = _MiddlewareContext(requestContext: requestContext,
+                                     responseContext: responseContext) { [self] in
+            if (middleware.count - 1) > 0 {
+                executeAll(forRequest: request, middleware: Array(middleware[1...]))
+            }
+        }
+        
+        middleware.first?.execute(withContext: context)
         
         return context
-    }
-    
-    private func next() {
-        guard middleware.count > 0, let context = context else { return }
-        activeMiddleware = middleware.removeFirst()
-        activeMiddleware?.execute(withContext: context)
     }
     
     func add(middleware mdl: Middleware) {
