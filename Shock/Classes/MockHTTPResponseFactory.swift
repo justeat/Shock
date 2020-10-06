@@ -9,7 +9,6 @@
 import Foundation
 #if canImport(GRMustache)
 import GRMustache
-fileprivate typealias Template = GRMustacheTemplate
 #elseif canImport(Mustache)
 import Mustache
 #endif

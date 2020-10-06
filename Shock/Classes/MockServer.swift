@@ -161,6 +161,10 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
         
     }
     
+    public func add(middleware: Middleware) {
+        httpServer.add(middleware: middleware)
+    }
+    
 }
 
 // MARK: Utils

@@ -44,5 +44,5 @@ enum MockHttpResponse {
     case internalServerError
 }
 
-protocol MockHttpRequest: CacheableRequest {}
+public protocol MockHttpRequest: CacheableRequest {}
 

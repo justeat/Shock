@@ -13,9 +13,11 @@ import NIOHTTP1
 class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
     
     private let router = MockNIOHTTPRouter()
-    
+    private let middlewareService = MiddlewareService()
+
     var notFoundHandler: ((MockHttpRequest) -> MockHttpResponse)?
     var methodRoutes: [MockHTTPMethod: MockNIOHTTPMethodRoute] = [:]
+    
     
     override init() {
         methodRoutes[.delete] = MockNIOHTTPMethodRoute(method: "DELETE", router: router)
@@ -30,9 +32,18 @@ class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
     func start(_ port: Int, forceIPv4: Bool, priority: DispatchQoS.QoSClass) throws -> Void {
         try start(port) { (channel) -> EventLoopFuture<Void> in
             channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
-                channel.pipeline.addHandler(MockNIOHTTPHandler(router: self.router))
+                channel.pipeline.addHandler(MockNIOHTTPHandler(router: self.router,
+                                                               middlewareService: self.middlewareService))
             }
         }
+    }
+    
+    func add(middleware: Middleware) {
+        middlewareService.add(middleware: middleware)
+    }
+    
+    func has<T>(middlewareOfType type: T.Type) -> Bool where T: Middleware {
+        return middlewareService.middleware.contains { $0 is T }
     }
 }
 
