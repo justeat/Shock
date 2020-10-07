@@ -11,15 +11,15 @@ A HTTP mocking framework written in Swift.
 
 ## Summary
 
-Shock lets you quickly and painlessly provided mock responses for web requests made by your iOS app.
+* 😎 **Painless API mocking**: Shock lets you quickly and painlessly provide mock responses for web requests made by your apps.
 
-This is particularly useful when writing both unit and UI tests where you often want to receive staged responses to allow reliable testing of all of your features.
+* 🧪 **Isolated mocking**: When used with UI tests, Shock runs its server within the UI test process and stores all its responses within the UI tests target - so there is no need to pollute your app target with lots of test data and logic.
 
-It also provides an alternative to hitting live APIs and avoids the uncertainty of receiving unexpected failures or response content as a result.
-
-When used with UI tests, Shock runs its server within the UI test process and stores all its responses within the UI tests target - so there is no need to pollute your app target with lots of test data and logic.
+* ⭐️ **Shock now supports parallel UI testing!**: Shock can run isolated servers in parallel test processes. See below for more details!
 
 ## Installation
+
+### cocoapods
 
 Add the following to your podfile:
 
@@ -29,7 +29,11 @@ pod 'Shock', '~> x.y.z'
 
 You can find the latest version on [cocoapods.org](http://cocoapods.org/pods/Shock)
 
-## How does it work?
+### SPM
+
+Copy the URL for this repo, and add the package in your project settings.
+
+## Mocking HTTP Requests
 
 Shock aims to provide a simple interface for setting up your mocks.
 
@@ -79,15 +83,6 @@ if isRunningUITests {
     apiConfiguration.setHostname("http://localhost:6789/")
 }
 ```
-
-## Shock Route Tester
-
-<p align="center">
-    <img src="./assets/example-app.png" alt="Example app screenshot" />
-<p>
-
-The Shock Route Tester example app lets you try out the different route types.
-Edit the `MyRoutes.swift` file to add your own and test them in the app.
 
 ## Route types
 
@@ -183,7 +178,7 @@ let collectionRoute: MockHTTPRoute = .collection(routes: [ firstRoute, secondRou
 
 ### Timeout Route
 
-A timeout route is useful for testing client timeout code paths. 
+A timeout route is useful for testing client timeout code paths.
 It simply waits a configurable amount of seconds (defaulting to 120 seconds).
 **Note** if you do specify your own timeout, please make sure it exceeds your
 client's timeout.
@@ -200,10 +195,54 @@ let route: MockHTTPRoute = .timeout(method: .get, urlPath: "/timeouttest", timeo
 In some case you might prefer to have all the calls to be mocked so that the tests can reliably run without internet connection. You can force this behaviour like so:
 
 ```
-server.forceAllCallsToBeMocked()
+server.shouldSendNotFoundForMissingRoutes = true
 ```
 
-Your tests will hit an assert if any call wasn't mocked.
+This will send a 404 status code with an empty response body for any unrecognised paths.
+
+## Middleware
+
+Shock now support middleware! Middleware lets you use custom logic to handle a given request.
+
+* 🤝 Middleware can be used with or without mock routes.
+* ⛓ Middleware is chainable with the first middleware added receiving the context first,
+passing it to the next, and so on
+
+### ClosureMiddleware
+
+The simplest way to use middleware is to add an instance of ClosureMiddleware to the server. For example:
+
+```swift
+let myMiddleware = ClosureMiddleware { request, response, next in
+  if request.headers["X-Question"] == "Can I have a cup of tea?" {
+      response.headers["X-Answer"] = "Yes, you can!"
+  }
+}
+mockServer.add(middleware: myMiddleware)
+```
+
+The above will look for a request header named `X-Question` and, if it is present with the
+expected value, it will send back an answer in the 'X-Answer' response header.
+
+### Using Mock Routes and Middleware Together
+
+Mock routes and middleware work fine together but there are a few things worth bearing in mind:
+
+1. Mock routes is managed by are managed by a single middleware
+2. This middleware will be added to the existing stack of middlewares _when the first mock route is added to the server_.
+
+For middleware such as the example above, the order of middleware won't matter. However, if you
+are making changes to a part of the response that was already set by the mock routes middleware,
+you may get unexpected results!
+
+## Shock Route Tester
+
+<p align="center">
+    <img src="./assets/example-app.png" alt="Example app screenshot" />
+<p>
+
+The Shock Route Tester example app lets you try out the different route types.
+Edit the `MyRoutes.swift` file to add your own and test them in the app.
 
 ## License
 
