@@ -73,16 +73,6 @@ class MockNIOHTTPRouter: MockHttpRouter {
     }
 }
 
-class MockNIOHTTPResponseBodyWriter: MockHttpResponseBodyWriter {
-    var buffer = ByteBuffer(bytes: [])
-    var contentLength: Int {
-        buffer.readableBytes
-    }
-    func write(_ data: Data) throws {
-        buffer = ByteBuffer(bytes: data)
-    }
-}
-
 struct MockNIOHTTPRequest: MockHttpRequest {
     var path: String
     var queryParams: [(String, String)]

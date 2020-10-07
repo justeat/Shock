@@ -34,16 +34,5 @@ protocol MockHttpServer {
     func stop()
 }
 
-protocol MockHttpResponseBodyWriter {
-    func write(_ data: Data) throws
-}
-
-enum MockHttpResponse {
-    case raw(Int, String, [String: String]?, ((MockHttpResponseBodyWriter) throws -> Void)?)
-    case movedPermanently(String)
-    case notFound
-    case internalServerError
-}
-
 public protocol MockHttpRequest: CacheableRequest {}
 
