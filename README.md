@@ -88,7 +88,7 @@ if isRunningUITests {
 }
 ```
 
-**Note:** 👉 The easiest way to pass arguments from your test cases to the app is to
+**Note:** 👉 The easiest way to pass arguments from your test cases to your running app is to
 use another of our wonderful open-source libraries: [AutomationTools](https://github.com/justeat/AutomationTools/)
 
 ## Route types
@@ -244,18 +244,18 @@ you may get unexpected results!
 
 ## Socket Server
 
-Shock can now host a socket server in addition to the HTTP server. This is useful for cases where you need to mock 
+Shock can now host a socket server in addition to the HTTP server. This is useful for cases where you need to mock
 HTTP requests and a socket server. The Socket server uses familiar terminology to the HTTP server, so it has inherited
-the term "route" to refer to a type of socket data handler. The API is similar to the HTTP API in that you need to create a 
+the term "route" to refer to a type of socket data handler. The API is similar to the HTTP API in that you need to create a
 `MockServerRoute`, call `setupSocket` with the route and when server `start` is called a socket will be setup with
-your route (assuming at least one route is registered). 
+your route (assuming at least one route is registered).
 
 If no `MockServerRoute`s are setup, the socket server is not started.
 
 ### Prerequisites
 
-The socket server can only be hosted in addition to the HTTP server, as such Shock will need a port range of 
-at least two ports, using the `init` method that takes a range. 
+The socket server can only be hosted in addition to the HTTP server, as such Shock will need a port range of
+at least two ports, using the `init` method that takes a range.
 
 ```swift
 let range: ClosedRange<Int> = 10000...10010
