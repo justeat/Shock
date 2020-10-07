@@ -17,6 +17,8 @@ A HTTP mocking framework written in Swift.
 
 * ⭐️ **Shock now supports parallel UI testing!**: Shock can run isolated servers in parallel test processes. See below for more details!
 
+* 🔌 **Shock can now host a basic socket**: In addition to an HTTP server, Shock can also host a socket server for a variety of testing tasks. See below for more details!
+
 ## Installation
 
 ### cocoapods
@@ -234,6 +236,56 @@ Mock routes and middleware work fine together but there are a few things worth b
 For middleware such as the example above, the order of middleware won't matter. However, if you
 are making changes to a part of the response that was already set by the mock routes middleware,
 you may get unexpected results!
+
+## Socket Server
+
+Shock can now host a socket server in addition to the HTTP server. This is useful for cases where you need to mock 
+HTTP requests and a socket server. The Socket server uses familiar terminology to the HTTP server, so it has inherited
+the term "route" to refer to a type of socket data handler. The API is similar to the HTTP API in that you need to create a 
+`MockServerRoute`, call `setupSocket` with the route and when server `start` is called a socket will be setup with
+your route (assuming at least one route is registered). 
+
+If no `MockServerRoute`s are setup, the socket server is not started.
+
+### Prerequisites
+
+The socket server can only be hosted in addition to the HTTP server, as such Shock will need a port range of 
+at least two ports, using the `init` method that takes a range. 
+
+```swift
+let range: ClosedRange<Int> = 10000...10010
+let server = MockServer(portRange: range, bundle: ...)
+```
+
+### Available routes
+
+There is only one route currently available for the socket server and that is `logStashEcho`. This route will setup a socket
+that accepts messages being logged to [Logstash](https://www.elastic.co/logstash) and echo them back as strings.
+
+Here is an example of using `logStashEcho` with our [JustTrack](https://github.com/justeat/JustTrack) framework.
+
+```swift
+import JustLog
+import Shock
+
+let server = MockServer(portRange: 9090...9099, bundle: ...)
+let route = MockSocketRoute.logStashEcho { (log) in
+    print("Received \(log)"
+}
+server.setupSocket(route: route)
+server.start()
+
+let logger = Logger.shared
+logger.logstashHost = "localhost"
+logger.logstashPort = UInt16(server.selectedSocketPort)
+logger.enableLogstashLogging = true
+logger.allowUntrustedServer = true
+logger.setup()
+
+logger.info("Hello world!")
+```
+
+It's worth noting that Shock is an untrusted server, so the `logger.allowUntrustedServer = true` is necessary.
 
 ## Shock Route Tester
 
