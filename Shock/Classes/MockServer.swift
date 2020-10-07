@@ -20,7 +20,14 @@ public class MockServer {
     private var httpServer = MockNIOHttpServer()
     private var socketServer: MockNIOSocketServer?
     
-    private let responseFactory: MockHTTPResponseFactory
+    private let responseFactory: ResponseFactory
+    
+    private lazy var middleware: MockRoutesMiddleware = {
+        let middleware = MockRoutesMiddleware(router: MockNIOHTTPRouter(),
+                                              responseFactory: responseFactory)
+        httpServer.add(middleware: middleware)
+        return middleware
+    }()
     
     public var onRequestReceived: ((MockHTTPRoute, CacheableRequest) -> Void)?
     
@@ -35,7 +42,7 @@ public class MockServer {
     
     public init(portRange: ClosedRange<Int>, bundle: Bundle = Bundle.main) {
         self.portRange = portRange
-        self.responseFactory = MockHTTPResponseFactory(bundle: bundle)
+        self.responseFactory = ResponseFactory(bundle: bundle)
     }
     
     // MARK: Server managements
@@ -77,10 +84,17 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
         loggingClosure?("SUCCESS: Closed server on port: \(selectedHTTPPort)")
     }
     
-    public func forceAllCallsToBeMocked() {
-        httpServer.notFoundHandler = { request in
-            assertionFailure("Not handled: \(request.method) \(request.path)")
-            return .internalServerError
+    /// Indicates whether a 404 status should be sent for requests that do
+    /// not have a matching route
+    public var shouldSendNotFoundForMissingRoutes: Bool {
+        get {
+            httpServer.notFoundHandler != nil            
+        }
+        set {
+            httpServer.notFoundHandler = { _, response in
+                response.statusCode = 404
+                response.responseBody = nil
+            }
         }
     }
     
@@ -92,65 +106,61 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
     
     public func setup(route: MockHTTPRoute) {
         
-        let response: MockHttpResponse
-        
         switch route {
-        case .simple(let method, let urlPath, let code, let jsonFilename):
-            response = responseFactory.makeResponse(urlPath: urlPath,
-                                                    jsonFilename: jsonFilename,
-                                                    method: method.rawValue,
-                                                    code: code)
-        case .custom(let method, let urlPath, _, _, let responseHeaders, let code, let jsonFilename):
-            response = responseFactory.makeResponse(urlPath: urlPath,
-                                                    jsonFilename: jsonFilename,
-                                                    method: method.rawValue,
-                                                    code: code,
-                                                    headers: responseHeaders)
-        case .template(let method, let urlPath, let code, let jsonFileName, let data):
-            response = responseFactory.makeResponse(urlPath: urlPath,
-                                                    templateFilename: jsonFileName,
-                                                    data: data,
-                                                    method: method.rawValue,
-                                                    code: code)
-        case .redirect(let urlPath, let destination):
-            response = responseFactory.makeResponse(urlPath: urlPath, destination: destination)
         case .collection(let routes):
             routes.forEach { self.setup(route: $0) }
             return
-        case .timeout(let method, let urlPath, let timeoutInSeconds):
-            response = responseFactory.makeResponse(urlPath: urlPath, method: method.rawValue, timeout: timeoutInSeconds)
+        default:
+            break
+        }
+
+        
+        guard let method = route.method, let path = route.urlPath else {
+            self.loggingClosure?("ERROR: route was missing a field")
+            return
         }
         
-        if let urlPath = route.urlPath, let method = route.method {
+        middleware.router.register(method.rawValue, path: path) { request, response in
             
-            guard var router = httpServer.methodRoutes[method] else {
-                self.loggingClosure?("ERROR: couldn't find method route for \(method)")
+            if let expectedHeaders = route.requestHeaders, !request.headers.contains(expectedHeaders) {
+                self.httpServer.notFoundHandler?(request, response)
                 return
             }
             
-            router[urlPath] = { request in
-                assert(method == route.method)
-                
-                // API Request data can be accessible by the testcase
-                self.onRequestReceived?(route, request)
-                
-                if let headers = route.requestHeaders {
-                    let match = headers.map({ request.headers[$0.key.lowercased()] == $0.value }).reduce(true, { $0 && $1 })
-                    if !match {
-                        return .notFound
-                    }
-                }
-                
-                if let routeDict = route.query {
-                    if dictionary(from: request.queryParams) != routeDict {
-                        return .notFound
-                    }
-                }
-                
-                self.loggingClosure?("Executing request for route: \(request.method) \(request.path)")
-                return response
+            let query = request.queryParams.reduce(into: [String: String]()) { $0[$1.0] = $1.1 }
+            if let expectedQuery = route.query, !query.contains(expectedQuery) {
+                self.httpServer.notFoundHandler?(request, response)
+                return
             }
+            
+            switch route {
+            case .redirect(_, let destination):
+                response.statusCode = 301
+                response.headers["Location"] = destination
+                return
+            case .timeout(_, _, let timeoutInSeconds):
+                sleep(UInt32(timeoutInSeconds))
+                return
+            default:
+                break
+            }
+            
+            response.statusCode = route.statusCode ?? 0
+            route.responseHeaders?.map { response.headers[$0.key] = $0.value }
+            
+            var data: Data?
+            
+            if let filename = route.filename {
+                if let templateInfo = route.templateInfo {
+                    data = self.responseFactory.response(withTemplateFileName: filename, data: templateInfo)
+                } else {
+                    data = self.responseFactory.response(fromFileNamed: filename)
+                }
+            }
+            
+            response.responseBody = data
         }
+        
     }
     
     public func setupSocket(route: MockSocketRoute) {
@@ -162,6 +172,10 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
         socketServer.loggingClosure = loggingClosure
         socketServer.socketDataHandler = MockSocketResponseFactory().responseFromRoute(route: route)
         self.socketServer = socketServer
+    }
+    
+    public func add(middleware: Middleware) {
+        httpServer.add(middleware: middleware)
     }
     
 }
@@ -182,4 +196,18 @@ public protocol CacheableRequest {
     var body: [UInt8] { get }
     var address: String? { get }
     var params: [String: String] { get }
+}
+
+fileprivate extension Dictionary where Key == String, Value == String {
+    
+    func contains(_ dictionary: [Key: Value], caseSensitive: Bool = true) -> Bool {
+        for (key, value) in dictionary {
+            var expectedValue = self[key] ?? self[key.lowercased()]
+            if expectedValue != value {
+                return false
+            }
+        }
+        return true
+    }
+    
 }

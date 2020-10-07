@@ -8,21 +8,9 @@
 
 import XCTest
 import JustLog
-@testable import Shock
+import Shock
 
-class SocketServerTests: XCTestCase {
-    
-    var server: MockServer!
-    
-    override func setUp() {
-        super.setUp()
-        server = MockServer(portRange: 9090...9099, bundle: Bundle(for: SocketServerTests.self))
-    }
-    
-    override func tearDown() {
-        server.stop()
-        super.tearDown()
-    }
+class SocketServerTests: ShockTestCase {
     
     func testFakeLogstash() {
         let expectation = self.expectation(description: "Expect log echo'd back")

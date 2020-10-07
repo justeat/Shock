@@ -7,22 +7,9 @@
 //
 
 import XCTest
-@testable import Shock
+import Shock
 
-class MethodTests: XCTestCase {
-    
-    var server: MockServer!
-    
-    override func setUp() {
-        super.setUp()
-        server = MockServer(portRange: 9090...9099, bundle: Bundle(for: MethodTests.self))
-        server.start()
-    }
-    
-    override func tearDown() {
-        server.stop()
-        super.tearDown()
-    }
+class MethodTests: ShockTestCase {
     
     func testGETRequest() {
         let route: MockHTTPRoute = .simple(method: .get,

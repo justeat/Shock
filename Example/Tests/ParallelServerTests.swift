@@ -12,7 +12,7 @@ import Shock
 class ParallelServerTests: XCTestCase {
 
     func testParallelServerPortAssignment() throws {
-        let range: ClosedRange<Int> = 9090...9099
+        let range: ClosedRange<Int> = 10000...10010
         
         var servers: [MockServer] = []
         
@@ -23,7 +23,7 @@ class ParallelServerTests: XCTestCase {
         }
         
         servers.enumerated().forEach { index, server in
-            let port = 9090 + index
+            let port = range.lowerBound + index
             XCTAssertEqual(server.selectedHTTPPort, port)
             server.stop()
         }

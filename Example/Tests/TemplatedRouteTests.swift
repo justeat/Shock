@@ -9,20 +9,7 @@
 import XCTest
 @testable import Shock
 
-class TemplatedRouteTests: XCTestCase {
-    
-    var server: MockServer!
-    
-    override func setUp() {
-        super.setUp()
-        server = MockServer(portRange: 9090...9099, bundle: Bundle(for: TemplatedRouteTests.self))
-        server.start()
-    }
-    
-    override func tearDown() {
-        server.stop()
-        super.tearDown()
-    }
+class TemplatedRouteTests: ShockTestCase {
     
     func testTemplatedRoute() {
         let route: MockHTTPRoute = .template(method: .get,

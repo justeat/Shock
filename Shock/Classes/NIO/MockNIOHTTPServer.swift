@@ -13,9 +13,11 @@ import NIOHTTP1
 class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
     
     private let router = MockNIOHTTPRouter()
-    
-    var notFoundHandler: ((MockHttpRequest) -> MockHttpResponse)?
+    private let middlewareService = MiddlewareService()
+
+    var notFoundHandler: HandlerClosure?
     var methodRoutes: [MockHTTPMethod: MockNIOHTTPMethodRoute] = [:]
+    
     
     override init() {
         methodRoutes[.delete] = MockNIOHTTPMethodRoute(method: "DELETE", router: router)
@@ -30,9 +32,18 @@ class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
     func start(_ port: Int, forceIPv4: Bool, priority: DispatchQoS.QoSClass) throws -> Void {
         try start(port) { (channel) -> EventLoopFuture<Void> in
             channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
-                channel.pipeline.addHandler(MockNIOHTTPHandler(router: self.router))
+                channel.pipeline.addHandler(MockNIOHTTPHandler(router: self.router,
+                                                               middlewareService: self.middlewareService))
             }
         }
+    }
+    
+    func add(middleware: Middleware) {
+        middlewareService.add(middleware: middleware)
+    }
+    
+    func has<T>(middlewareOfType type: T.Type) -> Bool where T: Middleware {
+        return middlewareService.middleware.contains { $0 is T }
     }
 }
 
@@ -42,10 +53,10 @@ struct MockNIOHTTPMethodRoute: MockMethodRoute {
 }
 
 class MockNIOHTTPRouter: MockHttpRouter {
-    typealias PathHandlerMapping = [String: MockMethodRoute.HandlerClosure]
+    typealias PathHandlerMapping = [String: HandlerClosure]
     private var routes = [String: PathHandlerMapping]()
     
-    func handlerForMethod(_ method: String, path: String) -> MockMethodRoute.HandlerClosure? {
+    func handlerForMethod(_ method: String, path: String) -> HandlerClosure? {
         let methodRoutes = routes[method] ?? PathHandlerMapping()
         for (candidate, handler) in methodRoutes {
             if candidate.pathMatchesStrippingVariables(path) {
@@ -55,20 +66,10 @@ class MockNIOHTTPRouter: MockHttpRouter {
         return nil
     }
     
-    func register(_ method: String, path: String, handler: MockMethodRoute.HandlerClosure?) {
+    func register(_ method: String, path: String, handler: HandlerClosure?) {
         var methodRoutes = routes[method] ?? PathHandlerMapping()
         methodRoutes[path] = handler
         routes[method] = methodRoutes
-    }
-}
-
-class MockNIOHTTPResponseBodyWriter: MockHttpResponseBodyWriter {
-    var buffer = ByteBuffer(bytes: [])
-    var contentLength: Int {
-        buffer.readableBytes
-    }
-    func write(_ data: Data) throws {
-        buffer = ByteBuffer(bytes: data)
     }
 }
 

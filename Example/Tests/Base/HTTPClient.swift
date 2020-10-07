@@ -41,7 +41,7 @@ class HTTPClient {
         headers.forEach { request.addValue($0.value, forHTTPHeaderField: $0.key) }
         let task = session.dataTask(with: request) { data, response, error in
             if let error = error {
-                completion(500, "", [:], error)
+                completion(0, "", [:], error)
             } else {
                 let response = response as! HTTPURLResponse
                 completion(response.statusCode, String(data: data!, encoding: .utf8)!, response.allHeaderFields as! [String: String], error)
