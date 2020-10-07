@@ -75,16 +75,21 @@ class HappyPathTests: XCTestCase {
 
 Bear in mind that you will need to replace your API endpoint hostname with 'localhost' and the port you specify in the setup method during test runs.
 
-e.g. ```https://localhost:6789/my/api/endpoint```
+e.g. ```https://localhost:{PORT}/my/api/endpoint```
 
 In the case or UI tests, this is most quickly accomplished by passing a launch argument to your app that indicates which endpoint to use. For example:
 
 ```swift
-let isRunningUITests = ProcessInfo.processInfo.arguments.contains("UITests")
+let args = ProcessInfo.processInfo.arguments
+let isRunningUITests = args.contains("UITests")
+let port = args["MockServerPort"]
 if isRunningUITests {
-    apiConfiguration.setHostname("http://localhost:6789/")
+    apiConfiguration.setHostname("http://localhost:\(port)/")
 }
 ```
+
+**Note:** 👉 The easiest way to pass arguments from your test cases to the app is to
+use another of our wonderful open-source libraries: [AutomationTools](https://github.com/justeat/AutomationTools/)
 
 ## Route types
 
