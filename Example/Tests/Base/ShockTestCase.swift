@@ -3,7 +3,7 @@
 //  Shock_Tests
 //
 //  Created by Jack Newcombe on 07/10/2020.
-//  Copyright © 2020 CocoaPods. All rights reserved.
+//  Copyright © 2018 Just Eat. All rights reserved.
 //
 
 import XCTest
