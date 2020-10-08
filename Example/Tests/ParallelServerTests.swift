@@ -27,7 +27,5 @@ class ParallelServerTests: XCTestCase {
             XCTAssertEqual(server.selectedHTTPPort, port)
             server.stop()
         }
-        
     }
-
 }
