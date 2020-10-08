@@ -224,6 +224,7 @@ let myMiddleware = ClosureMiddleware { request, response, next in
   if request.headers["X-Question"] == "Can I have a cup of tea?" {
       response.headers["X-Answer"] = "Yes, you can!"
   }
+  next()
 }
 mockServer.add(middleware: myMiddleware)
 ```
