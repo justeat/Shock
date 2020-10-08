@@ -21,7 +21,7 @@ A HTTP mocking framework written in Swift.
 
 ## Installation
 
-### cocoapods
+### CocoaPods
 
 Add the following to your podfile:
 
