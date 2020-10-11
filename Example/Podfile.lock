@@ -9,7 +9,7 @@ PODS:
   - JRSwizzle (1.0)
   - JustLog (3.1.3):
     - SwiftyBeaver (~> 1.9.1)
-  - Shock (4.0.1):
+  - Shock (5.0.0):
     - GRMustache (~> 7.3.2)
     - SwiftNIOHTTP1 (~> 2.22.1)
   - SwiftNIO (2.22.1):
@@ -58,7 +58,7 @@ SPEC CHECKSUMS:
   GRMustache: ebe6104fd30a6d22c1f36af131e19e2dbf7cd292
   JRSwizzle: dd5ead5d913a0f29e7f558200165849f006bb1e3
   JustLog: c1b12fe8fc6a7c22cc31dd874fe7776eaa7089d2
-  Shock: 30201f93aa26f3d24f719d3c445eba167822d67a
+  Shock: b8060b0dcc03094a433083ed6e44199f1a2b2747
   SwiftNIO: 763188229de166e046cc8975383cca388832e992
   SwiftNIOConcurrencyHelpers: 34d2e9d4d2b7886fa765086e845e6b19417be927
   SwiftNIOHTTP1: c0a9ce48ba256f349af4f09648a0e0939b11a65c
