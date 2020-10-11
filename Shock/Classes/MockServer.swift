@@ -11,117 +11,171 @@
 // swiftlint:disable force_try
 
 import Foundation
-import Swifter
 
 public class MockServer {
     
-    private let port: Int
+    /// The range in which to find a free port on which to launch the server
+    private let portRange: ClosedRange<Int>
     
-    private let server = HttpServer()
+    private var httpServer = MockNIOHttpServer()
+    private var socketServer: MockNIOSocketServer?
     
-    private let responseFactory: MockHTTPResponseFactory
+    private let responseFactory: ResponseFactory
+    
+    private lazy var middleware: MockRoutesMiddleware = {
+        let middleware = MockRoutesMiddleware(router: MockNIOHTTPRouter(),
+                                              responseFactory: responseFactory)
+        httpServer.add(middleware: middleware)
+        return middleware
+    }()
     
     public var onRequestReceived: ((MockHTTPRoute, CacheableRequest) -> Void)?
     
-    public init(port: Int = 9000, bundle: Bundle = Bundle.main) {
-        self.port = port
-        self.responseFactory = MockHTTPResponseFactory(bundle: bundle)
+    public var selectedHTTPPort = 0
+    public var selectedSocketPort = 0
+    
+    public var loggingClosure: ((String?) -> Void)?
+    
+    public convenience init(port: Int = 9000, bundle: Bundle = Bundle.main) {
+        self.init(portRange: port...port, bundle: bundle)
+    }
+    
+    public init(portRange: ClosedRange<Int>, bundle: Bundle = Bundle.main) {
+        self.portRange = portRange
+        self.responseFactory = ResponseFactory(bundle: bundle)
     }
     
     // MARK: Server managements
     
     public func start(priority: DispatchQoS.QoSClass = .default) {
-        try! server.start(UInt16(port), forceIPv4: true, priority: priority)
+        var httpStarted = false
+        let socketServerRequired = socketServer != nil
+        var socketStarted = false
+        for i in portRange {
+            let proposedPort = i
+            do {
+                if !httpStarted {
+                    try httpServer.start(proposedPort, forceIPv4: true, priority: priority)
+                    selectedHTTPPort = proposedPort
+                    httpStarted = true
+                    loggingClosure?("SUCCESS: Opened HTTP server on port: \(i)")
+                } else if !socketStarted && socketServerRequired {
+                    try socketServer?.start(proposedPort)
+                    selectedSocketPort = proposedPort
+                    socketStarted = true
+                    loggingClosure?("SUCCESS: Opened Socket server on port: \(i)")
+                }
+                if httpStarted && (socketStarted || !socketServerRequired) {
+                    return
+                }
+            } catch _ {
+                loggingClosure?("NOTE: Failed to open server on port: \(i), \(portRange.upperBound - i) remaining")
+                continue
+            }
+        }
+        loggingClosure?("""
+ERROR: Failed to open server on port in range \(portRange.upperBound)...\(portRange.lowerBound).
+Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
+""")
     }
     
     public func stop() {
-        server.stop()
+        httpServer.stop()
+        loggingClosure?("SUCCESS: Closed server on port: \(selectedHTTPPort)")
     }
     
-    public func forceAllCallsToBeMocked() {
-        server.notFoundHandler = { request in
-            assertionFailure("Not handled: \(request.method) \(request.path)")
-            return .internalServerError
+    /// Indicates whether a 404 status should be sent for requests that do
+    /// not have a matching route
+    public var shouldSendNotFoundForMissingRoutes: Bool {
+        get {
+            httpServer.notFoundHandler != nil            
+        }
+        set {
+            httpServer.notFoundHandler = { _, response in
+                response.statusCode = 404
+                response.responseBody = nil
+            }
         }
     }
     
     public var hostURL: String {
-        return "http://localhost:\(port)"
+        return "http://localhost:\(selectedHTTPPort)"
     }
     
     // MARK: Mock setup
     
     public func setup(route: MockHTTPRoute) {
         
-        let response: HttpResponse
-        
         switch route {
-        case .simple(let method, let urlPath, let code, let jsonFilename):
-            response = responseFactory.makeResponse(urlPath: urlPath,
-                                                    jsonFilename: jsonFilename,
-                                                    method: method.rawValue,
-                                                    code: code)
-        case .custom(let method, let urlPath, _, _, let responseHeaders, let code, let jsonFilename):
-            response = responseFactory.makeResponse(urlPath: urlPath,
-                                                    jsonFilename: jsonFilename,
-                                                    method: method.rawValue,
-                                                    code: code,
-                                                    headers: responseHeaders)
-        case .template(let method, let urlPath, let code, let jsonFileName, let data):
-            response = responseFactory.makeResponse(urlPath: urlPath,
-                                                    templateFilename: jsonFileName,
-                                                    data: data,
-                                                    method: method.rawValue,
-                                                    code: code)
-        case .redirect(let urlPath, let destination):
-            response = responseFactory.makeResponse(urlPath: urlPath, destination: destination)
         case .collection(let routes):
             routes.forEach { self.setup(route: $0) }
             return
-        case .timeout(let method, let urlPath, let timeoutInSeconds):
-            response = responseFactory.makeResponse(urlPath: urlPath, method: method.rawValue, timeout: timeoutInSeconds)
+        default:
+            break
+        }
+
+        
+        guard let method = route.method, let path = route.urlPath else {
+            self.loggingClosure?("ERROR: route was missing a field")
+            return
         }
         
-        if let urlPath = route.urlPath, let method = route.method {
+        middleware.router.register(method.rawValue, path: path) { request, response in
             
-            var router = httpServerMethod(for: method)
-            
-            router[urlPath] = { request in
-                assert(method == route.method)
-                
-                // API Request data can be accessible by the testcase
-                self.onRequestReceived?(route, request)
-                
-                if let headers = route.requestHeaders {
-                    let match = headers.map({ request.headers[$0.key.lowercased()] == $0.value }).reduce(true, { $0 && $1 })
-                    if !match {
-                        return .notFound
-                    }
-                }
-                
-                if let routeDict = route.query {
-                    if dictionary(from: request.queryParams) != routeDict {
-                        return .notFound
-                    }
-                }
-                
-                print("Executing request for route: \(request.method) \(request.path)")
-                return response
+            if let expectedHeaders = route.requestHeaders, !request.headers.contains(expectedHeaders) {
+                self.httpServer.notFoundHandler?(request, response)
+                return
             }
+            
+            let query = request.queryParams.reduce(into: [String: String]()) { $0[$1.0] = $1.1 }
+            if let expectedQuery = route.query, !query.contains(expectedQuery) {
+                self.httpServer.notFoundHandler?(request, response)
+                return
+            }
+            
+            switch route {
+            case .redirect(_, let destination):
+                response.statusCode = 301
+                response.headers["Location"] = destination
+                return
+            case .timeout(_, _, let timeoutInSeconds):
+                sleep(UInt32(timeoutInSeconds))
+                return
+            default:
+                break
+            }
+            
+            response.statusCode = route.statusCode ?? 0
+            route.responseHeaders?.map { response.headers[$0.key] = $0.value }
+            
+            var data: Data?
+            
+            if let filename = route.filename {
+                if let templateInfo = route.templateInfo {
+                    data = self.responseFactory.response(withTemplateFileName: filename, data: templateInfo)
+                } else {
+                    data = self.responseFactory.response(fromFileNamed: filename)
+                }
+            }
+            
+            response.responseBody = data
         }
+        
     }
     
-    // MARK: Utils
-    
-    private func httpServerMethod(for method: MockHTTPMethod) -> HttpServer.MethodRoute {
-        switch method {
-        case .get:      return server.GET
-        case .head:     return server.HEAD
-        case .post:     return server.POST
-        case .put:      return server.PUT
-        case .patch:    return server.PATCH
-        case .delete:   return server.DELETE
+    public func setupSocket(route: MockSocketRoute) {
+        guard selectedSocketPort == 0 else {
+            self.loggingClosure?("Server socket already running")
+            return
         }
+        let socketServer = MockNIOSocketServer()
+        socketServer.loggingClosure = loggingClosure
+        socketServer.socketDataHandler = MockSocketResponseFactory().responseFromRoute(route: route)
+        self.socketServer = socketServer
+    }
+    
+    public func add(middleware: Middleware) {
+        httpServer.add(middleware: middleware)
     }
     
 }
@@ -144,4 +198,16 @@ public protocol CacheableRequest {
     var params: [String: String] { get }
 }
 
-extension HttpRequest: CacheableRequest {}
+fileprivate extension Dictionary where Key == String, Value == String {
+    
+    func contains(_ dictionary: [Key: Value], caseSensitive: Bool = true) -> Bool {
+        for (key, value) in dictionary {
+            var expectedValue = self[key] ?? self[key.lowercased()]
+            if expectedValue != value {
+                return false
+            }
+        }
+        return true
+    }
+    
+}

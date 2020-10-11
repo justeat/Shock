@@ -7,23 +7,9 @@
 //
 
 import XCTest
-@testable import Shock
+import Shock
 
-class CustomRouteTests: XCTestCase {
-    
-    var server: MockServer!
-    let timeout: TimeInterval = 2.0
-    
-    override func setUp() {
-        super.setUp()
-        server = MockServer(port: 9090, bundle: Bundle(for: Tests.self))
-        server.start()
-    }
-    
-    override func tearDown() {
-        server.stop()
-        super.tearDown()
-    }
+class CustomRouteTests: ShockTestCase {
     
     func testCustomRoute() {
         let route: MockHTTPRoute = .custom(method: .get,

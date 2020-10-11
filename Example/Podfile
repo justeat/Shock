@@ -1,11 +1,14 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, '9.0'
+platform :ios, '10.0'
 
+inhibit_all_warnings!
 use_frameworks!
 
 target 'Shock_Example' do
   pod 'Shock', :path => '../'
+  
+  pod 'JustLog', '3.1.3'
 
   target 'Shock_Tests' do
     inherit! :search_paths

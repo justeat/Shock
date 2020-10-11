@@ -10,15 +10,17 @@ import Foundation
 import Shock
 
 class MyRoutes {
-	
-	private let routes: [MockHTTPRoute]
-	
-	private let server = MockServer(port: 9091, bundle: Bundle.main)
-	
-	init() {
-		
+    
+    private let routes: [MockHTTPRoute]
+    
+    // NOTE: Ensure this port is outside of the range used by unit tests
+    // (i.e. not in range <9090...9099> )
+    private let server = MockServer(port: 9990, bundle: Bundle.main)
+    
+    init() {
+	    
         // Add your own routes here to test them in the example app
-		routes = [
+	    routes = [
             .simple(
                 method: .get,
                 urlPath: "/simple",
@@ -47,24 +49,24 @@ class MyRoutes {
             ),
             .timeout(method: .get,
                      urlPath: "/timeout")
-		]
-		
-		server.setup(route: .collection(routes: routes))
-		server.start(priority: DispatchQoS.QoSClass.background)
-	}
-	
-	func nameOfRoute(at index: Int) -> String {
+	    ]
+	    
+	    server.setup(route: .collection(routes: routes))
+	    server.start(priority: DispatchQoS.QoSClass.background)
+    }
+    
+    func nameOfRoute(at index: Int) -> String {
         if let urlPath = routes[index].urlPath, let method = routes[index].method {
             return "\(method) \(urlPath)"
-		}
-		return ""
-	}
-	
-	var count: Int {
-		return routes.count
-	}
-	
-	func performRequest(index: Int, completion: @escaping (HTTPURLResponse, Data, Error?) -> ()) {
+	    }
+	    return ""
+    }
+    
+    var count: Int {
+	    return routes.count
+    }
+    
+    func performRequest(index: Int, completion: @escaping (HTTPURLResponse, Data, Error?) -> ()) {
 
         let route = routes[index]
         
@@ -96,5 +98,5 @@ class MyRoutes {
             }
         }
         task.resume()
-	}
+    }
 }

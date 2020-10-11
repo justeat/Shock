@@ -1,31 +1,69 @@
 PODS:
+  - CNIOAtomics (2.22.1)
+  - CNIODarwin (2.22.1)
+  - CNIOHTTPParser (2.22.1)
+  - CNIOLinux (2.22.1)
+  - CNIOSHA1 (2.22.1)
   - GRMustache (7.3.2):
     - JRSwizzle (~> 1.0)
   - JRSwizzle (1.0)
+  - JustLog (3.1.3):
+    - SwiftyBeaver (~> 1.9.1)
   - Shock (4.0.1):
     - GRMustache (~> 7.3.2)
-    - Swifter (~> 1.5.0)
-  - Swifter (1.5.0)
+    - SwiftNIOHTTP1 (~> 2.22.1)
+  - SwiftNIO (2.22.1):
+    - CNIOAtomics (= 2.22.1)
+    - CNIODarwin (= 2.22.1)
+    - CNIOLinux (= 2.22.1)
+    - CNIOSHA1 (= 2.22.1)
+    - SwiftNIOConcurrencyHelpers (= 2.22.1)
+  - SwiftNIOConcurrencyHelpers (2.22.1):
+    - CNIOAtomics (= 2.22.1)
+  - SwiftNIOHTTP1 (2.22.1):
+    - CNIOHTTPParser (= 2.22.1)
+    - SwiftNIO (= 2.22.1)
+    - SwiftNIOConcurrencyHelpers (= 2.22.1)
+  - SwiftyBeaver (1.9.2)
 
 DEPENDENCIES:
+  - JustLog (= 3.1.3)
   - Shock (from `../`)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
+    - CNIOAtomics
+    - CNIODarwin
+    - CNIOHTTPParser
+    - CNIOLinux
+    - CNIOSHA1
     - GRMustache
     - JRSwizzle
-    - Swifter
+    - JustLog
+    - SwiftNIO
+    - SwiftNIOConcurrencyHelpers
+    - SwiftNIOHTTP1
+    - SwiftyBeaver
 
 EXTERNAL SOURCES:
   Shock:
     :path: "../"
 
 SPEC CHECKSUMS:
+  CNIOAtomics: 55026298b0bd7524bb8ca85bd9d00983ef2b6ab5
+  CNIODarwin: 65c40ddcfa113c0cb0bf5947dbef3165a0098b59
+  CNIOHTTPParser: 869e928f9f9b7bb68837e085b3ae921125d28d76
+  CNIOLinux: 896c5715ebe479fbfcdac5340717bbbd7936901b
+  CNIOSHA1: fd4d38fb42778ed971a75d87530f842106d4b4f4
   GRMustache: ebe6104fd30a6d22c1f36af131e19e2dbf7cd292
   JRSwizzle: dd5ead5d913a0f29e7f558200165849f006bb1e3
-  Shock: 10167fcc9fc3faff2fdf2b23aff372faa11ccf93
-  Swifter: e71dd674404923d7f03ebb03f3f222d1c570bc8e
+  JustLog: c1b12fe8fc6a7c22cc31dd874fe7776eaa7089d2
+  Shock: 30201f93aa26f3d24f719d3c445eba167822d67a
+  SwiftNIO: 763188229de166e046cc8975383cca388832e992
+  SwiftNIOConcurrencyHelpers: 34d2e9d4d2b7886fa765086e845e6b19417be927
+  SwiftNIOHTTP1: c0a9ce48ba256f349af4f09648a0e0939b11a65c
+  SwiftyBeaver: b8239f6bfe9e1ea3303e6139abc8c24228081d84
 
-PODFILE CHECKSUM: f2aa1fe1bd8633dab49f7d1b56c94fb4c395c003
+PODFILE CHECKSUM: cf5d6960b7408fe196110b4f67d26532469e9318
 
 COCOAPODS: 1.8.4
