@@ -1,6 +1,6 @@
 # Shock
 
-[![Build Status](https://travis-ci.org/justeat/Shock.svg?branch=master)](https://travis-ci.org/justeat/Shock)
+[![Build Status](https://travis-ci.com/justeat/Shock.svg?branch=master)](https://travis-ci.org/justeat/Shock)
 [![Version](https://img.shields.io/cocoapods/v/Shock.svg?style=flat)](http://cocoapods.org/pods/Shock)
 [![License](https://img.shields.io/cocoapods/l/Shock.svg?style=flat)](http://cocoapods.org/pods/Shock)
 [![Platform](https://img.shields.io/cocoapods/p/Shock.svg?style=flat)](http://cocoapods.org/pods/Shock)
