@@ -7,7 +7,7 @@ PODS:
   - GRMustache.swift (4.0.1)
   - JustLog (3.1.3):
     - SwiftyBeaver (~> 1.9.1)
-  - Shock (5.0.0):
+  - Shock (5.1.0):
     - GRMustache.swift (~> 4.0.1)
     - SwiftNIOHTTP1 (~> 2.22.1)
   - SwiftNIO (2.22.1):
@@ -54,7 +54,7 @@ SPEC CHECKSUMS:
   CNIOSHA1: fd4d38fb42778ed971a75d87530f842106d4b4f4
   GRMustache.swift: a6436504284b22b4b05daf5f46f77bd3fe00a9a2
   JustLog: c1b12fe8fc6a7c22cc31dd874fe7776eaa7089d2
-  Shock: 9cdada2f2a13c8a50cf2d68a9629c1ae15741561
+  Shock: bf0897783c236a737439c9791f1598141def9246
   SwiftNIO: 763188229de166e046cc8975383cca388832e992
   SwiftNIOConcurrencyHelpers: 34d2e9d4d2b7886fa765086e845e6b19417be927
   SwiftNIOHTTP1: c0a9ce48ba256f349af4f09648a0e0939b11a65c
