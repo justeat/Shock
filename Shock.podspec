@@ -8,11 +8,11 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Shock'
-  s.version          = '5.0.0'
+  s.version          = '5.1.0'
   s.summary          = 'A HTTP mocking framework written in Swift.'
 
   s.description      = <<-DESC
-Shock lets you quickly and painlessly provided mock responses for web requests made by your iOS app.
+Shock lets you quickly and painlessly provided mock responses for HTTP & HTTPs web requests made by your iOS app.
                        DESC
 
   s.homepage         = 'https://github.com/justeat/Shock'
@@ -29,5 +29,5 @@ Shock lets you quickly and painlessly provided mock responses for web requests m
   'Shock/Classes/NIO/**/*'
 
   s.dependency 'SwiftNIOHTTP1', '~> 2.22.1'
-  s.dependency 'GRMustache', '~> 7.3.2'
+  s.dependency 'GRMustache.swift', '~> 4.0.1'
 end
