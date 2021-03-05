@@ -138,9 +138,7 @@ Sometimes we simply want our mock to redirect to another URL. The redirect mock
 allows you to return a 301 redirect to another URL or endpoint.
 
 ```swift
-let route: MockHTTPRoute = .redirect(
-    .redirect(urlPath: "/source", destination: "/destination")
-)
+let route: MockHTTPRoute = .redirect(urlPath: "/source", destination: "/destination")
 ```
 
 ### Templated Route
