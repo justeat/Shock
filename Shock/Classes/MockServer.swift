@@ -104,52 +104,53 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
     
     // MARK: Mock setup
     
-    public func setup(route: MockHTTPRoute) {
-        
-        switch route {
-        case .collection(let routes):
-            routes.forEach { self.setup(route: $0) }
-            return
-        default:
-            break
-        }
+    @available(*, deprecated, renamed: "setup(routes:)")
+    public func setup(route: [MockHTTPRoute]) {
+        setup(routes: route)
+    }
 
-        
-        guard let method = route.method, let path = route.urlPath else {
-            self.loggingClosure?("ERROR: route was missing a field")
-            return
-        }
-        
+    public func setup(routes: MockHTTPRoute...) {
+        setup(routes: routes)
+    }
+
+    public func setup(routes: [MockHTTPRoute]) {
+        routes.forEach { self.setup(route: $0) }
+    }
+
+    public func setup(route: MockHTTPRoute) {
+        let method = route.method
+        let path = route.urlPath
+
         middleware.router.register(method.rawValue, path: path) { request, response in
-            
-            if let expectedHeaders = route.requestHeaders, !request.headers.contains(expectedHeaders) {
+            let expectedHeaders = route.requestHeaders
+            if !request.headers.contains(expectedHeaders) {
                 self.httpServer.notFoundHandler?(request, response)
                 return
             }
-            
+
             let query = request.queryParams.reduce(into: [String: String]()) { $0[$1.0] = $1.1 }
-            if let expectedQuery = route.query, !query.contains(expectedQuery) {
+            let expectedQuery = route.query
+            if !query.contains(expectedQuery) {
                 self.httpServer.notFoundHandler?(request, response)
                 return
             }
-            
-            switch route {
-            case .redirect(_, let destination):
+
+            if route.statusCode == 301 {
                 response.statusCode = 301
-                response.headers["Location"] = destination
+                response.headers["Location"] = route.filename
                 return
-            case .timeout(_, _, let timeoutInSeconds):
+            }
+
+            if let timeoutInSeconds = route.timeoutInSeconds {
                 sleep(UInt32(timeoutInSeconds))
                 return
-            default:
-                break
             }
-            
-            response.statusCode = route.statusCode ?? 0
-            route.responseHeaders?.map { response.headers[$0.key] = $0.value }
-            
+
+            response.statusCode = route.statusCode
+            route.responseHeaders.map { response.headers[$0.key] = $0.value }
+
             var data: Data?
-            
+
             if let filename = route.filename {
                 if let templateInfo = route.templateInfo {
                     data = self.responseFactory.response(withTemplateFileName: filename, data: templateInfo)

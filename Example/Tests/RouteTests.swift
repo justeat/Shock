@@ -40,11 +40,11 @@ class RouteTests: ShockTestCase {
     }
     
     func testRedirectRoute() {
-        let route: MockHTTPRoute = .collection(routes: [
+        let route: [MockHTTPRoute] = [
             .redirect(urlPath: "/redirect", destination: "/destination"),
             .simple(method: .get, urlPath: "/destination", code: 200, filename: "testRedirectRoute.txt")
-            ])
-        server.setup(route: route)
+            ]
+        server.setup(routes: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body after redirect")
         
@@ -57,11 +57,12 @@ class RouteTests: ShockTestCase {
     }
     
     func testRouteProperties() {
-        let emptyRoute: MockHTTPRoute = .collection(routes: [])
-        XCTAssertNil(emptyRoute.urlPath)
-        XCTAssertNil(emptyRoute.method)
+        let emptyRoute: MockHTTPRoute = .init(urlPath: "", method: .get)
+        XCTAssertNil(emptyRoute.filename)
+        XCTAssertNil(emptyRoute.templateInfo)
+        XCTAssertNil(emptyRoute.timeoutInSeconds)
     }
-    
+
     func testTimeoutRoute() {
         let route: MockHTTPRoute = .timeout(method: .get, urlPath: "/timeouttest", timeoutInSeconds: 2)
         server.setup(route: route)

@@ -50,16 +50,15 @@ class MyRoutes {
             .timeout(method: .get,
                      urlPath: "/timeout")
 	    ]
-	    
-	    server.setup(route: .collection(routes: routes))
+
+	    server.setup(routes: routes)
 	    server.start(priority: DispatchQoS.QoSClass.background)
     }
     
     func nameOfRoute(at index: Int) -> String {
-        if let urlPath = routes[index].urlPath, let method = routes[index].method {
-            return "\(method) \(urlPath)"
-	    }
-	    return ""
+        let urlPath = routes[index].urlPath
+        let method = routes[index].method
+        return "\(method) \(urlPath)"
     }
     
     var count: Int {
@@ -70,12 +69,14 @@ class MyRoutes {
 
         let route = routes[index]
         
-        guard let urlPath = route.urlPath, var urlComponents = URLComponents(string: "\(server.hostURL)\(urlPath)") else {
+        let urlPath = route.urlPath
+        guard var urlComponents = URLComponents(string: "\(server.hostURL)\(urlPath)") else {
             print("ERROR: failed to derive URL from mock route")
             return
         }
         
-        if let query = route.query {
+        if !route.query.isEmpty {
+            let query = route.query
             urlComponents.queryItems = query.keys.map({ URLQueryItem(name: $0, value: query[$0]) })
         }
         
@@ -86,7 +87,7 @@ class MyRoutes {
         
         var urlRequest = URLRequest(url: url)
         urlRequest.allHTTPHeaderFields = route.requestHeaders
-        urlRequest.httpMethod = route.method?.rawValue ?? "GET"
+        urlRequest.httpMethod = route.method.rawValue
         
         print("Requesting \(url.absoluteString)")
 
