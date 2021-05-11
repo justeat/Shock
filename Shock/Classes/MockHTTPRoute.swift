@@ -152,18 +152,18 @@ public enum MockHTTPRoute {
     
 }
 
-extension MockHTTPRoute: Equatable {
+extension MockHTTPRoute: Hashable {
     public static func == (lhs: MockHTTPRoute, rhs: MockHTTPRoute) -> Bool {
-        if case MockHTTPRoute.simple(let lhsMethod, let lhsUrlPath, let lhsCode, _) = lhs,
-           case MockHTTPRoute.simple(let rhsMethod, let rhsUrlPath, let rhsCode, _) = rhs {
+        if case MockHTTPRoute.simple(let lhsMethod, let lhsUrlPath, let _, _) = lhs,
+           case MockHTTPRoute.simple(let rhsMethod, let rhsUrlPath, let _, _) = rhs {
             return lhsMethod == rhsMethod && lhsUrlPath == rhsUrlPath
         }
-        if case MockHTTPRoute.custom(let lhsMethod, let lhsUrlPath, let lhsQuery, let lhsRequestHeaders, let lhsResponseHeaders, let lhsCode, _) = lhs,
-           case MockHTTPRoute.custom(let rhsMethod, let rhsUrlPath, let rhsQuery, let rhsRequestHeaders, let rhsResponseHeaders, let rhsCode, _) = rhs {
-            return lhsMethod == rhsMethod && lhsUrlPath == rhsUrlPath
+        if case MockHTTPRoute.custom(let lhsMethod, let lhsUrlPath, let lhsQuery, let lhsRequestHeaders, _, let _, _) = lhs,
+           case MockHTTPRoute.custom(let rhsMethod, let rhsUrlPath, let rhsQuery, let rhsRequestHeaders, _, let _, _) = rhs {
+            return lhsMethod == rhsMethod && lhsUrlPath == rhsUrlPath && lhsQuery == rhsQuery && lhsRequestHeaders == rhsRequestHeaders
         }
-        if case MockHTTPRoute.template(let lhsMethod, let lhsUrlPath, let lhsCode, _, _) = lhs,
-           case MockHTTPRoute.template(let rhsMethod, let rhsUrlPath, let rhsCode, _, _) = rhs {
+        if case MockHTTPRoute.template(let lhsMethod, let lhsUrlPath, let _, _, _) = lhs,
+           case MockHTTPRoute.template(let rhsMethod, let rhsUrlPath, let _, _, _) = rhs {
             return lhsMethod == rhsMethod && lhsUrlPath == rhsUrlPath
         }
         if case MockHTTPRoute.redirect(let lhsUrlPath, _) = lhs,
