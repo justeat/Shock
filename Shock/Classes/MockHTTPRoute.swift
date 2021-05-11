@@ -180,4 +180,26 @@ extension MockHTTPRoute: Hashable {
         }
         return false
     }
+    
+    public func hash(into hasher: inout Hasher) {
+        switch self {
+        case .simple(method: let method, urlPath: let urlPath, _, _):
+            hasher.combine(method)
+            hasher.combine(urlPath)
+        case .custom(method: let method, urlPath: let urlPath, query: let query, _, _, _, _):
+            hasher.combine(method)
+            hasher.combine(urlPath)
+            hasher.combine(query)
+        case .template(method: let method, urlPath: let urlPath, _, _, _):
+            hasher.combine(method)
+            hasher.combine(urlPath)
+        case .redirect(urlPath: let urlPath, _):
+            hasher.combine(urlPath)
+        case .collection(routes: let routes):
+            hasher.combine(routes)
+        case .timeout(method: let method, urlPath: let urlPath, _):
+            hasher.combine(method)
+            hasher.combine(urlPath)
+        }
+    }
 }
