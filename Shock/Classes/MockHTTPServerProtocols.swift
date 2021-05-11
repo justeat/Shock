@@ -10,7 +10,7 @@ import Foundation
 typealias HandlerClosure = (MiddlewareRequestContext, MiddlewareResponseContext) -> Void
 
 protocol MockHttpRouter {
-    func register(_ method: String, path: String, handler: HandlerClosure?)
+    func register(route: MockHTTPRoute, handler: HandlerClosure?)
 }
 
 protocol MockMethodRoute {
@@ -19,9 +19,9 @@ protocol MockMethodRoute {
 }
 
 extension MockMethodRoute {
-    subscript(path: String) -> HandlerClosure? {
+    subscript(route: MockHTTPRoute) -> HandlerClosure? {
         set {
-            router.register(method, path: path, handler: newValue)
+            router.register(route: route, handler: newValue)
         }
         get { return nil }
     }

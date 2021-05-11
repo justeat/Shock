@@ -53,22 +53,24 @@ struct MockNIOHTTPMethodRoute: MockMethodRoute {
 }
 
 class MockNIOHTTPRouter: MockHttpRouter {
-    typealias PathHandlerMapping = [String: HandlerClosure]
-    private var routes = [String: PathHandlerMapping]()
+    typealias RouteHandlerMapping = [MockHTTPRoute: HandlerClosure]
+    private var routes = [String: RouteHandlerMapping]()
     
-    func handlerForMethod(_ method: String, path: String) -> HandlerClosure? {
-        let methodRoutes = routes[method] ?? PathHandlerMapping()
+    func handlerForMethod(_ method: String, path: String, params: [String:String]) -> HandlerClosure? {
+        guard let httpMethod = MockHTTPMethod(rawValue: method) else { return nil }
+        let methodRoutes = routes[method] ?? RouteHandlerMapping()
         for (candidate, handler) in methodRoutes {
-            if candidate.pathMatchesStrippingVariables(path) {
+            if candidate.matches(method: httpMethod, path: path, params: params) {
                 return handler
             }
         }
         return nil
     }
     
-    func register(_ method: String, path: String, handler: HandlerClosure?) {
-        var methodRoutes = routes[method] ?? PathHandlerMapping()
-        methodRoutes[path] = handler
+    func register(route: MockHTTPRoute, handler: HandlerClosure?) {
+        guard let method = route.method?.rawValue else { return }
+        var methodRoutes = routes[method] ?? RouteHandlerMapping()
+        methodRoutes[route] = handler
         routes[method] = methodRoutes
     }
 }
@@ -81,27 +83,4 @@ struct MockNIOHTTPRequest: MockHttpRequest {
     var body: [UInt8]
     var address: String?
     var params: [String : String]
-}
-
-extension String {
-    func pathMatchesStrippingVariables(_ other: String) -> Bool {
-        let parts = self.split(separator: "/")
-        let otherParts = other.split(separator: "/")
-        guard parts.count == otherParts.count else { return false }
-        var match = true
-        for (index, part) in parts.enumerated() {
-            if part.hasPrefix(":") {
-                continue
-            }
-            let otherPart = otherParts[index]
-            if otherPart.hasPrefix(":") {
-                continue
-            }
-            match = part == otherPart
-            if !match {
-                break
-            }
-        }
-        return match
-    }
 }

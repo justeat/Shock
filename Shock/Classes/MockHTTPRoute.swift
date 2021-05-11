@@ -183,6 +183,23 @@ extension MockHTTPRoute: Hashable {
         return false
     }
     
+    public func matches(method: MockHTTPMethod, path: String, params: [String:String]) -> Bool {
+        switch self {
+        case .simple:
+            return MockHTTPRoute.simple(method: method, urlPath: path, code: 0, filename: nil) == self
+        case .custom:
+            return MockHTTPRoute.custom(method: method, urlPath: path, query: params, requestHeaders: [:], responseHeaders: [:], code: 0, filename: nil) == self
+        case .template:
+            return MockHTTPRoute.template(method: method, urlPath: path, code: 0, filename: nil, templateInfo: [:]) == self
+        case .redirect:
+            return MockHTTPRoute.redirect(urlPath: path, destination: "") == self
+        case .collection:
+            return false
+        case .timeout:
+            return MockHTTPRoute.timeout(method: method, urlPath: path, timeoutInSeconds: 0) == self
+        }
+    }
+    
     public func hash(into hasher: inout Hasher) {
         switch self {
         case .simple(method: let method, urlPath: let urlPath, _, _):
@@ -203,5 +220,28 @@ extension MockHTTPRoute: Hashable {
             hasher.combine(method)
             hasher.combine(urlPath)
         }
+    }
+}
+
+extension String {
+    func pathMatchesStrippingVariables(_ other: String) -> Bool {
+        let parts = self.split(separator: "/")
+        let otherParts = other.split(separator: "/")
+        guard parts.count == otherParts.count else { return false }
+        var match = true
+        for (index, part) in parts.enumerated() {
+            if part.hasPrefix(":") {
+                continue
+            }
+            let otherPart = otherParts[index]
+            if otherPart.hasPrefix(":") {
+                continue
+            }
+            match = part == otherPart
+            if !match {
+                break
+            }
+        }
+        return match
     }
 }

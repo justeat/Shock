@@ -120,7 +120,7 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
             return
         }
         
-        middleware.router.register(method.rawValue, path: path) { request, response in
+        middleware.router.register(route: route) { request, response in
             
             if let expectedHeaders = route.requestHeaders, !request.headers.contains(expectedHeaders) {
                 self.httpServer.notFoundHandler?(request, response)
