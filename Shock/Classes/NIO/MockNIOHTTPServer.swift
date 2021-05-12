@@ -56,11 +56,11 @@ class MockNIOHTTPRouter: MockHttpRouter {
     typealias RouteHandlerMapping = [MockHTTPRoute: HandlerClosure]
     private var routes = [String: RouteHandlerMapping]()
     
-    func handlerForMethod(_ method: String, path: String, params: [String:String]) -> HandlerClosure? {
+    func handlerForMethod(_ method: String, path: String, params: [String:String], headers: [String:String]) -> HandlerClosure? {
         guard let httpMethod = MockHTTPMethod(rawValue: method) else { return nil }
         let methodRoutes = routes[method] ?? RouteHandlerMapping()
         for (candidate, handler) in methodRoutes {
-            if candidate.matches(method: httpMethod, path: path, params: params) {
+            if candidate.matches(method: httpMethod, path: path, params: params, headers: headers) {
                 return handler
             }
         }
