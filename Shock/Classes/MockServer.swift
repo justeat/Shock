@@ -126,17 +126,6 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
         
         middleware.router.register(route: route) { request, response in
             
-            if let expectedHeaders = route.requestHeaders, !request.headers.contains(expectedHeaders) {
-                self.httpServer.notFoundHandler?(request, response)
-                return
-            }
-            
-            let query = request.queryParams.reduce(into: [String: String]()) { $0[$1.0] = $1.1 }
-            if let expectedQuery = route.query, !query.contains(expectedQuery) {
-                self.httpServer.notFoundHandler?(request, response)
-                return
-            }
-            
             switch route {
             case .redirect(_, let destination):
                 response.statusCode = 301
