@@ -91,9 +91,13 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
             httpServer.notFoundHandler != nil            
         }
         set {
-            httpServer.notFoundHandler = { _, response in
-                response.statusCode = 404
-                response.responseBody = nil
+            if newValue {
+                httpServer.notFoundHandler = { _, response in
+                    response.statusCode = 404
+                    response.responseBody = nil
+                }
+            } else {
+                httpServer.notFoundHandler = nil
             }
         }
     }

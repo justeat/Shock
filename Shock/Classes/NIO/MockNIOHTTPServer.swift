@@ -15,7 +15,14 @@ class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
     private let router = MockNIOHTTPRouter()
     private let middlewareService = MiddlewareService()
 
-    var notFoundHandler: HandlerClosure?
+    var notFoundHandler: HandlerClosure? {
+        get {
+            middlewareService.notFoundHandler
+        }
+        set {
+            middlewareService.notFoundHandler = newValue
+        }
+    }
     var methodRoutes: [MockHTTPMethod: MockNIOHTTPMethodRoute] = [:]
     
     

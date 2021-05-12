@@ -7,6 +7,8 @@
 
 import Foundation
 
+public typealias HandlerClosure = (MiddlewareRequestContext, MiddlewareResponseContext) -> Void
+
 public protocol MiddlewareRequestContext: MockHttpRequest {
     var path: String { get }
     var queryParams: [(String, String)] { get }
@@ -26,6 +28,7 @@ public protocol MiddlewareResponseContext: class {
 public protocol MiddlewareContext {
     var requestContext: MiddlewareRequestContext { get }
     var responseContext: MiddlewareResponseContext { get }
+    var notFoundHandler: HandlerClosure? { get }
     var next: () -> Void { get }
 }
 
@@ -64,12 +67,15 @@ class MiddlewareService {
     private struct _MiddlewareContext: MiddlewareContext {
         let requestContext: MiddlewareRequestContext
         let responseContext: MiddlewareResponseContext
+        let notFoundHandler: HandlerClosure?
         let next: () -> Void
     }
     
     private(set) var middleware: [Middleware] = []
         
     private var context: MiddlewareContext?
+    
+    var notFoundHandler: HandlerClosure?
     
     func executeAll(forRequest request: MockNIOHTTPRequest) -> MiddlewareContext? {
         executeAll(forRequest: request, middleware: middleware)
@@ -81,7 +87,8 @@ class MiddlewareService {
         let responseContext = _MiddlewareResponseContext()
         
         let context = _MiddlewareContext(requestContext: requestContext,
-                                     responseContext: responseContext) {
+                                     responseContext: responseContext,
+                                     notFoundHandler: notFoundHandler) {
             if (middleware.count - 1) > 0 {
                 self.executeAll(forRequest: request, middleware: Array(middleware[1...]))
             }

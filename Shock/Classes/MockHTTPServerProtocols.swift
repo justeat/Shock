@@ -7,8 +7,6 @@
 
 import Foundation
 
-typealias HandlerClosure = (MiddlewareRequestContext, MiddlewareResponseContext) -> Void
-
 protocol MockHttpRouter {
     func register(route: MockHTTPRoute, handler: HandlerClosure?)
 }

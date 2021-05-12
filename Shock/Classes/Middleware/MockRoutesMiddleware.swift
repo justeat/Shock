@@ -24,6 +24,7 @@ class MockRoutesMiddleware: Middleware {
                                                     path: context.requestContext.path,
                                                     params: context.requestContext.params,
                                                     headers: context.requestContext.headers) else {
+            context.notFoundHandler?(context.requestContext, context.responseContext)
             return context.next()
         }
         
