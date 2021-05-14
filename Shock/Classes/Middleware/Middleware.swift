@@ -87,8 +87,8 @@ class MiddlewareService {
         let responseContext = _MiddlewareResponseContext()
         
         let context = _MiddlewareContext(requestContext: requestContext,
-                                     responseContext: responseContext,
-                                     notFoundHandler: notFoundHandler) {
+                                         responseContext: responseContext,
+                                         notFoundHandler: notFoundHandler) {
             if (middleware.count - 1) > 0 {
                 self.executeAll(forRequest: request, middleware: Array(middleware[1...]))
             }
