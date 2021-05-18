@@ -91,9 +91,13 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
             httpServer.notFoundHandler != nil            
         }
         set {
-            httpServer.notFoundHandler = { _, response in
-                response.statusCode = 404
-                response.responseBody = nil
+            if newValue {
+                httpServer.notFoundHandler = { _, response in
+                    response.statusCode = 404
+                    response.responseBody = nil
+                }
+            } else {
+                httpServer.notFoundHandler = nil
             }
         }
     }
@@ -120,18 +124,7 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
             return
         }
         
-        middleware.router.register(method.rawValue, path: path) { request, response in
-            
-            if let expectedHeaders = route.requestHeaders, !request.headers.contains(expectedHeaders) {
-                self.httpServer.notFoundHandler?(request, response)
-                return
-            }
-            
-            let query = request.queryParams.reduce(into: [String: String]()) { $0[$1.0] = $1.1 }
-            if let expectedQuery = route.query, !query.contains(expectedQuery) {
-                self.httpServer.notFoundHandler?(request, response)
-                return
-            }
+        middleware.router.register(route: route) { request, response in
             
             switch route {
             case .redirect(_, let destination):

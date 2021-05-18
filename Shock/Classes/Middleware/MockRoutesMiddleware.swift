@@ -21,7 +21,10 @@ class MockRoutesMiddleware: Middleware {
     func execute(withContext context: MiddlewareContext) {
         
         guard let handler = router.handlerForMethod(context.requestContext.method,
-                                                  path: context.requestContext.path) else {
+                                                    path: context.requestContext.path,
+                                                    params: context.requestContext.params,
+                                                    headers: context.requestContext.headers) else {
+            context.notFoundHandler?(context.requestContext, context.responseContext)
             return context.next()
         }
         

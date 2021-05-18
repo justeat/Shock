@@ -151,3 +151,118 @@ public enum MockHTTPRoute {
     }
     
 }
+
+/// The philosophy for Equatable/Hashable `MockHTTPRoute` is anything in the request
+/// part of the route (e.g. `method` or `urlPath`) are part of the identify of the route
+extension MockHTTPRoute: Hashable {    
+    public static func == (lhs: MockHTTPRoute, rhs: MockHTTPRoute) -> Bool {
+        if case MockHTTPRoute.simple(let lhsMethod, let lhsUrlPath, let _, _) = lhs,
+           case MockHTTPRoute.simple(let rhsMethod, let rhsUrlPath, let _, _) = rhs {
+            return lhsMethod == rhsMethod && lhsUrlPath.pathMatchesStrippingVariables(rhsUrlPath)
+        }
+        if case MockHTTPRoute.custom(let lhsMethod, let lhsUrlPath, let lhsQuery, let lhsRequestHeaders, _, _, _) = lhs,
+           case MockHTTPRoute.custom(let rhsMethod, let rhsUrlPath, let rhsQuery, let rhsRequestHeaders, _, _, _) = rhs {
+            return lhsMethod == rhsMethod && lhsUrlPath.pathMatchesStrippingVariables(rhsUrlPath)
+                && lhsQuery == rhsQuery && headers(lhsRequestHeaders, contains: rhsRequestHeaders)
+        }
+        if case MockHTTPRoute.template(let lhsMethod, let lhsUrlPath, let _, _, _) = lhs,
+           case MockHTTPRoute.template(let rhsMethod, let rhsUrlPath, let _, _, _) = rhs {
+            return lhsMethod == rhsMethod && lhsUrlPath.pathMatchesStrippingVariables(rhsUrlPath)
+        }
+        if case MockHTTPRoute.redirect(let lhsUrlPath, _) = lhs,
+           case MockHTTPRoute.redirect(let rhsUrlPath, _) = rhs {
+            return lhsUrlPath.pathMatchesStrippingVariables(rhsUrlPath)
+        }
+        if case MockHTTPRoute.timeout(let lhsMethod, let lhsUrlPath, _) = lhs,
+           case MockHTTPRoute.timeout(let rhsMethod, let rhsUrlPath, _) = rhs {
+            return lhsMethod == rhsMethod && lhsUrlPath.pathMatchesStrippingVariables(rhsUrlPath)
+        }
+        if case MockHTTPRoute.collection(let lhsRoutes) = lhs,
+           case MockHTTPRoute.collection(let rhsRoutes) = rhs {
+            return lhsRoutes.elementsEqual(rhsRoutes)
+        }
+        return false
+    }
+    
+    private static func headers(_ lhs: [String:String], contains rhs: [String:String]) -> Bool {
+        var bigger = lhs
+        var smaller = rhs
+        if smaller.count != bigger.count {
+            bigger = lhs.count > rhs.count ? lhs : rhs
+            smaller = lhs.count < rhs.count ? lhs : rhs
+        }
+        guard !bigger.isEmpty else { return false }
+        guard !smaller.isEmpty else { return true }
+        for outer in smaller {
+            let result = bigger.contains() { (key: String, value: String) in
+                key.lowercased() == outer.key.lowercased() && value.lowercased() == outer.value.lowercased()
+            }
+            if result {
+                return true
+            }
+        }
+        return false
+    }
+    
+    public func matches(method: MockHTTPMethod, path: String, params: [String:String], headers: [String:String]) -> Bool {
+        switch self {
+        case .simple:
+            return MockHTTPRoute.simple(method: method, urlPath: path, code: 0, filename: nil) == self
+        case .custom:
+            return MockHTTPRoute.custom(method: method, urlPath: path, query: params, requestHeaders: headers, responseHeaders: [:], code: 0, filename: nil) == self
+        case .template:
+            return MockHTTPRoute.template(method: method, urlPath: path, code: 0, filename: nil, templateInfo: [:]) == self
+        case .redirect:
+            return MockHTTPRoute.redirect(urlPath: path, destination: "") == self
+        case .collection:
+            return false
+        case .timeout:
+            return MockHTTPRoute.timeout(method: method, urlPath: path, timeoutInSeconds: 0) == self
+        }
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        switch self {
+        case .simple(method: let method, urlPath: let urlPath, _, _):
+            hasher.combine(method)
+            hasher.combine(urlPath)
+        case .custom(method: let method, urlPath: let urlPath, query: let query, _, _, _, _):
+            hasher.combine(method)
+            hasher.combine(urlPath)
+            hasher.combine(query)
+        case .template(method: let method, urlPath: let urlPath, _, _, _):
+            hasher.combine(method)
+            hasher.combine(urlPath)
+        case .redirect(urlPath: let urlPath, _):
+            hasher.combine(urlPath)
+        case .collection(routes: let routes):
+            hasher.combine(routes)
+        case .timeout(method: let method, urlPath: let urlPath, _):
+            hasher.combine(method)
+            hasher.combine(urlPath)
+        }
+    }
+}
+
+extension String {
+    func pathMatchesStrippingVariables(_ other: String) -> Bool {
+        let parts = self.split(separator: "/")
+        let otherParts = other.split(separator: "/")
+        guard parts.count == otherParts.count else { return false }
+        var match = true
+        for (index, part) in parts.enumerated() {
+            if part.hasPrefix(":") {
+                continue
+            }
+            let otherPart = otherParts[index]
+            if otherPart.hasPrefix(":") {
+                continue
+            }
+            match = part == otherPart
+            if !match {
+                break
+            }
+        }
+        return match
+    }
+}
