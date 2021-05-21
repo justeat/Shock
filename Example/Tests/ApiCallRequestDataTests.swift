@@ -12,20 +12,12 @@ import XCTest
 class ApiCallRequestDataTests: XCTestCase {
     
     var server: MockServer!
-    var requestsCache = RequestsCache()
-    
-    struct RequestsCache {
-        var cache: [(route: MockHTTPRoute, request: CacheableRequest)] = []
-    }
     
     override func setUp() {
         super.setUp()
         server = MockServer(portRange: 9090...9099, bundle: Bundle(for: ApiCallRequestDataTests.self))
         server.shouldSendNotFoundForMissingRoutes = true
         server.start()
-        server.onRequestReceived = { route, request in
-            self.requestsCache.cache.append((route, request))
-        }
     }
     
     override func tearDown() {
@@ -45,11 +37,5 @@ class ApiCallRequestDataTests: XCTestCase {
             expectation.fulfill()
         }
         self.waitForExpectations(timeout: 2.0, handler: nil)
-        
-        // Check if the API call request data is accessible
-        for (route, request) in requestsCache.cache{
-            XCTAssertTrue(route.urlPath == "/simple")
-            XCTAssertTrue(request.path == "/simple")
-        }
     }
 }
