@@ -28,9 +28,7 @@ public class MockServer {
         httpServer.add(middleware: middleware)
         return middleware
     }()
-    
-    public var onRequestReceived: ((MockHTTPRoute, CacheableRequest) -> Void)?
-    
+
     public var selectedHTTPPort = 0
     public var selectedSocketPort = 0
     

@@ -185,13 +185,13 @@ extension MockHTTPRoute: Hashable {
     }
     
     private static func headers(_ lhs: [String:String], contains rhs: [String:String]) -> Bool {
+        guard !(lhs.isEmpty && rhs.isEmpty) else { return true }
         var bigger = lhs
         var smaller = rhs
         if smaller.count != bigger.count {
             bigger = lhs.count > rhs.count ? lhs : rhs
             smaller = lhs.count < rhs.count ? lhs : rhs
         }
-        guard !bigger.isEmpty else { return false }
         guard !smaller.isEmpty else { return true }
         for outer in smaller {
             let result = bigger.contains() { (key: String, value: String) in
