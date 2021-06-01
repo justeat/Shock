@@ -258,7 +258,7 @@ extension String {
             if otherPart.hasPrefix(":") {
                 continue
             }
-            match = part == otherPart
+            match = part.lowercased() == otherPart.lowercased()
             if !match {
                 break
             }
