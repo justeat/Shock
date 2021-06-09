@@ -14,14 +14,16 @@ class MockNIOHTTPHandler {
     typealias OutboundOut = HTTPServerResponsePart
     
     private let router: MockNIOHTTPRouter
-    private let middlewareService: MiddlewareService
-    
     private var httpRequest: HTTPRequestHead?
     private var handlerRequest: MockNIOHTTPRequest?
     
-    init(router: MockNIOHTTPRouter, middlewareService: MiddlewareService) {
+    var middleware: [Middleware]
+    var notFoundHandler: HandlerClosure?
+    
+    init(router: MockNIOHTTPRouter, middleware: [Middleware], notFoundHandler: HandlerClosure?) {
         self.router = router
-        self.middlewareService = middlewareService
+        self.middleware = middleware
+        self.notFoundHandler = notFoundHandler
     }
     
     private func httpResponseHeadForRequestHead(_ request: HTTPRequestHead, status: HTTPResponseStatus, headers: HTTPHeaders = HTTPHeaders()) -> HTTPResponseHead {
@@ -51,7 +53,7 @@ class MockNIOHTTPHandler {
         }
     }
     
-    private func requestForHTTPRequestHead(_ request: HTTPRequestHead) -> MockNIOHTTPRequest? {
+    private func requestForHTTPRequestHead(_ request: HTTPRequestHead, eventLoop: EventLoop) -> MockNIOHTTPRequest? {
         guard let url = URLComponents(string: request.uri) else { return nil }
         let path = url.path
         let method = stringForHTTPMethod(request.method)
@@ -65,13 +67,14 @@ class MockNIOHTTPHandler {
             queryParams = queryItems.reduce(into: [(String, String)](), { $0.append(($1.name, $1.value ?? "")) })
         }
         
-        return MockNIOHTTPRequest(path: path,
-                              queryParams: queryParams,
-                              method: method,
-                              headers: headers,
-                              body: body,
-                              address: address,
-                              params: params)
+        return MockNIOHTTPRequest(eventLoop: eventLoop,
+                                  path: path,
+                                  queryParams: queryParams,
+                                  method: method,
+                                  headers: headers,
+                                  body: body,
+                                  address: address,
+                                  params: params)
     }
     
     private func handleResponse(forResponseContext middlewareContext: MiddlewareContext, in     channelHandlerContext: ChannelHandlerContext) {
@@ -119,7 +122,7 @@ extension MockNIOHTTPHandler: ChannelInboundHandler {
         switch reqPart {
         case .head(let request):
             self.httpRequest = request
-            self.handlerRequest = requestForHTTPRequestHead(request)
+            self.handlerRequest = requestForHTTPRequestHead(request, eventLoop: context.eventLoop)
         case .body(buffer: var bytes):
             guard var handlerRequest = self.handlerRequest else { return }
             handlerRequest.body += bytes.readBytes(length: bytes.readableBytes) ?? []
@@ -128,12 +131,39 @@ extension MockNIOHTTPHandler: ChannelInboundHandler {
             guard let request = self.httpRequest else { return }
             guard let handlerRequest = self.handlerRequest else { return }
             
-            if let finalContext = middlewareService.executeAll(forRequest: handlerRequest) {
-                handleResponse(forResponseContext: finalContext, in: context)
+            let responder = MiddlwareResponder(middleware: middleware, notFoundHandler: notFoundHandler)
+            responder.respond(to: handlerRequest).whenSuccess { (responseContext) in
+                if let finalContext = responseContext {
+                    self.handleResponse(forResponseContext: finalContext, in: context)
+                }
             }
 
             self.httpRequest = nil
             self.handlerRequest = nil
         }
+    }
+}
+
+// MARK: MiddlewareResponder
+
+struct MiddlwareResponder {
+    
+    let middleware: [Middleware]
+    let notFoundHandler: HandlerClosure?
+    
+    let middlewareService = ThreadSpecificVariable<MiddlewareService>()
+    private func makeMiddlewareService(for eventLoop: EventLoop) -> MiddlewareService {
+        if let existingService = middlewareService.currentValue {
+            return existingService
+        }
+        
+        let newService = MiddlewareService(middleware: middleware, notFoundHandler: notFoundHandler)
+        middlewareService.currentValue = newService
+        return newService
+    }
+    
+    func respond(to request: MockNIOHTTPRequest) -> EventLoopFuture<MiddlewareContext?> {
+        let middlewareService = makeMiddlewareService(for: request.eventLoop)
+        return middlewareService.executeAll(forRequest: request)
     }
 }

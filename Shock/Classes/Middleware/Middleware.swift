@@ -5,7 +5,7 @@
 //  Created by Jack Newcombe on 01/10/2020.
 //
 
-import Foundation
+import NIO
 
 public typealias HandlerClosure = (MiddlewareRequestContext, MiddlewareResponseContext) -> Void
 
@@ -71,14 +71,24 @@ class MiddlewareService {
         let next: () -> Void
     }
     
-    private(set) var middleware: [Middleware] = []
-        
+    private let middleware: [Middleware]
+    private let notFoundHandler: HandlerClosure?
     private var context: MiddlewareContext?
+
+    public init(middleware: [Middleware], notFoundHandler: HandlerClosure?) {
+        self.middleware = middleware
+        self.notFoundHandler = notFoundHandler
+    }
     
-    var notFoundHandler: HandlerClosure?
-    
-    func executeAll(forRequest request: MockNIOHTTPRequest) -> MiddlewareContext? {
-        executeAll(forRequest: request, middleware: middleware)
+    func executeAll(forRequest request: MockNIOHTTPRequest) -> EventLoopFuture<MiddlewareContext?> {
+        let promise = request.eventLoop.makePromise(of: MiddlewareContext?.self)
+        
+        request.eventLoop.execute {
+            let context = self.executeAll(forRequest: request, middleware: self.middleware)
+            promise.succeed(context)
+        }
+        
+        return promise.futureResult
     }
         
     private func executeAll(forRequest request: MockNIOHTTPRequest, middleware: [Middleware]) -> MiddlewareContext? {
@@ -97,10 +107,6 @@ class MiddlewareService {
         middleware.first?.execute(withContext: context)
         
         return context
-    }
-    
-    func add(middleware mdl: Middleware) {
-        middleware.append(mdl)
     }
     
 }

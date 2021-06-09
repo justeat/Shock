@@ -7,7 +7,7 @@
 
 import Foundation
 
-class MockRoutesMiddleware: Middleware {
+struct MockRoutesMiddleware: Middleware {
         
     let router: MockNIOHTTPRouter
 
