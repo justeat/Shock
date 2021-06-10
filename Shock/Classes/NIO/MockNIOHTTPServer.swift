@@ -37,6 +37,9 @@ class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
     }
     
     func register(route: MockHTTPRoute, handler: HandlerClosure?) {
+        if let urlPath = route.urlPath, urlPath.isEmpty {
+            return
+        }
         self.router.register(route: route, handler: handler)
     }
     
