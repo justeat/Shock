@@ -19,7 +19,6 @@ public class MockServer {
     
     private var httpServer: MockNIOHttpServer
     private var socketServer: MockNIOSocketServer?
-    private let router: MockNIOHTTPRouter
     private let responseFactory: ResponseFactory
 
     public var selectedHTTPPort = 0
@@ -34,9 +33,7 @@ public class MockServer {
     public init(portRange: ClosedRange<Int>, bundle: Bundle = Bundle.main) {
         self.portRange = portRange
         self.responseFactory = ResponseFactory(bundle: bundle)
-        self.router = MockNIOHTTPRouter()
-        self.httpServer = MockNIOHttpServer(responseFactory: self.responseFactory,
-                                            router: self.router)
+        self.httpServer = MockNIOHttpServer(responseFactory: self.responseFactory)
     }
     
     // MARK: Server managements
@@ -118,7 +115,7 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
             return
         }
         
-        router.register(route: route) { request, response in
+        httpServer.router?.register(route: route) { request, response in
             
             switch route {
             case .redirect(_, let destination):
