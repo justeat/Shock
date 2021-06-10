@@ -224,20 +224,26 @@ extension MockHTTPRoute: Hashable {
     public func hash(into hasher: inout Hasher) {
         switch self {
         case .simple(method: let method, urlPath: let urlPath, _, _):
+            hasher.combine("simple")
             hasher.combine(method)
             hasher.combine(urlPath)
         case .custom(method: let method, urlPath: let urlPath, query: let query, _, _, _, _):
+            hasher.combine("custom")
             hasher.combine(method)
             hasher.combine(urlPath)
             hasher.combine(query)
         case .template(method: let method, urlPath: let urlPath, _, _, _):
+            hasher.combine("template")
             hasher.combine(method)
             hasher.combine(urlPath)
         case .redirect(urlPath: let urlPath, _):
+            hasher.combine("redirect")
             hasher.combine(urlPath)
         case .collection(routes: let routes):
+            hasher.combine("collection")
             hasher.combine(routes)
         case .timeout(method: let method, urlPath: let urlPath, _):
+            hasher.combine("timeout")
             hasher.combine(method)
             hasher.combine(urlPath)
         }
