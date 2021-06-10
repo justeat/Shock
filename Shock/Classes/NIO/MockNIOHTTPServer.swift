@@ -14,25 +14,10 @@ class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
     
     private let responseFactory: ResponseFactory
     private var httpHandler: MockNIOHTTPHandler?
-
-    var router: MockNIOHTTPRouter? {
-        get {
-            httpHandler?.router
-        }
-        set {
-            guard let httpHandler = self.httpHandler else { return }
-            httpHandler.router = newValue
-        }
-    }
-    
-    var notFoundHandler: HandlerClosure? {
-        get {
-            httpHandler?.notFoundHandler
-        }
-        set {
-            httpHandler?.notFoundHandler = newValue
-        }
-    }
+    private var router = MockNIOHTTPRouter()
+    private var middleware = [Middleware]()
+    private var routeMiddleware: MockRoutesMiddleware?
+    var notFoundHandler: HandlerClosure?
     
     init(responseFactory: ResponseFactory) {
         self.responseFactory = responseFactory
@@ -43,18 +28,24 @@ class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
         try start(port) { (channel) -> EventLoopFuture<Void> in
             channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
                 self.httpHandler = MockNIOHTTPHandler(responseFactory: self.responseFactory,
+                                                      router: self.router,
+                                                      middleware: self.middleware,
                                                       notFoundHandler: self.notFoundHandler)
                 return channel.pipeline.addHandler(self.httpHandler!)
             }
         }
     }
     
+    func register(route: MockHTTPRoute, handler: HandlerClosure?) {
+        self.router.register(route: route, handler: handler)
+    }
+    
     func add(middleware: Middleware) {
-        httpHandler?.middleware.append(middleware)
+        self.middleware.append(middleware)
     }
     
     func has<T>(middlewareOfType type: T.Type) -> Bool where T: Middleware {
-        return (httpHandler?.middleware ?? []).contains { $0 is T }
+        return (self.middleware ?? []).contains { $0 is T }
     }
 }
 

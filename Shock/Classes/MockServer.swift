@@ -115,7 +115,7 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
             return
         }
         
-        httpServer.router?.register(route: route) { request, response in
+        httpServer.register(route: route) { request, response in
             
             switch route {
             case .redirect(_, let destination):

@@ -13,23 +13,25 @@ class MockNIOHTTPHandler {
     typealias InboundIn = HTTPServerRequestPart
     typealias OutboundOut = HTTPServerResponsePart
     
-    private let responseFactory: ResponseFactory
     private var httpRequest: HTTPRequestHead?
     private var handlerRequest: MockNIOHTTPRequest?
-    
-    var router: MockNIOHTTPRouter?
-    var middleware = [Middleware]()
-    var notFoundHandler: HandlerClosure?
+    private var responseFactory: ResponseFactory
+    private var router: MockNIOHTTPRouter
+    private var middleware: [Middleware]
+    private var notFoundHandler: HandlerClosure?
     
     init(responseFactory: ResponseFactory,
+         router: MockNIOHTTPRouter,
+         middleware: [Middleware],
          notFoundHandler: HandlerClosure?) {
-        self.router = MockNIOHTTPRouter()
         self.responseFactory = responseFactory
+        self.router = router
+        self.middleware = middleware
         self.notFoundHandler = notFoundHandler
     }
     
-    private func httpResponseHeadForRequestHead(_ request: HTTPRequestHead, status: HTTPResponseStatus, headers: HTTPHeaders = HTTPHeaders()) -> HTTPResponseHead {
-        HTTPResponseHead(version: request.version, status: status, headers: headers)
+    private func httpResponseHeadForVersion(_ version: HTTPVersion, status: HTTPResponseStatus, headers: HTTPHeaders = HTTPHeaders()) -> HTTPResponseHead {
+        HTTPResponseHead(version: version, status: status, headers: headers)
     }
     
     private func completeResponse(_ context: ChannelHandlerContext, trailers: HTTPHeaders?) {
@@ -79,7 +81,9 @@ class MockNIOHTTPHandler {
                                   params: params)
     }
     
-    private func handleResponse(forResponseContext middlewareContext: MiddlewareContext, in     channelHandlerContext: ChannelHandlerContext) {
+    private func handleResponse(forResponseContext middlewareContext: MiddlewareContext,
+                                in channelHandlerContext: ChannelHandlerContext,
+                                version: HTTPVersion) {
         
         // TODO
         
@@ -88,10 +92,9 @@ class MockNIOHTTPHandler {
         let statusCode = middlewareContext.responseContext.statusCode
         
         // Write head
-        guard let requestHead = self.httpRequest else { return }
-        let responseHead = httpResponseHeadForRequestHead(requestHead,
-                                                          status: HTTPResponseStatus(statusCode: statusCode),
-                                                          headers: HTTPHeaders(headers.map { ($0.key, $0.value) }))
+        let responseHead = httpResponseHeadForVersion(version,
+                                                      status: HTTPResponseStatus(statusCode: statusCode),
+                                                      headers: HTTPHeaders(headers.map { ($0.key, $0.value) }))
         let outboundHeadData = self.wrapOutboundOut(.head(responseHead))
         channelHandlerContext.writeAndFlush(outboundHeadData, promise: nil)
         
@@ -105,8 +108,8 @@ class MockNIOHTTPHandler {
         completeResponse(channelHandlerContext, trailers: nil)
     }
     
-    private func writeAndFlushHeaderResponse(status: HTTPResponseStatus, for request: HTTPRequestHead, in context: ChannelHandlerContext) {
-        _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForRequestHead(request, status: status))))
+    private func writeAndFlushHeaderResponse(status: HTTPResponseStatus, in context: ChannelHandlerContext, version: HTTPVersion) {
+        _ = context.writeAndFlush(self.wrapOutboundOut(.head(httpResponseHeadForVersion(version, status: status))))
     }
 }
     
@@ -132,15 +135,19 @@ extension MockNIOHTTPHandler: ChannelInboundHandler {
         case .end(_):
             guard let request = self.httpRequest else { return }
             guard let handlerRequest = self.handlerRequest else { return }
-            guard let router = self.router else { return }
+            guard let version = self.httpRequest?.version else { return }
             
-            let routeMiddleware = MockRoutesMiddleware(router: router,
-                                                       responseFactory: self.responseFactory)
-            let responder = MiddlwareResponder(middleware: [routeMiddleware] + middleware,
+            var finalMiddleware = middleware
+            if router.requiresRouteMiddleware {
+                let routeMiddleware = MockRoutesMiddleware(router: self.router,
+                                                           responseFactory: self.responseFactory)
+                finalMiddleware.append(routeMiddleware)
+            }
+            let responder = MiddlwareResponder(middleware: finalMiddleware,
                                                notFoundHandler: notFoundHandler)
             responder.respond(to: handlerRequest).whenSuccess { (responseContext) in
                 if let finalContext = responseContext {
-                    self.handleResponse(forResponseContext: finalContext, in: context)
+                    self.handleResponse(forResponseContext: finalContext, in: context, version: version)
                 }
             }
 
@@ -177,6 +184,10 @@ struct MiddlwareResponder {
 struct MockNIOHTTPRouter: MockHttpRouter {
     typealias RouteHandlerMapping = [MockHTTPRoute: HandlerClosure]
     private var routes = [String: RouteHandlerMapping]()
+    
+    var requiresRouteMiddleware: Bool {
+        !routes.isEmpty
+    }
     
     func handlerForMethod(_ method: String, path: String, params: [String:String], headers: [String:String]) -> HandlerClosure? {
         guard let httpMethod = MockHTTPMethod(rawValue: method) else { return nil }
