@@ -180,30 +180,3 @@ struct MiddlwareResponder {
         return middlewareService.executeAll(forRequest: request)
     }
 }
-
-struct MockNIOHTTPRouter: MockHttpRouter {
-    typealias RouteHandlerMapping = [MockHTTPRoute: HandlerClosure]
-    private var routes = [String: RouteHandlerMapping]()
-    
-    var requiresRouteMiddleware: Bool {
-        !routes.isEmpty
-    }
-    
-    func handlerForMethod(_ method: String, path: String, params: [String:String], headers: [String:String]) -> HandlerClosure? {
-        guard let httpMethod = MockHTTPMethod(rawValue: method) else { return nil }
-        let methodRoutes = routes[method] ?? RouteHandlerMapping()
-        for (candidate, handler) in methodRoutes {
-            if candidate.matches(method: httpMethod, path: path, params: params, headers: headers) {
-                return handler
-            }
-        }
-        return nil
-    }
-    
-    mutating func register(route: MockHTTPRoute, handler: HandlerClosure?) {
-        guard let method = route.method?.rawValue else { return }
-        var methodRoutes = routes[method] ?? RouteHandlerMapping()
-        methodRoutes[route] = handler
-        routes[method] = methodRoutes
-    }
-}
