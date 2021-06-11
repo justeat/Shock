@@ -141,7 +141,7 @@ extension MockNIOHTTPHandler: ChannelInboundHandler {
             if router.requiresRouteMiddleware {
                 let routeMiddleware = MockRoutesMiddleware(router: self.router,
                                                            responseFactory: self.responseFactory)
-                finalMiddleware.append(routeMiddleware)
+                finalMiddleware.insert(routeMiddleware, at: 0)
             }
             let responder = MiddlwareResponder(middleware: finalMiddleware,
                                                notFoundHandler: notFoundHandler)
