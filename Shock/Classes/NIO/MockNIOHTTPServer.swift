@@ -72,7 +72,7 @@ struct MockNIOHTTPRouter: MockHttpRouter {
     }
     
     func handlerForMethod(_ method: String, path: String, params: [String:String], headers: [String:String]) -> HandlerClosure? {
-        guard let httpMethod = MockHTTPMethod(rawValue: method) else { return nil }
+        guard let httpMethod = MockHTTPMethod(rawValue: method.uppercased()) else { return nil }
         let methodRoutes = routes[httpMethod] ?? RouteHandlerMapping()
         for (candidate, handler) in methodRoutes {
             if candidate.matches(method: httpMethod, path: path, params: params, headers: headers) {
