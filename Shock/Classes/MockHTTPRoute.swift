@@ -205,6 +205,8 @@ extension MockHTTPRoute: Hashable {
     }
     
     public func matches(method: MockHTTPMethod, path: String, params: [String:String], headers: [String:String]) -> Bool {
+        guard !method.rawValue.isEmpty else { return false }
+        guard !path.isEmpty else { return false }
         switch self {
         case .simple:
             return MockHTTPRoute.simple(method: method, urlPath: path, code: 0, filename: nil) == self
