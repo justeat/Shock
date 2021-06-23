@@ -154,7 +154,7 @@ public enum MockHTTPRoute {
 
 /// The philosophy for Equatable/Hashable `MockHTTPRoute` is anything in the request
 /// part of the route (e.g. `method` or `urlPath`) are part of the identify of the route
-extension MockHTTPRoute: Hashable {    
+extension MockHTTPRoute: Equatable {    
     public static func == (lhs: MockHTTPRoute, rhs: MockHTTPRoute) -> Bool {
         if case MockHTTPRoute.simple(let lhsMethod, let lhsUrlPath, let _, _) = lhs,
            case MockHTTPRoute.simple(let rhsMethod, let rhsUrlPath, let _, _) = rhs {

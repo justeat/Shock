@@ -63,9 +63,13 @@ struct MockNIOHTTPRequest: MockHttpRequest {
     var params: [String : String]
 }
 
+struct RouteHandlerMapping {
+    let route: MockHTTPRoute
+    let handler: HandlerClosure
+}
+
 struct MockNIOHTTPRouter: MockHttpRouter {
-    typealias RouteHandlerMapping = [MockHTTPRoute: HandlerClosure]
-    private var routes = [MockHTTPMethod: RouteHandlerMapping]()
+    private var routes = [MockHTTPMethod: [RouteHandlerMapping]]()
     
     var requiresRouteMiddleware: Bool {
         !routes.isEmpty
@@ -73,10 +77,10 @@ struct MockNIOHTTPRouter: MockHttpRouter {
     
     func handlerForMethod(_ method: String, path: String, params: [String:String], headers: [String:String]) -> HandlerClosure? {
         guard let httpMethod = MockHTTPMethod(rawValue: method.uppercased()) else { return nil }
-        let methodRoutes = routes[httpMethod] ?? RouteHandlerMapping()
-        for (candidate, handler) in methodRoutes {
-            if candidate.matches(method: httpMethod, path: path, params: params, headers: headers) {
-                return handler
+        let methodRoutes = routes[httpMethod] ?? [RouteHandlerMapping]()
+        for mapping in methodRoutes {
+            if mapping.route.matches(method: httpMethod, path: path, params: params, headers: headers) {
+                return mapping.handler
             }
         }
         return nil
@@ -84,8 +88,13 @@ struct MockNIOHTTPRouter: MockHttpRouter {
     
     mutating func register(route: MockHTTPRoute, handler: HandlerClosure?) {
         guard let method = route.method else { return }
-        var methodRoutes = routes[method] ?? RouteHandlerMapping()
-        methodRoutes[route] = handler
+        var methodRoutes = routes[method] ?? [RouteHandlerMapping]()
+        if methodRoutes.contains() { $0.route == route } {
+            methodRoutes = methodRoutes.filter({ $0.route != route })
+        }
+        if let handler = handler {
+            methodRoutes.append(RouteHandlerMapping(route: route, handler: handler))
+        }
         routes[method] = methodRoutes
     }
 }
