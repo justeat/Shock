@@ -121,6 +121,18 @@ class RouteTests: ShockTestCase {
     }
     
     func testSimpleRouteEquivalence() {
+        var route1 = MockHTTPRoute.simple(method: .get, urlPath: "/restaurants/bypostcode/:postcode", code: 200, filename: nil)
+        var route2 = MockHTTPRoute.simple(method: .get, urlPath: "/restaurants/bypostcode/:postcode", code: 200, filename: nil)
+        XCTAssertEqual(route1, route2, "Simple gets should be equal")
+        route1 = MockHTTPRoute.simple(method: .get, urlPath: "/restaurants/bypostcode/:postcode", code: 200, filename: nil)
+        route2 = MockHTTPRoute.simple(method: .get, urlPath: "/restaurants/bypostcode/AR511AA", code: 200, filename: nil)
+        XCTAssertEqual(route1, route2, "Simple gets should be equal")
+        route1 = MockHTTPRoute.simple(method: .get, urlPath: "/restaurants/bypostcode/:postcode", code: 200, filename: nil)
+        route2 = MockHTTPRoute.simple(method: .get, urlPath: "restaurants/:id/reviews", code: 200, filename: nil)
+        XCTAssertNotEqual(route1, route2, "Paths are different, should not be equal")
+    }
+    
+    func testSimpleRouteWithVariablesEquivalence() {
         var route1 = MockHTTPRoute.simple(method: .get, urlPath: "foo/bar", code: 200, filename: nil)
         var route2 = MockHTTPRoute.simple(method: .get, urlPath: "foo/bar", code: 200, filename: nil)
         XCTAssertEqual(route1, route2, "Simple gets should be equal")

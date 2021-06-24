@@ -226,17 +226,20 @@ extension MockHTTPRoute: Equatable {
 
 extension String {
     func pathMatchesStrippingVariables(_ other: String) -> Bool {
+        let bothTemplates = self.contains() { $0 == ":" } && other.contains() { $0 == ":" }
         let parts = self.split(separator: "/")
         let otherParts = other.split(separator: "/")
         guard parts.count == otherParts.count else { return false }
         var match = true
         for (index, part) in parts.enumerated() {
-            if part.hasPrefix(":") {
-                continue
-            }
             let otherPart = otherParts[index]
-            if otherPart.hasPrefix(":") {
-                continue
+            if !bothTemplates {
+                if part.hasPrefix(":") {
+                    continue
+                }
+                if otherPart.hasPrefix(":") {
+                    continue
+                }
             }
             match = part.lowercased() == otherPart.lowercased()
             if !match {
