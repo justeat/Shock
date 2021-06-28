@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0463BE14252DA52700C18221 /* ClosureMiddlewareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0463BE13252DA52700C18221 /* ClosureMiddlewareTests.swift */; };
 		0463BE1A252DA54700C18221 /* ShockTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0463BE19252DA54700C18221 /* ShockTestCase.swift */; };
+		142CB1172680B93100E0B3F4 /* testSimpleRouteWithVariables.txt in Resources */ = {isa = PBXBuildFile; fileRef = 142CB1162680B93100E0B3F4 /* testSimpleRouteWithVariables.txt */; };
 		14739D0D25262B640031286B /* SocketServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14739D0C25262B640031286B /* SocketServerTests.swift */; };
 		14C308E82649781700B85451 /* testCustomRoute2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 14C308E72649781700B85451 /* testCustomRoute2.txt */; };
 		28CF36BB9C72A116B41A9CCA /* Pods_Shock_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504237DD0DF4E81BD4C74B63 /* Pods_Shock_Example.framework */; };
@@ -48,6 +49,7 @@
 /* Begin PBXFileReference section */
 		0463BE13252DA52700C18221 /* ClosureMiddlewareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosureMiddlewareTests.swift; sourceTree = "<group>"; };
 		0463BE19252DA54700C18221 /* ShockTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShockTestCase.swift; sourceTree = "<group>"; };
+		142CB1162680B93100E0B3F4 /* testSimpleRouteWithVariables.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testSimpleRouteWithVariables.txt; sourceTree = "<group>"; };
 		14739D0C25262B640031286B /* SocketServerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketServerTests.swift; sourceTree = "<group>"; };
 		14C308E72649781700B85451 /* testCustomRoute2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testCustomRoute2.txt; sourceTree = "<group>"; };
 		2AF495106DF32828591B5E10 /* Pods-Shock_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shock_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Shock_Tests/Pods-Shock_Tests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 			children = (
 				6DF676FB1F8793F700E1783A /* testTemplatedRoute.mustache */,
 				6D718E361F8777660070B764 /* testSimpleRoute.txt */,
+				142CB1162680B93100E0B3F4 /* testSimpleRouteWithVariables.txt */,
 				6D718E381F877AB30070B764 /* testRedirectRoute.txt */,
 				6D7BDCF51FA72BC300488DB5 /* testCustomRoute.txt */,
 				14C308E72649781700B85451 /* testCustomRoute2.txt */,
@@ -336,6 +339,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				142CB1172680B93100E0B3F4 /* testSimpleRouteWithVariables.txt in Resources */,
 				14C308E82649781700B85451 /* testCustomRoute2.txt in Resources */,
 				6DF676FC1F8793F700E1783A /* testTemplatedRoute.mustache in Resources */,
 				6D718E391F877AB30070B764 /* testRedirectRoute.txt in Resources */,

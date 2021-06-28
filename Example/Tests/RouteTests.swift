@@ -26,12 +26,57 @@ class RouteTests: ShockTestCase {
     }
     
     func testSimpleRouteWithVariables() {
-        let route: MockHTTPRoute = .simple(method: .get, urlPath: "/simple/:foo", code: 200, filename: "testSimpleRoute.txt")
+        let route: MockHTTPRoute = .simple(method: .get, urlPath: "/simple/:foo", code: 200, filename: "testSimpleRouteWithVariables.txt")
         server.setup(route: route)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
         HTTPClient.get(url: "\(server.hostURL)/simple/1") { code, body, headers, error in
+            XCTAssertEqual(code, 200)
+            XCTAssertEqual(body, "testSimpleRoute (with variables) test fixture\n")
+            expectation.fulfill()
+        }
+        self.waitForExpectations(timeout: 2.0, handler: nil)
+    }
+    
+    func testSimpleRouteWithAndWithoutVariables() {
+        let withoutRoute: MockHTTPRoute = .simple(method: .get, urlPath: "/simple/withoutvariables", code: 200, filename: "testSimpleRoute.txt")
+        let withRoute: MockHTTPRoute = .simple(method: .get, urlPath: "/simple/withvariables/:foo", code: 200, filename: "testSimpleRouteWithVariables.txt")
+        server.setup(route: .collection(routes: [withRoute, withoutRoute]))
+        
+        let expectation = self.expectation(description: "Expect 200 response with response body")
+        
+        HTTPClient.get(url: "\(server.hostURL)/simple/withvariables/1") { code, body, headers, error in
+            XCTAssertEqual(code, 200)
+            XCTAssertEqual(body, "testSimpleRoute (with variables) test fixture\n")
+            expectation.fulfill()
+        }
+        self.waitForExpectations(timeout: 2.0, handler: nil)
+    }
+    
+    func testSimpleRouteWithEmptyURLPath() {
+        let withoutRoute: MockHTTPRoute = .simple(method: .get, urlPath: "", code: 200, filename: "testSimpleRoute.txt")
+        let withRoute: MockHTTPRoute = .simple(method: .get, urlPath: "/simple/withvariables/:foo", code: 200, filename: "testSimpleRouteWithVariables.txt")
+        server.setup(route: .collection(routes: [withRoute, withoutRoute]))
+        
+        let expectation = self.expectation(description: "Expect 200 response with response body")
+        
+        HTTPClient.get(url: "\(server.hostURL)/simple/withvariables/1") { code, body, headers, error in
+            XCTAssertEqual(code, 200)
+            XCTAssertEqual(body, "testSimpleRoute (with variables) test fixture\n")
+            expectation.fulfill()
+        }
+        self.waitForExpectations(timeout: 2.0, handler: nil)
+    }
+    
+    func testSimpleRouteWithEmptyURLPathAlternate() {
+        let withoutRoute: MockHTTPRoute = .simple(method: .get, urlPath: "/simple/withoutvariables", code: 200, filename: "testSimpleRoute.txt")
+        let withRoute: MockHTTPRoute = .simple(method: .get, urlPath: "", code: 200, filename: "testSimpleRouteWithVariables.txt")
+        server.setup(route: .collection(routes: [withRoute, withoutRoute]))
+        
+        let expectation = self.expectation(description: "Expect 200 response with response body")
+        
+        HTTPClient.get(url: "\(server.hostURL)/simple/withoutvariables") { code, body, headers, error in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
@@ -76,6 +121,18 @@ class RouteTests: ShockTestCase {
     }
     
     func testSimpleRouteEquivalence() {
+        var route1 = MockHTTPRoute.simple(method: .get, urlPath: "/restaurants/bypostcode/:postcode", code: 200, filename: nil)
+        var route2 = MockHTTPRoute.simple(method: .get, urlPath: "/restaurants/bypostcode/:postcode", code: 200, filename: nil)
+        XCTAssertEqual(route1, route2, "Simple gets should be equal")
+        route1 = MockHTTPRoute.simple(method: .get, urlPath: "/restaurants/bypostcode/:postcode", code: 200, filename: nil)
+        route2 = MockHTTPRoute.simple(method: .get, urlPath: "/restaurants/bypostcode/AR511AA", code: 200, filename: nil)
+        XCTAssertEqual(route1, route2, "Simple gets should be equal")
+        route1 = MockHTTPRoute.simple(method: .get, urlPath: "/restaurants/bypostcode/:postcode", code: 200, filename: nil)
+        route2 = MockHTTPRoute.simple(method: .get, urlPath: "restaurants/:id/reviews", code: 200, filename: nil)
+        XCTAssertNotEqual(route1, route2, "Paths are different, should not be equal")
+    }
+    
+    func testSimpleRouteWithVariablesEquivalence() {
         var route1 = MockHTTPRoute.simple(method: .get, urlPath: "foo/bar", code: 200, filename: nil)
         var route2 = MockHTTPRoute.simple(method: .get, urlPath: "foo/bar", code: 200, filename: nil)
         XCTAssertEqual(route1, route2, "Simple gets should be equal")
@@ -190,104 +247,5 @@ class RouteTests: ShockTestCase {
             .simple(method: .get, urlPath: "bar/foo", code: 200, filename: nil)
         ])
         XCTAssertNotEqual(route1, route2, "Paths are different, should not be equal")
-    }
-    
-    func testSimpleRouteHash() {
-        let route1 = MockHTTPRoute.simple(method: .get, urlPath: "foo/bar", code: 200, filename: nil)
-        let route2 = MockHTTPRoute.simple(method: .get, urlPath: "foo/bar", code: 200, filename: nil)
-        var dict = [MockHTTPRoute : String]()
-        dict[route1] = "Foo"
-        XCTAssertEqual(dict.count, 1, "There should be one element in the dictionary")
-        dict[route2] = "Bar"
-        XCTAssertEqual(dict.count, 1, "There should still be one element in the dictionary")
-        let route3 = MockHTTPRoute.simple(method: .post, urlPath: "foo/bar", code: 200, filename: nil)
-        dict[route3] = "Foo"
-        XCTAssertEqual(dict.count, 2, "There should now be two elements in the dictionary")
-        XCTAssertEqual(dict[route2], "Bar")
-        XCTAssertEqual(dict[route3], "Foo")
-    }
-    
-    func testCustomRouteHash() {
-        let route1 = MockHTTPRoute.custom(method: .get, urlPath: "foo/bar", query: ["query":"value"],
-                                          requestHeaders: ["HTTPHeader":"false"], responseHeaders: ["HTTPHeader":"true"], code: 200, filename: nil)
-        let route2 = MockHTTPRoute.custom(method: .get, urlPath: "foo/bar", query: ["query":"value"],
-                                          requestHeaders: ["HTTPHeader":"false"], responseHeaders: ["HTTPHeader":"true"], code: 200, filename: nil)
-        var dict = [MockHTTPRoute : String]()
-        dict[route1] = "Foo"
-        XCTAssertEqual(dict.count, 1, "There should be one element in the dictionary")
-        dict[route2] = "Bar"
-        XCTAssertEqual(dict.count, 1, "There should still be one element in the dictionary")
-        let route3 = MockHTTPRoute.custom(method: .post, urlPath: "foo/bar", query: ["query":"value"],
-                                          requestHeaders: ["HTTPHeader":"false"], responseHeaders: ["HTTPHeader":"true"], code: 200, filename: nil)
-        dict[route3] = "Foo"
-        XCTAssertEqual(dict.count, 2, "There should now be two elements in the dictionary")
-        XCTAssertEqual(dict[route2], "Bar")
-        XCTAssertEqual(dict[route3], "Foo")
-    }
-    
-    func testTemplateRouteHash() {
-        let route1 = MockHTTPRoute.template(method: .get, urlPath: "foo/bar", code: 200, filename: nil, templateInfo: ["Value" : 1])
-        let route2 = MockHTTPRoute.template(method: .get, urlPath: "foo/bar", code: 200, filename: nil, templateInfo: ["Value" : 1])
-        var dict = [MockHTTPRoute : String]()
-        dict[route1] = "Foo"
-        XCTAssertEqual(dict.count, 1, "There should be one element in the dictionary")
-        dict[route2] = "Bar"
-        XCTAssertEqual(dict.count, 1, "There should still be one element in the dictionary")
-        let route3 = MockHTTPRoute.template(method: .post, urlPath: "foo/bar", code: 200, filename: nil, templateInfo: ["Value" : 1])
-        dict[route3] = "Foo"
-        XCTAssertEqual(dict.count, 2, "There should now be two elements in the dictionary")
-        XCTAssertEqual(dict[route2], "Bar")
-        XCTAssertEqual(dict[route3], "Foo")
-    }
-    
-    func testRedirectRouteHash() {
-        let route1 = MockHTTPRoute.redirect(urlPath: "foo/bar", destination: "bar/foo")
-        let route2 = MockHTTPRoute.redirect(urlPath: "foo/bar", destination: "bar/foo")
-        var dict = [MockHTTPRoute : String]()
-        dict[route1] = "Foo"
-        XCTAssertEqual(dict.count, 1, "There should be one element in the dictionary")
-        dict[route2] = "Bar"
-        XCTAssertEqual(dict.count, 1, "There should still be one element in the dictionary")
-        let route3 = MockHTTPRoute.redirect(urlPath: "bar/foo", destination: "bar/foo")
-        dict[route3] = "Foo"
-        XCTAssertEqual(dict.count, 2, "There should now be two elements in the dictionary")
-        XCTAssertEqual(dict[route2], "Bar")
-        XCTAssertEqual(dict[route3], "Foo")
-    }
-    
-    func testCollectionRouteHash() {
-        let route1 = MockHTTPRoute.collection(routes: [
-            .simple(method: .get, urlPath: "foo/bar", code: 200, filename: nil)
-        ])
-        let route2 = MockHTTPRoute.collection(routes: [
-            .simple(method: .get, urlPath: "foo/bar", code: 200, filename: nil)
-        ])
-        var dict = [MockHTTPRoute : String]()
-        dict[route1] = "Foo"
-        XCTAssertEqual(dict.count, 1, "There should be one element in the dictionary")
-        dict[route2] = "Bar"
-        XCTAssertEqual(dict.count, 1, "There should still be one element in the dictionary")
-        let route3 = MockHTTPRoute.collection(routes: [
-            .simple(method: .post, urlPath: "foo/bar", code: 200, filename: nil)
-        ])
-        dict[route3] = "Foo"
-        XCTAssertEqual(dict.count, 2, "There should now be two elements in the dictionary")
-        XCTAssertEqual(dict[route2], "Bar")
-        XCTAssertEqual(dict[route3], "Foo")
-    }
-    
-    func testTimeoutRouteHash() {
-        let route1 = MockHTTPRoute.timeout(method: .get, urlPath: "foo/bar", timeoutInSeconds: 1)
-        let route2 = MockHTTPRoute.timeout(method: .get, urlPath: "foo/bar", timeoutInSeconds: 1)
-        var dict = [MockHTTPRoute : String]()
-        dict[route1] = "Foo"
-        XCTAssertEqual(dict.count, 1, "There should be one element in the dictionary")
-        dict[route2] = "Bar"
-        XCTAssertEqual(dict.count, 1, "There should still be one element in the dictionary")
-        let route3 = MockHTTPRoute.timeout(method: .post, urlPath: "foo/bar", timeoutInSeconds: 1)
-        dict[route3] = "Foo"
-        XCTAssertEqual(dict.count, 2, "There should now be two elements in the dictionary")
-        XCTAssertEqual(dict[route2], "Bar")
-        XCTAssertEqual(dict[route3], "Foo")
     }
 }

@@ -32,7 +32,7 @@ public enum MockHTTPRoute {
         urlPath: String,
         code: Int,
         filename: String?,
-        templateInfo: [String: Any?]
+        templateInfo: [String: AnyHashable?]
     )
     
     case redirect(
@@ -154,7 +154,7 @@ public enum MockHTTPRoute {
 
 /// The philosophy for Equatable/Hashable `MockHTTPRoute` is anything in the request
 /// part of the route (e.g. `method` or `urlPath`) are part of the identify of the route
-extension MockHTTPRoute: Hashable {    
+extension MockHTTPRoute: Equatable {    
     public static func == (lhs: MockHTTPRoute, rhs: MockHTTPRoute) -> Bool {
         if case MockHTTPRoute.simple(let lhsMethod, let lhsUrlPath, let _, _) = lhs,
            case MockHTTPRoute.simple(let rhsMethod, let rhsUrlPath, let _, _) = rhs {
@@ -205,6 +205,8 @@ extension MockHTTPRoute: Hashable {
     }
     
     public func matches(method: MockHTTPMethod, path: String, params: [String:String], headers: [String:String]) -> Bool {
+        guard !method.rawValue.isEmpty else { return false }
+        guard !path.isEmpty else { return false }
         switch self {
         case .simple:
             return MockHTTPRoute.simple(method: method, urlPath: path, code: 0, filename: nil) == self
@@ -220,43 +222,24 @@ extension MockHTTPRoute: Hashable {
             return MockHTTPRoute.timeout(method: method, urlPath: path, timeoutInSeconds: 0) == self
         }
     }
-    
-    public func hash(into hasher: inout Hasher) {
-        switch self {
-        case .simple(method: let method, urlPath: let urlPath, _, _):
-            hasher.combine(method)
-            hasher.combine(urlPath)
-        case .custom(method: let method, urlPath: let urlPath, query: let query, _, _, _, _):
-            hasher.combine(method)
-            hasher.combine(urlPath)
-            hasher.combine(query)
-        case .template(method: let method, urlPath: let urlPath, _, _, _):
-            hasher.combine(method)
-            hasher.combine(urlPath)
-        case .redirect(urlPath: let urlPath, _):
-            hasher.combine(urlPath)
-        case .collection(routes: let routes):
-            hasher.combine(routes)
-        case .timeout(method: let method, urlPath: let urlPath, _):
-            hasher.combine(method)
-            hasher.combine(urlPath)
-        }
-    }
 }
 
 extension String {
     func pathMatchesStrippingVariables(_ other: String) -> Bool {
+        let bothTemplates = self.contains() { $0 == ":" } && other.contains() { $0 == ":" }
         let parts = self.split(separator: "/")
         let otherParts = other.split(separator: "/")
         guard parts.count == otherParts.count else { return false }
         var match = true
         for (index, part) in parts.enumerated() {
-            if part.hasPrefix(":") {
-                continue
-            }
             let otherPart = otherParts[index]
-            if otherPart.hasPrefix(":") {
-                continue
+            if !bothTemplates {
+                if part.hasPrefix(":") {
+                    continue
+                }
+                if otherPart.hasPrefix(":") {
+                    continue
+                }
             }
             match = part.lowercased() == otherPart.lowercased()
             if !match {
