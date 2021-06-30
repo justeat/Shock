@@ -5,6 +5,7 @@
 //  Created by Jack Newcombe on 01/10/2020.
 //
 
+import Foundation
 import NIO
 
 public typealias HandlerClosure = (MiddlewareRequestContext, MiddlewareResponseContext) -> Void
