@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "899046EE-8265-4161-98A6-88547A832D05",
+      "name" : "Default",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Shock.xcodeproj",
+      "identifier" : "607FACCF1AFB9204008FA782",
+      "name" : "Shock_Example"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Shock.xcodeproj",
+        "identifier" : "607FACE41AFB9204008FA782",
+        "name" : "Shock_Tests"
+      }
+    }
+  ],
+  "version" : 1
+}
