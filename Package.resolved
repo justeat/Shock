@@ -2,8 +2,8 @@
   "object": {
     "pins": [
       {
-        "package": "Mustache",
-        "repositoryURL": "git@github.com:groue/GRMustache.swift.git",
+        "package": "GRMustache.swift",
+        "repositoryURL": "https://github.com/groue/GRMustache.swift.git",
         "state": {
           "branch": null,
           "revision": "671e2c5234e829c1f337c9d300bd6d9b21d1c42a",
@@ -12,7 +12,7 @@
       },
       {
         "package": "swift-nio",
-        "repositoryURL": "git@github.com:apple/swift-nio.git",
+        "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
           "revision": "96db8838be60fcbb993fa738e1120fb7f4b99c43",
