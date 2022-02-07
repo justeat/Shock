@@ -1,6 +1,9 @@
 //
 //  String+PathMatrchingTests.swift
-//  Copyright © 2021 Just Eat Takeaway. All rights reserved.
+//  Shock
+//
+//  Created by Alberto De Bortoli on 07/02/2022.
+//  Copyright © 2022 Just Eat. All rights reserved.
 //
 
 import XCTest

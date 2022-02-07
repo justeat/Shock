@@ -2,6 +2,9 @@
 //  String+PathMatching.swift
 //  Shock
 //
+//  Created by Alberto De Bortoli on 07/02/2022.
+//  Copyright © 2022 Just Eat. All rights reserved.
+//
 
 import Foundation
 
