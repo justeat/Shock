@@ -13,6 +13,7 @@
 		14739D0D25262B640031286B /* SocketServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14739D0C25262B640031286B /* SocketServerTests.swift */; };
 		14C308E82649781700B85451 /* testCustomRoute2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 14C308E72649781700B85451 /* testCustomRoute2.txt */; };
 		28CF36BB9C72A116B41A9CCA /* Pods_Shock_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 504237DD0DF4E81BD4C74B63 /* Pods_Shock_Example.framework */; };
+		4F2CCBF827B17CEF00E17FB7 /* String+PathMatchingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2CCBF727B17CEF00E17FB7 /* String+PathMatchingTests.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -55,6 +56,7 @@
 		2AF495106DF32828591B5E10 /* Pods-Shock_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shock_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Shock_Tests/Pods-Shock_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		2DEE7FFDC29CFACFFE3400E0 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		4A7A38CD9EF252172E5C9478 /* Pods-Shock_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shock_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Shock_Example/Pods-Shock_Example.release.xcconfig"; sourceTree = "<group>"; };
+		4F2CCBF727B17CEF00E17FB7 /* String+PathMatchingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+PathMatchingTests.swift"; sourceTree = "<group>"; };
 		4F7E258226CD2E86001F66F7 /* UnitTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnitTests.xctestplan; sourceTree = "<group>"; };
 		504237DD0DF4E81BD4C74B63 /* Pods_Shock_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Shock_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* Shock_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shock_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -186,6 +188,7 @@
 				6D9D7BBA25248ED7000FE60F /* ParallelServerTests.swift */,
 				607FACEB1AFB9204008FA782 /* RouteTests.swift */,
 				14739D0C25262B640031286B /* SocketServerTests.swift */,
+				4F2CCBF727B17CEF00E17FB7 /* String+PathMatchingTests.swift */,
 				6D10776E1FA9EB21006BB9C8 /* TemplatedRouteTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
@@ -449,6 +452,7 @@
 				6D9D7BBB25248ED7000FE60F /* ParallelServerTests.swift in Sources */,
 				6D10776D1FA9E67E006BB9C8 /* CustomRouteTests.swift in Sources */,
 				6D410ED6206D203D00A2D79D /* MethodTests.swift in Sources */,
+				4F2CCBF827B17CEF00E17FB7 /* String+PathMatchingTests.swift in Sources */,
 				CBF416CD230DE1F20087A914 /* ApiCallRequestDataTests.swift in Sources */,
 				0463BE1A252DA54700C18221 /* ShockTestCase.swift in Sources */,
 				6DE276E91F8761F300C9F194 /* HTTPClient.swift in Sources */,
