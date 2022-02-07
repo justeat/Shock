@@ -158,24 +158,24 @@ extension MockHTTPRoute: Equatable {
     public static func == (lhs: MockHTTPRoute, rhs: MockHTTPRoute) -> Bool {
         if case MockHTTPRoute.simple(let lhsMethod, let lhsUrlPath, let _, _) = lhs,
            case MockHTTPRoute.simple(let rhsMethod, let rhsUrlPath, let _, _) = rhs {
-            return lhsMethod == rhsMethod && lhsUrlPath.pathMatchesStrippingVariables(rhsUrlPath)
+            return lhsMethod == rhsMethod && lhsUrlPath.pathMatches(rhsUrlPath)
         }
         if case MockHTTPRoute.custom(let lhsMethod, let lhsUrlPath, let lhsQuery, let lhsRequestHeaders, _, _, _) = lhs,
            case MockHTTPRoute.custom(let rhsMethod, let rhsUrlPath, let rhsQuery, let rhsRequestHeaders, _, _, _) = rhs {
-            return lhsMethod == rhsMethod && lhsUrlPath.pathMatchesStrippingVariables(rhsUrlPath)
+            return lhsMethod == rhsMethod && lhsUrlPath.pathMatches(rhsUrlPath)
                 && lhsQuery == rhsQuery && headers(lhsRequestHeaders, contains: rhsRequestHeaders)
         }
         if case MockHTTPRoute.template(let lhsMethod, let lhsUrlPath, let _, _, _) = lhs,
            case MockHTTPRoute.template(let rhsMethod, let rhsUrlPath, let _, _, _) = rhs {
-            return lhsMethod == rhsMethod && lhsUrlPath.pathMatchesStrippingVariables(rhsUrlPath)
+            return lhsMethod == rhsMethod && lhsUrlPath.pathMatches(rhsUrlPath)
         }
         if case MockHTTPRoute.redirect(let lhsUrlPath, _) = lhs,
            case MockHTTPRoute.redirect(let rhsUrlPath, _) = rhs {
-            return lhsUrlPath.pathMatchesStrippingVariables(rhsUrlPath)
+            return lhsUrlPath.pathMatches(rhsUrlPath)
         }
         if case MockHTTPRoute.timeout(let lhsMethod, let lhsUrlPath, _) = lhs,
            case MockHTTPRoute.timeout(let rhsMethod, let rhsUrlPath, _) = rhs {
-            return lhsMethod == rhsMethod && lhsUrlPath.pathMatchesStrippingVariables(rhsUrlPath)
+            return lhsMethod == rhsMethod && lhsUrlPath.pathMatches(rhsUrlPath)
         }
         if case MockHTTPRoute.collection(let lhsRoutes) = lhs,
            case MockHTTPRoute.collection(let rhsRoutes) = rhs {
@@ -225,8 +225,13 @@ extension MockHTTPRoute: Equatable {
 }
 
 extension String {
-    func pathMatchesStrippingVariables(_ other: String) -> Bool {
-        let bothTemplates = self.contains() { $0 == ":" } && other.contains() { $0 == ":" }
+    
+    func pathMatches(_ other: String) -> Bool {
+        pathMatches(other, tokenPrefix: ":") || pathMatches(other, tokenPrefix: "{")
+    }
+    
+    private func pathMatches(_ other: String, tokenPrefix: Character) -> Bool {
+        let bothTemplates = self.contains() { $0 == tokenPrefix } && other.contains() { $0 == tokenPrefix }
         let parts = self.split(separator: "/")
         let otherParts = other.split(separator: "/")
         guard parts.count == otherParts.count else { return false }
@@ -234,10 +239,10 @@ extension String {
         for (index, part) in parts.enumerated() {
             let otherPart = otherParts[index]
             if !bothTemplates {
-                if part.hasPrefix(":") {
+                if part.hasPrefix(String(tokenPrefix)) {
                     continue
                 }
-                if otherPart.hasPrefix(":") {
+                if otherPart.hasPrefix(String(tokenPrefix)) {
                     continue
                 }
             }
