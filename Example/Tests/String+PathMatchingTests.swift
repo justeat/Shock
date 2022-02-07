@@ -1,5 +1,5 @@
 //
-//  String+PathMatrchingTests.swift
+//  String+PathMatchingTests.swift
 //  Shock
 //
 //  Created by Alberto De Bortoli on 07/02/2022.
@@ -9,7 +9,7 @@
 import XCTest
 @testable import Shock
 
-class String_PathMatrchingTests: XCTestCase {
+class String_PathMatchingTests: XCTestCase {
 
     func testNoTokenPathsMatch() {
         let path = "/some/path"
