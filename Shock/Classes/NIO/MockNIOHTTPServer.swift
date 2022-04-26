@@ -12,68 +12,48 @@ import NIOHTTP1
 /// SwiftNIO implementation of mock HTTP server
 class MockNIOHttpServer: MockNIOBaseServer, MockHttpServer {
     
-    private let router = MockNIOHTTPRouter()
-    private let middlewareService = MiddlewareService()
-
+    private let responseFactory: ResponseFactory
+    private var httpHandler: MockNIOHTTPHandler?
+    private var router = MockNIOHTTPRouter()
+    private var middleware = [Middleware]()
+    private var routeMiddleware: MockRoutesMiddleware?
     var notFoundHandler: HandlerClosure?
-    var methodRoutes: [MockHTTPMethod: MockNIOHTTPMethodRoute] = [:]
     
-    
-    override init() {
-        methodRoutes[.delete] = MockNIOHTTPMethodRoute(method: "DELETE", router: router)
-        methodRoutes[.patch] = MockNIOHTTPMethodRoute(method: "PATCH", router: router)
-        methodRoutes[.head] = MockNIOHTTPMethodRoute(method: "HEAD", router: router)
-        methodRoutes[.post] = MockNIOHTTPMethodRoute(method: "POST", router: router)
-        methodRoutes[.get] = MockNIOHTTPMethodRoute(method: "GET", router: router)
-        methodRoutes[.put] = MockNIOHTTPMethodRoute(method: "PUT", router: router)
+    init(responseFactory: ResponseFactory) {
+        self.responseFactory = responseFactory
         super.init()
     }
     
     func start(_ port: Int, forceIPv4: Bool, priority: DispatchQoS.QoSClass) throws -> Void {
         try start(port) { (channel) -> EventLoopFuture<Void> in
             channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
-                channel.pipeline.addHandler(MockNIOHTTPHandler(router: self.router,
-                                                               middlewareService: self.middlewareService))
+                self.httpHandler = MockNIOHTTPHandler(responseFactory: self.responseFactory,
+                                                      router: self.router,
+                                                      middleware: self.middleware,
+                                                      notFoundHandler: self.notFoundHandler)
+                return channel.pipeline.addHandler(self.httpHandler!)
             }
         }
+    }
+    
+    func register(route: MockHTTPRoute, handler: HandlerClosure?) {
+        if route.urlPath.isEmpty {
+            return
+        }
+        self.router.register(route: route, handler: handler)
     }
     
     func add(middleware: Middleware) {
-        middlewareService.add(middleware: middleware)
+        self.middleware.append(middleware)
     }
     
     func has<T>(middlewareOfType type: T.Type) -> Bool where T: Middleware {
-        return middlewareService.middleware.contains { $0 is T }
-    }
-}
-
-struct MockNIOHTTPMethodRoute: MockMethodRoute {
-    let method: String
-    let router: MockHttpRouter
-}
-
-class MockNIOHTTPRouter: MockHttpRouter {
-    typealias PathHandlerMapping = [String: HandlerClosure]
-    private var routes = [String: PathHandlerMapping]()
-    
-    func handlerForMethod(_ method: String, path: String) -> HandlerClosure? {
-        let methodRoutes = routes[method] ?? PathHandlerMapping()
-        for (candidate, handler) in methodRoutes {
-            if candidate.pathMatchesStrippingVariables(path) {
-                return handler
-            }
-        }
-        return nil
-    }
-    
-    func register(_ method: String, path: String, handler: HandlerClosure?) {
-        var methodRoutes = routes[method] ?? PathHandlerMapping()
-        methodRoutes[path] = handler
-        routes[method] = methodRoutes
+        return (self.middleware ?? []).contains { $0 is T }
     }
 }
 
 struct MockNIOHTTPRequest: MockHttpRequest {
+    var eventLoop: EventLoop
     var path: String
     var queryParams: [(String, String)]
     var method: String
@@ -83,25 +63,38 @@ struct MockNIOHTTPRequest: MockHttpRequest {
     var params: [String : String]
 }
 
-extension String {
-    func pathMatchesStrippingVariables(_ other: String) -> Bool {
-        let parts = self.split(separator: "/")
-        let otherParts = other.split(separator: "/")
-        guard parts.count == otherParts.count else { return false }
-        var match = true
-        for (index, part) in parts.enumerated() {
-            if part.hasPrefix(":") {
-                continue
-            }
-            let otherPart = otherParts[index]
-            if otherPart.hasPrefix(":") {
-                continue
-            }
-            match = part == otherPart
-            if !match {
-                break
+struct RouteHandlerMapping {
+    let route: MockHTTPRoute
+    let handler: HandlerClosure
+}
+
+struct MockNIOHTTPRouter: MockHttpRouter {
+    private var routes = [MockHTTPMethod: [RouteHandlerMapping]]()
+    
+    var requiresRouteMiddleware: Bool {
+        !routes.isEmpty
+    }
+    
+    func handlerForMethod(_ method: String, path: String, params: [String:String], headers: [String:String]) -> HandlerClosure? {
+        guard let httpMethod = MockHTTPMethod(rawValue: method.uppercased()) else { return nil }
+        let methodRoutes = routes[httpMethod] ?? [RouteHandlerMapping]()
+        for mapping in methodRoutes {
+            if mapping.route.matches(method: httpMethod, path: path, params: params, headers: headers) {
+                return mapping.handler
             }
         }
-        return match
+        return nil
+    }
+    
+    mutating func register(route: MockHTTPRoute, handler: HandlerClosure?) {
+        let method = route.method
+        var methodRoutes = routes[method] ?? [RouteHandlerMapping]()
+        if methodRoutes.contains() { $0.route == route } {
+            methodRoutes = methodRoutes.filter({ $0.route != route })
+        }
+        if let handler = handler {
+            methodRoutes.append(RouteHandlerMapping(route: route, handler: handler))
+        }
+        routes[method] = methodRoutes
     }
 }

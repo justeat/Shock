@@ -1,45 +1,62 @@
 PODS:
-  - CNIOAtomics (2.22.1)
-  - CNIODarwin (2.22.1)
-  - CNIOHTTPParser (2.22.1)
-  - CNIOLinux (2.22.1)
-  - CNIOSHA1 (2.22.1)
+  - _NIODataStructures (2.38.0)
+  - CNIOAtomics (2.38.0)
+  - CNIODarwin (2.38.0)
+  - CNIOHTTPParser (2.38.0)
+  - CNIOLinux (2.38.0)
+  - CNIOWindows (2.38.0)
   - GRMustache.swift (4.0.1)
   - JustLog (3.1.3):
     - SwiftyBeaver (~> 1.9.1)
-  - Shock (5.1.0):
+  - Shock (6.1.1):
     - GRMustache.swift (~> 4.0.1)
-    - SwiftNIOHTTP1 (~> 2.22.1)
-  - SwiftNIO (2.22.1):
-    - CNIOAtomics (= 2.22.1)
-    - CNIODarwin (= 2.22.1)
-    - CNIOLinux (= 2.22.1)
-    - CNIOSHA1 (= 2.22.1)
-    - SwiftNIOConcurrencyHelpers (= 2.22.1)
-  - SwiftNIOConcurrencyHelpers (2.22.1):
-    - CNIOAtomics (= 2.22.1)
-  - SwiftNIOHTTP1 (2.22.1):
-    - CNIOHTTPParser (= 2.22.1)
-    - SwiftNIO (= 2.22.1)
-    - SwiftNIOConcurrencyHelpers (= 2.22.1)
-  - SwiftyBeaver (1.9.2)
+    - SwiftNIOHTTP1 (~> 2.38.0)
+  - SwiftNIO (2.38.0):
+    - SwiftNIOCore (= 2.38.0)
+    - SwiftNIOEmbedded (= 2.38.0)
+    - SwiftNIOPosix (= 2.38.0)
+  - SwiftNIOConcurrencyHelpers (2.38.0):
+    - CNIOAtomics (= 2.38.0)
+  - SwiftNIOCore (2.38.0):
+    - CNIOLinux (= 2.38.0)
+    - SwiftNIOConcurrencyHelpers (= 2.38.0)
+  - SwiftNIOEmbedded (2.38.0):
+    - _NIODataStructures (= 2.38.0)
+    - SwiftNIOCore (= 2.38.0)
+  - SwiftNIOHTTP1 (2.38.0):
+    - CNIOHTTPParser (= 2.38.0)
+    - SwiftNIO (= 2.38.0)
+    - SwiftNIOConcurrencyHelpers (= 2.38.0)
+    - SwiftNIOCore (= 2.38.0)
+  - SwiftNIOPosix (2.38.0):
+    - _NIODataStructures (= 2.38.0)
+    - CNIODarwin (= 2.38.0)
+    - CNIOLinux (= 2.38.0)
+    - CNIOWindows (= 2.38.0)
+    - SwiftNIOConcurrencyHelpers (= 2.38.0)
+    - SwiftNIOCore (= 2.38.0)
+  - SwiftyBeaver (1.9.5)
 
 DEPENDENCIES:
   - JustLog (= 3.1.3)
   - Shock (from `../`)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  trunk:
+    - _NIODataStructures
     - CNIOAtomics
     - CNIODarwin
     - CNIOHTTPParser
     - CNIOLinux
-    - CNIOSHA1
+    - CNIOWindows
     - GRMustache.swift
     - JustLog
     - SwiftNIO
     - SwiftNIOConcurrencyHelpers
+    - SwiftNIOCore
+    - SwiftNIOEmbedded
     - SwiftNIOHTTP1
+    - SwiftNIOPosix
     - SwiftyBeaver
 
 EXTERNAL SOURCES:
@@ -47,19 +64,23 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  CNIOAtomics: 55026298b0bd7524bb8ca85bd9d00983ef2b6ab5
-  CNIODarwin: 65c40ddcfa113c0cb0bf5947dbef3165a0098b59
-  CNIOHTTPParser: 869e928f9f9b7bb68837e085b3ae921125d28d76
-  CNIOLinux: 896c5715ebe479fbfcdac5340717bbbd7936901b
-  CNIOSHA1: fd4d38fb42778ed971a75d87530f842106d4b4f4
+  _NIODataStructures: d8175e5ca5a34ec19b7ff21de298dd2a4d30818d
+  CNIOAtomics: 00b638e1b0dac91d06d4bb089ea9126c117c6650
+  CNIODarwin: e6cba4513e4f7633981e2e0eb3fca39cfbb834c4
+  CNIOHTTPParser: f3bd2955c9c8669ea2ae0f1f4f03df1fea2ed90d
+  CNIOLinux: f8801300bb296d16dee59a82aba1613a08cfbe23
+  CNIOWindows: 1cc6fb2af1d445f52f2d39cecf7069873f7d5b0d
   GRMustache.swift: a6436504284b22b4b05daf5f46f77bd3fe00a9a2
   JustLog: c1b12fe8fc6a7c22cc31dd874fe7776eaa7089d2
-  Shock: bf0897783c236a737439c9791f1598141def9246
-  SwiftNIO: 763188229de166e046cc8975383cca388832e992
-  SwiftNIOConcurrencyHelpers: 34d2e9d4d2b7886fa765086e845e6b19417be927
-  SwiftNIOHTTP1: c0a9ce48ba256f349af4f09648a0e0939b11a65c
-  SwiftyBeaver: b8239f6bfe9e1ea3303e6139abc8c24228081d84
+  Shock: 9258930104aad1e7f83b06e8f0ce08bbc15c158c
+  SwiftNIO: 9bc23fada7254a38f1417533a4514aabdcb7cf31
+  SwiftNIOConcurrencyHelpers: ec57adfc490604a341904994fbf98de61a8b5497
+  SwiftNIOCore: 156fd84c03dc877a5f22d0ba575745cafe4a83ca
+  SwiftNIOEmbedded: b5625cb78841ad4daa50d71a930c768531233770
+  SwiftNIOHTTP1: 2ec5bf1a511b8c04b5da3d9803374dc6077eff57
+  SwiftNIOPosix: b9cee2136fcb51223bf63b00795089c6928dd876
+  SwiftyBeaver: 84069991dd5dca07d7069100985badaca7f0ce82
 
-PODFILE CHECKSUM: cf5d6960b7408fe196110b4f67d26532469e9318
+PODFILE CHECKSUM: 1b9975b97a2d251dc3a7894a1b154635aef501a6
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.10.2

@@ -17,20 +17,10 @@ public class MockServer {
     /// The range in which to find a free port on which to launch the server
     private let portRange: ClosedRange<Int>
     
-    private var httpServer = MockNIOHttpServer()
+    private var httpServer: MockNIOHttpServer
     private var socketServer: MockNIOSocketServer?
-    
     private let responseFactory: ResponseFactory
-    
-    private lazy var middleware: MockRoutesMiddleware = {
-        let middleware = MockRoutesMiddleware(router: MockNIOHTTPRouter(),
-                                              responseFactory: responseFactory)
-        httpServer.add(middleware: middleware)
-        return middleware
-    }()
-    
-    public var onRequestReceived: ((MockHTTPRoute, CacheableRequest) -> Void)?
-    
+
     public var selectedHTTPPort = 0
     public var selectedSocketPort = 0
     
@@ -43,6 +33,7 @@ public class MockServer {
     public init(portRange: ClosedRange<Int>, bundle: Bundle = Bundle.main) {
         self.portRange = portRange
         self.responseFactory = ResponseFactory(bundle: bundle)
+        self.httpServer = MockNIOHttpServer(responseFactory: self.responseFactory)
     }
     
     // MARK: Server managements
@@ -91,9 +82,13 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
             httpServer.notFoundHandler != nil            
         }
         set {
-            httpServer.notFoundHandler = { _, response in
-                response.statusCode = 404
-                response.responseBody = nil
+            if newValue {
+                httpServer.notFoundHandler = { _, response in
+                    response.statusCode = 404
+                    response.responseBody = nil
+                }
+            } else {
+                httpServer.notFoundHandler = nil
             }
         }
     }
@@ -120,26 +115,8 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
     public func setup(route: MockHTTPRoute) {
         let method = route.method
         let path = route.urlPath
-
-        middleware.router.register(method.rawValue, path: path) { request, response in
-            let expectedHeaders = route.requestHeaders
-            if !request.headers.contains(expectedHeaders) {
-                self.httpServer.notFoundHandler?(request, response)
-                return
-            }
-
-            let query = request.queryParams.reduce(into: [String: String]()) { $0[$1.0] = $1.1 }
-            let expectedQuery = route.query
-            if !query.contains(expectedQuery) {
-                self.httpServer.notFoundHandler?(request, response)
-                return
-            }
-
-            if route.statusCode == 301 {
-                response.statusCode = 301
-                response.headers["Location"] = route.filename
-                return
-            }
+        
+        httpServer.register(route: route) { request, response in
 
             if let timeoutInSeconds = route.timeoutInSeconds {
                 sleep(UInt32(timeoutInSeconds))

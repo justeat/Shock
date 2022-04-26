@@ -81,7 +81,7 @@ public struct MockHTTPRoute {
         urlPath: String,
         code: Int,
         filename: String?,
-        templateInfo: [String: Any?]
+        templateInfo: [String: AnyHashable?]
     ) -> MockHTTPRoute {
         MockHTTPRoute(
             urlPath: urlPath,
@@ -100,6 +100,7 @@ public struct MockHTTPRoute {
             urlPath: urlPath,
             method: .get,
             statusCode: 301,
+            responseHeaders: ["Location": destination],
             filename: destination
         )
     }
@@ -130,5 +131,42 @@ extension Array where Element == MockHTTPRoute {
         routes: [MockHTTPRoute]
     ) -> [MockHTTPRoute] {
         routes
+    }
+}
+
+/// The philosophy for Equatable/Hashable `MockHTTPRoute` is anything in the request
+/// part of the route (e.g. `method` or `urlPath`) are part of the identify of the route
+extension MockHTTPRoute: Equatable {    
+    public static func == (lhs: MockHTTPRoute, rhs: MockHTTPRoute) -> Bool {
+        lhs.method == rhs.method &&
+            lhs.urlPath.pathMatches(rhs.urlPath) &&
+            lhs.query == rhs.query &&
+            headers(lhs.requestHeaders, contains: rhs.requestHeaders)
+    }
+    
+    private static func headers(_ lhs: [String:String], contains rhs: [String:String]) -> Bool {
+        guard !(lhs.isEmpty && rhs.isEmpty) else { return true }
+        var bigger = lhs
+        var smaller = rhs
+        if smaller.count != bigger.count {
+            bigger = lhs.count > rhs.count ? lhs : rhs
+            smaller = lhs.count < rhs.count ? lhs : rhs
+        }
+        guard !smaller.isEmpty else { return true }
+        for outer in smaller {
+            let result = bigger.contains() { (key: String, value: String) in
+                key.lowercased() == outer.key.lowercased() && value.lowercased() == outer.value.lowercased()
+            }
+            if result {
+                return true
+            }
+        }
+        return false
+    }
+    
+    public func matches(method: MockHTTPMethod, path: String, params: [String:String], headers: [String:String]) -> Bool {
+        guard !method.rawValue.isEmpty else { return false }
+        guard !path.isEmpty else { return false }
+        return self == MockHTTPRoute(urlPath: path, method: method, requestHeaders: headers, query: params)
     }
 }

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Shock'
-  s.version          = '5.1.0'
+  s.version          = '6.1.1'
   s.summary          = 'A HTTP mocking framework written in Swift.'
 
   s.description      = <<-DESC
@@ -17,7 +17,7 @@ Shock lets you quickly and painlessly provided mock responses for HTTP & HTTPs w
 
   s.homepage         = 'https://github.com/justeat/Shock'
   s.license          = { :type => 'Apache 2.0', :file => 'LICENSE' }
-  s.author           = { 'Jack Newcombe' => 'jack.newcombe@just-eat.com' }
+  s.author           = 'Just Eat Takeaway iOS Team'
   s.source           = { :git => 'https://github.com/justeat/Shock.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/justeat_tech'
 
@@ -28,6 +28,6 @@ Shock lets you quickly and painlessly provided mock responses for HTTP & HTTPs w
   'Shock/Classes/**/*',
   'Shock/Classes/NIO/**/*'
 
-  s.dependency 'SwiftNIOHTTP1', '~> 2.22.1'
+  s.dependency 'SwiftNIOHTTP1', '~> 2.38.0'
   s.dependency 'GRMustache.swift', '~> 4.0.1'
 end

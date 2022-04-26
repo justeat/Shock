@@ -6,6 +6,9 @@
 //
 
 import Foundation
+import NIO
+
+public typealias HandlerClosure = (MiddlewareRequestContext, MiddlewareResponseContext) -> Void
 
 public protocol MiddlewareRequestContext: MockHttpRequest {
     var path: String { get }
@@ -26,6 +29,7 @@ public protocol MiddlewareResponseContext: class {
 public protocol MiddlewareContext {
     var requestContext: MiddlewareRequestContext { get }
     var responseContext: MiddlewareResponseContext { get }
+    var notFoundHandler: HandlerClosure? { get }
     var next: () -> Void { get }
 }
 
@@ -64,36 +68,46 @@ class MiddlewareService {
     private struct _MiddlewareContext: MiddlewareContext {
         let requestContext: MiddlewareRequestContext
         let responseContext: MiddlewareResponseContext
+        let notFoundHandler: HandlerClosure?
         let next: () -> Void
     }
     
-    private(set) var middleware: [Middleware] = []
-        
-    private var context: MiddlewareContext?
+    private let middleware: [Middleware]
+    private let notFoundHandler: HandlerClosure?
+
+    public init(middleware: [Middleware], notFoundHandler: HandlerClosure?) {
+        self.middleware = middleware
+        self.notFoundHandler = notFoundHandler
+    }
     
-    func executeAll(forRequest request: MockNIOHTTPRequest) -> MiddlewareContext? {
-        executeAll(forRequest: request, middleware: middleware)
+    func executeAll(forRequest request: MockNIOHTTPRequest) -> EventLoopFuture<MiddlewareContext?> {
+        let promise = request.eventLoop.makePromise(of: MiddlewareContext?.self)
+        
+        request.eventLoop.execute {
+            // _MiddlewareResponseContext is a reference type that is updated across the registered middlewares
+            let responseContext = _MiddlewareResponseContext()
+            let context = self.executeAll(forRequest: request, middleware: self.middleware, responseContext: responseContext)
+            promise.succeed(context)
+        }
+        
+        return promise.futureResult
     }
         
-    private func executeAll(forRequest request: MockNIOHTTPRequest, middleware: [Middleware]) -> MiddlewareContext? {
+    private func executeAll(forRequest request: MockNIOHTTPRequest, middleware: [Middleware], responseContext: MiddlewareResponseContext) -> MiddlewareContext? {
         
         let requestContext = _MiddlewareRequestContext(request: request)
-        let responseContext = _MiddlewareResponseContext()
         
         let context = _MiddlewareContext(requestContext: requestContext,
-                                     responseContext: responseContext) {
+                                         responseContext: responseContext,
+                                         notFoundHandler: notFoundHandler) {
             if (middleware.count - 1) > 0 {
-                self.executeAll(forRequest: request, middleware: Array(middleware[1...]))
+                self.executeAll(forRequest: request, middleware: Array(middleware[1...]), responseContext: responseContext)
             }
         }
         
         middleware.first?.execute(withContext: context)
         
         return context
-    }
-    
-    func add(middleware mdl: Middleware) {
-        middleware.append(mdl)
     }
     
 }

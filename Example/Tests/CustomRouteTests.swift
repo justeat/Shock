@@ -114,14 +114,30 @@ class CustomRouteTests: ShockTestCase {
             code: 200,
             filename: "testCustomRoute.txt"
         )
-        server.setup(route: route)
+        let query2 = "item3=value3&item4=value4"
+        let route2: MockHTTPRoute = .custom(
+            method: .get,
+            urlPath: "/custom-with-query",
+            query: ["item3": "value3", "item4": "value4"],
+            requestHeaders: [:],
+            responseHeaders: [:],
+            code: 200,
+            filename: "testCustomRoute2.txt"
+        )
+        let routes: [MockHTTPRoute] = [route, route2]
+        server.setup(routes: routes)
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
-        
         HTTPClient.get(url: "\(server.hostURL)/custom-with-query?\(query)") { code, body, headers, error in
             expectation.fulfill()
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testCustomRoute test fixture\n")
+        }
+        let expectation2 = self.expectation(description: "Expect 200 response with response body")
+        HTTPClient.get(url: "\(server.hostURL)/custom-with-query?\(query2)") { code, body, headers, error in
+            expectation2.fulfill()
+            XCTAssertEqual(code, 200)
+            XCTAssertEqual(body, "testCustomRoute2 test fixture\n")
         }
         self.waitForExpectations(timeout: timeout, handler: nil)
     }

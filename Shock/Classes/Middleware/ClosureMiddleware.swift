@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class ClosureMiddleware: Middleware {
+public struct ClosureMiddleware: Middleware {
     
     public typealias Closure = (_ request: MiddlewareRequestContext,
                                 _ response: MiddlewareResponseContext,
