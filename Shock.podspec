@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Shock'
-  s.version          = '6.1.1'
+  s.version          = ENV['LIB_VERSION']
   s.summary          = 'A HTTP mocking framework written in Swift.'
 
   s.description      = <<-DESC
