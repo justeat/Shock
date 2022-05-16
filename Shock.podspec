@@ -28,6 +28,6 @@ Shock lets you quickly and painlessly provided mock responses for HTTP & HTTPs w
   'Shock/Classes/**/*',
   'Shock/Classes/NIO/**/*'
 
-  s.dependency 'SwiftNIOHTTP1', '~> 2.38.0'
+  s.dependency 'SwiftNIOHTTP1', '~> 2.40.0'
   s.dependency 'GRMustache.swift', '~> 4.0.1'
 end
