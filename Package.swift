@@ -1,4 +1,4 @@
-// swift-tools-version: 5.6
+// swift-tools-version: 5.5
 
 import PackageDescription
 
@@ -13,11 +13,11 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-nio",
-                 exact: "2.40.0"),
+                 from: "2.40.0"),
         .package(url: "https://github.com/groue/GRMustache.swift",
-                 exact: "4.0.1"),
+                 from: "4.0.1"),
         .package(url: "https://github.com/justeat/JustLog",
-                 exact: "4.0.2")
+                 from: "4.0.2")
     ],
     targets: [
         .target(
