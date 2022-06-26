@@ -22,8 +22,16 @@ jobs:
       uses: ruby/setup-ruby@v1.81.0
       with:
         bundler-cache: true
-    - name: Run tests
-      run: bundle exec fastlane unit_tests device:'iPhone 13'
+    - name: Build for testing
+      run: |
+        xcodebuild build-for-testing \
+        -scheme Shock \
+        -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13"
+    - name: Test without building
+      run: |
+        xcodebuild test-without-building \
+        -scheme Shock \
+        -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13"
     - name: Validate pod
       run: |
         set -eo pipefail
