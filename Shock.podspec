@@ -24,9 +24,7 @@ Shock lets you quickly and painlessly provided mock responses for HTTP & HTTPs w
   s.ios.deployment_target = '10.0'
   s.swift_version = '5.0'
 
-  s.source_files =
-  'Shock/Classes/**/*',
-  'Shock/Classes/NIO/**/*'
+  s.source_files = 'Framework/Sources/**/*'
 
   s.dependency 'SwiftNIOHTTP1', '~> 2.40.0'
   s.dependency 'GRMustache.swift', '~> 4.0.1'
