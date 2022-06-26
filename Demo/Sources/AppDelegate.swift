@@ -1,10 +1,4 @@
-//
 //  AppDelegate.swift
-//  Shock
-//
-//  Created by Jack Newcombe on 27/06/2018.
-//  Copyright © 2018 Just Eat. All rights reserved.
-//
 
 import UIKit
 
@@ -17,6 +11,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         return true
     }
-
 }
-

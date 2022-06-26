@@ -1,10 +1,4 @@
-//
 //  MyRoutes.swift
-//  Shock
-//
-//  Created by Jack Newcombe on 27/06/2018.
-//  Copyright © 2018 Just Eat. All rights reserved.
-//
 
 import Foundation
 import Shock
@@ -18,7 +12,6 @@ class MyRoutes {
     private let server = MockServer(port: 9990, bundle: Bundle.main)
     
     init() {
-	    
         // Add your own routes here to test them in the example app
 	    routes = [
             .simple(

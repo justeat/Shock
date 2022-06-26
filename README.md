@@ -48,7 +48,7 @@ class HappyPathTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        mockServer = MockServer(port: 6789, bundle: Bundle(for: type(of: self)))
+        mockServer = MockServer(port: 6789, bundle: Bundle.module)
         mockServer.start()
     }
 
