@@ -87,7 +87,8 @@ class MiddlewareService {
         
         return promise.futureResult
     }
-        
+    
+    @discardableResult
     private func executeAll(forRequest request: MockNIOHTTPRequest, middleware: [Middleware], responseContext: MiddlewareResponseContext) -> MiddlewareContext? {
         
         let requestContext = _MiddlewareRequestContext(request: request)
@@ -96,7 +97,7 @@ class MiddlewareService {
                                          responseContext: responseContext,
                                          notFoundHandler: notFoundHandler) {
             if middleware.count > 1 {
-                _ = self.executeAll(forRequest: request, middleware: Array(middleware[1...]), responseContext: responseContext)
+                self.executeAll(forRequest: request, middleware: Array(middleware[1...]), responseContext: responseContext)
             }
         }
         
@@ -104,5 +105,4 @@ class MiddlewareService {
         
         return context
     }
-    
 }
