@@ -1,0 +1,41 @@
+{
+  "pins" : [
+    {
+      "identity" : "grmustache.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/groue/GRMustache.swift",
+      "state" : {
+        "revision" : "671e2c5234e829c1f337c9d300bd6d9b21d1c42a",
+        "version" : "4.0.1"
+      }
+    },
+    {
+      "identity" : "justlog",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/justeat/JustLog",
+      "state" : {
+        "revision" : "b9bb34d2ae6d3d5e7d2ef678f588718ed96d643e",
+        "version" : "4.0.2"
+      }
+    },
+    {
+      "identity" : "swift-nio",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio",
+      "state" : {
+        "revision" : "124119f0bb12384cef35aa041d7c3a686108722d",
+        "version" : "2.40.0"
+      }
+    },
+    {
+      "identity" : "swiftybeaver",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftyBeaver/SwiftyBeaver",
+      "state" : {
+        "revision" : "12b5acf96d98f91d50de447369bd18df74600f1a",
+        "version" : "1.9.6"
+      }
+    }
+  ],
+  "version" : 2
+}

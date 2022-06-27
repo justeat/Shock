@@ -22,14 +22,17 @@ jobs:
       uses: ruby/setup-ruby@v1.81.0
       with:
         bundler-cache: true
-    - name: Run pod install
+    - name: Build for testing
       run: |
-        set -eo pipefail
-        export LIB_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
-        bundle exec pod install --project-directory=Example
-    - name: Run tests
-      run: bundle exec fastlane unit_tests device:'iPhone 11'
-    - name: Validate lib
+        xcodebuild build-for-testing \
+        -scheme Shock \
+        -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13"
+    - name: Test without building
+      run: |
+        xcodebuild test-without-building \
+        -scheme Shock \
+        -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13"
+    - name: Validate pod
       run: |
         set -eo pipefail
         export LIB_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)

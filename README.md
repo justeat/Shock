@@ -48,7 +48,7 @@ class HappyPathTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        mockServer = MockServer(port: 6789, bundle: Bundle(for: type(of: self)))
+        mockServer = MockServer(port: 6789, bundle: Bundle.module)
         mockServer.start()
     }
 
@@ -266,7 +266,7 @@ let server = MockServer(portRange: range, bundle: ...)
 There is only one route currently available for the socket server and that is `logStashEcho`. This route will setup a socket
 that accepts messages being logged to [Logstash](https://www.elastic.co/logstash) and echo them back as strings.
 
-Here is an example of using `logStashEcho` with our [JustTrack](https://github.com/justeat/JustTrack) framework.
+Here is an example of using `logStashEcho` with our [JustLog](https://github.com/justeat/JustLog) framework.
 
 ```swift
 import JustLog
