@@ -199,6 +199,9 @@ extension MockHTTPRoute: Equatable {
     }
     
     private static func queryParamsMatch(lhs: [String:String], rhs: [String:String]) -> Bool {
+        
+        if lhs.count != rhs.count { return false }
+        
         for element in lhs {
             let matches = rhs[element.key]?.pathMatches(element.value) ?? false
             if !matches {
