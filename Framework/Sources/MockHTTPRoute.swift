@@ -157,7 +157,7 @@ extension MockHTTPRoute: Equatable {
         if case MockHTTPRoute.custom(let lhsMethod, let lhsUrlPath, let lhsQuery, let lhsRequestHeaders, _, _, _) = lhs,
            case MockHTTPRoute.custom(let rhsMethod, let rhsUrlPath, let rhsQuery, let rhsRequestHeaders, _, _, _) = rhs {
             return lhsMethod == rhsMethod && lhsUrlPath.pathMatches(rhsUrlPath)
-                && lhsQuery == rhsQuery && headers(lhsRequestHeaders, contains: rhsRequestHeaders)
+                && queryParamsMatch(lhs: lhsQuery, rhs: rhsQuery) && headers(lhsRequestHeaders, contains: rhsRequestHeaders)
         }
         if case MockHTTPRoute.template(let lhsMethod, let lhsUrlPath, _, _, _) = lhs,
            case MockHTTPRoute.template(let rhsMethod, let rhsUrlPath, _, _, _) = rhs {
@@ -196,6 +196,19 @@ extension MockHTTPRoute: Equatable {
             }
         }
         return false
+    }
+    
+    private static func queryParamsMatch(lhs: [String:String], rhs: [String:String]) -> Bool {
+        
+        if lhs.count != rhs.count { return false }
+        
+        for element in lhs {
+            let matches = rhs[element.key]?.pathMatches(element.value) ?? false
+            if !matches {
+                return false
+            }
+        }
+        return true
     }
     
     public func matches(method: MockHTTPMethod, path: String, params: [String:String], headers: [String:String]) -> Bool {
