@@ -94,6 +94,7 @@ use another of our wonderful open-source libraries: [AutomationTools](https://gi
 ## Route types
 
 Shock provides different types of mock routes for different circumstances.
+All routes are conforming to the Codable protocol and can be decoded from a JSON file.
 
 ### Simple Route
 
@@ -108,6 +109,17 @@ let route: MockHTTPRoute = .simple(
     code: 200,
     filename: "my-test-data.json"
 )
+```
+
+JSON
+```JSON
+{
+    "type": "simple",
+    "method": "GET",
+    "urlPath": "/my/api/endpoint",
+    "code": 200,
+    "filename" : "my-test-data.json"
+}
 ```
 
 ### Custom Route
@@ -126,12 +138,32 @@ let route = MockHTTPRoute = .custom(
     method: .get,
     urlPath: "/my/api/endpoint",
     query: ["queryKey": "queryValue"],
-    headers: ["X-Custom-Header": "custom-header-value"],
+    requestHeaders: ["X-Custom-Header": "custom-header-value"],
+    responseHeaders: ["Content-Type": "application/json"],
     code: 200,
     filename: "my-test-data.json"
 )
 ```
 
+JSON
+```JSON
+{
+    "type": "custom",
+    "method": "GET",
+    "urlPath": "/my/api/endpoint",
+    "query": { 
+        "queryKey": "queryValue"
+    },
+    "requestHeaders": {
+        "X-Custom-Header": "custom-header-value"
+    },
+    "responseHeaders": {
+        "Content-Type": "application/json"
+    },
+    "code": 200,
+    "filename": "my-test-data.json"
+}
+```
 ### Redirect Route
 
 Sometimes we simply want our mock to redirect to another URL. The redirect mock
@@ -141,6 +173,13 @@ allows you to return a 301 redirect to another URL or endpoint.
 let route: MockHTTPRoute = .redirect(urlPath: "/source", destination: "/destination")
 ```
 
+```JSON
+{
+    "type": "redirect",
+    "urlPath": "/source",
+    "destination": "/destination"
+}
+```
 ### Templated Route
 
 A templated mock allows you to build a mock response for a request at runtime.
@@ -159,11 +198,25 @@ let route = MockHTTPRoute = .template(
     urlPath: "/template",
     code: 200,
     filename: "my-templated-data.json",
-    data: [
+    templateInfo: [
         "list": ["Item #1", "Item #2"],
         "text": "text"
     ])
 )
+```
+
+```JSON
+{
+    "type": "template",
+    "method": "GET",
+    "urlPath": "/template",
+    "code": 200,
+    "filename": "my-templated-data.json",
+    "templateInfo": {
+        "list": ["Item #1", "Item #2"],
+        "text": "text"
+    }
+}
 ```
 
 ### Collection
@@ -181,6 +234,28 @@ let secondRoute: MockHTTPRoute = .simple(method: .get, urlPath: "/route2", code:
 let collectionRoute: MockHTTPRoute = .collection(routes: [ firstRoute, secondRoute ])
 ```
 
+```JSON
+{
+    "type": "collection",
+    "routes": [
+        {
+            "type": "simple",
+            "method": "GET",
+            "urlPath": "/my/api/endpoint",
+            "code": 200,
+            "filename" : "my-test-data.json"
+        },
+        {
+            "type": "simple",
+            "method": "GET",
+            "urlPath": "/my/api/endpoint2",
+            "code": 200,
+            "filename" : "my-test-data2.json"
+        }
+    ]
+}
+```
+
 ### Timeout Route
 
 A timeout route is useful for testing client timeout code paths.
@@ -193,6 +268,15 @@ let route: MockHTTPRoute = .timeout(method: .get, urlPath: "/timeouttest")
 ```
 ```swift
 let route: MockHTTPRoute = .timeout(method: .get, urlPath: "/timeouttest", timeoutInSeconds: 5)
+```
+
+```JSON
+{
+    "type": "timeout",
+    "method": "GET",
+    "urlPath": "/timeouttest",
+    "timeoutInSeconds": 5
+}
 ```
 
 ### Force all calls to be mocked
