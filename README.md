@@ -173,6 +173,7 @@ allows you to return a 301 redirect to another URL or endpoint.
 let route: MockHTTPRoute = .redirect(urlPath: "/source", destination: "/destination")
 ```
 
+JSON
 ```JSON
 {
     "type": "redirect",
@@ -205,6 +206,7 @@ let route = MockHTTPRoute = .template(
 )
 ```
 
+JSON
 ```JSON
 {
     "type": "template",
@@ -233,7 +235,7 @@ let firstRoute: MockHTTPRoute = .simple(method: .get, urlPath: "/route1", code: 
 let secondRoute: MockHTTPRoute = .simple(method: .get, urlPath: "/route2", code: 200, filename: "data2.json")
 let collectionRoute: MockHTTPRoute = .collection(routes: [ firstRoute, secondRoute ])
 ```
-
+JSON
 ```JSON
 {
     "type": "collection",
@@ -269,7 +271,7 @@ let route: MockHTTPRoute = .timeout(method: .get, urlPath: "/timeouttest")
 ```swift
 let route: MockHTTPRoute = .timeout(method: .get, urlPath: "/timeouttest", timeoutInSeconds: 5)
 ```
-
+JSON
 ```JSON
 {
     "type": "timeout",
