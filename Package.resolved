@@ -3,20 +3,38 @@
     "pins": [
       {
         "package": "Mustache",
-        "repositoryURL": "git@github.com:groue/GRMustache.swift.git",
+        "repositoryURL": "https://github.com/groue/GRMustache.swift",
         "state": {
           "branch": null,
-          "revision": "671e2c5234e829c1f337c9d300bd6d9b21d1c42a",
-          "version": "4.0.1"
+          "revision": "edbe65da33671ca1e93e0751cbbeffc893b48da8",
+          "version": "4.1.0"
+        }
+      },
+      {
+        "package": "swift-atomics",
+        "repositoryURL": "https://github.com/apple/swift-atomics.git",
+        "state": {
+          "branch": null,
+          "revision": "ff3d2212b6b093db7f177d0855adbc4ef9c5f036",
+          "version": "1.0.3"
+        }
+      },
+      {
+        "package": "swift-collections",
+        "repositoryURL": "https://github.com/apple/swift-collections.git",
+        "state": {
+          "branch": null,
+          "revision": "937e904258d22af6e447a0b72c0bc67583ef64a2",
+          "version": "1.0.4"
         }
       },
       {
         "package": "swift-nio",
-        "repositoryURL": "git@github.com:apple/swift-nio.git",
+        "repositoryURL": "https://github.com/apple/swift-nio",
         "state": {
           "branch": null,
-          "revision": "96db8838be60fcbb993fa738e1120fb7f4b99c43",
-          "version": "2.22.1"
+          "revision": "9b2848d76f5caad08b97e71a04345aa5bdb23a06",
+          "version": "2.49.0"
         }
       }
     ]
