@@ -22,7 +22,7 @@ class ResponseFactory {
             #if canImport(GRMustache)
             return try! Template(fromResource: templateFilename, bundle: bundle)
             #elseif canImport(Mustache)
-            return try! Template(named: templateFilename, bundle: bundle)
+            return try! Template(named: templateFilename, bundle: bundle, templateExtension: nil)
             #endif
         }
 
