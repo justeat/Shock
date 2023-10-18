@@ -126,10 +126,10 @@ public enum MockHTTPRoute {
         }
     }
     
-    var templateInfo:  [String: Any]? {
+    var templateInfo: [String: Any]? {
         switch self {
         case .template(_, _, _, _, let templateInfo):
-            return templateInfo as [String : Any]
+            return templateInfo as [String: Any]
         default:
             return nil
         }
@@ -143,7 +143,6 @@ public enum MockHTTPRoute {
             return nil
         }
     }
-    
 }
 
 /// The philosophy for Equatable/Hashable `MockHTTPRoute` is anything in the request
@@ -178,7 +177,7 @@ extension MockHTTPRoute: Equatable {
         return false
     }
     
-    private static func headers(_ lhs: [String:String], contains rhs: [String:String]) -> Bool {
+    private static func headers(_ lhs: [String: String], contains rhs: [String: String]) -> Bool {
         guard !(lhs.isEmpty && rhs.isEmpty) else { return true }
         var bigger = lhs
         var smaller = rhs
@@ -188,7 +187,7 @@ extension MockHTTPRoute: Equatable {
         }
         guard !smaller.isEmpty else { return true }
         for outer in smaller {
-            let result = bigger.contains() { (key: String, value: String) in
+            let result = bigger.contains { (key: String, value: String) in
                 key.lowercased() == outer.key.lowercased() && value.lowercased() == outer.value.lowercased()
             }
             if result {
@@ -198,7 +197,7 @@ extension MockHTTPRoute: Equatable {
         return false
     }
     
-    private static func queryParamsMatch(lhs: [String:String], rhs: [String:String]) -> Bool {
+    private static func queryParamsMatch(lhs: [String: String], rhs: [String: String]) -> Bool {
         
         if lhs.count != rhs.count { return false }
         
@@ -211,7 +210,7 @@ extension MockHTTPRoute: Equatable {
         return true
     }
     
-    public func matches(method: MockHTTPMethod, path: String, params: [String:String], headers: [String:String]) -> Bool {
+    public func matches(method: MockHTTPMethod, path: String, params: [String: String], headers: [String: String]) -> Bool {
         guard !method.rawValue.isEmpty else { return false }
         guard !path.isEmpty else { return false }
         switch self {

@@ -56,10 +56,10 @@ class MyRoutes {
     }
     
     var count: Int {
-	    return routes.count
+	    routes.count
     }
     
-    func performRequest(index: Int, completion: @escaping (HTTPURLResponse, Data, Error?) -> ()) {
+    func performRequest(index: Int, completion: @escaping (HTTPURLResponse, Data, Error?) -> Void) {
 
         let route = routes[index]
         

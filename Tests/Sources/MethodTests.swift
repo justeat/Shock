@@ -14,7 +14,7 @@ class MethodTests: ShockTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/simple") { code, body, headers, error in
+        HTTPClient.get(url: "\(server.hostURL)/simple") { code, body, _, _ in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
@@ -31,7 +31,7 @@ class MethodTests: ShockTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.post(url: "\(server.hostURL)/simple") { code, body, headers, error in
+        HTTPClient.post(url: "\(server.hostURL)/simple") { code, body, _, _ in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
@@ -48,7 +48,7 @@ class MethodTests: ShockTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.post(url: "\(server.hostURL)/simple") { code, body, headers, error in
+        HTTPClient.post(url: "\(server.hostURL)/simple") { code, body, _, _ in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "")
             expectation.fulfill()
@@ -71,10 +71,10 @@ class MethodTests: ShockTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.post(url: "\(server.hostURL)/auth") { code, body, headers, error in
+        HTTPClient.post(url: "\(server.hostURL)/auth") { code, body, _, _ in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testSimpleRoute test fixture\n")
-            HTTPClient.post(url: "\(self.server.hostURL)/simple") { code, body, headers, error in
+            HTTPClient.post(url: "\(self.server.hostURL)/simple") { code, body, _, _ in
                 XCTAssertEqual(code, 200)
                 XCTAssertEqual(body, "")
                 expectation.fulfill()
@@ -92,7 +92,7 @@ class MethodTests: ShockTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.put(url: "\(server.hostURL)/simple") { code, body, headers, error in
+        HTTPClient.put(url: "\(server.hostURL)/simple") { code, body, _, _ in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()
@@ -109,7 +109,7 @@ class MethodTests: ShockTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with response body")
         
-        HTTPClient.delete(url: "\(server.hostURL)/simple") { code, body, headers, error in
+        HTTPClient.delete(url: "\(server.hostURL)/simple") { code, body, _, _ in
             XCTAssertEqual(code, 200)
             XCTAssertEqual(body, "testSimpleRoute test fixture\n")
             expectation.fulfill()

@@ -241,7 +241,7 @@ enum TemplateParameter: Hashable {
             self = .dictionary(dict)
             return
         }
-        if let _ = value as? NSNull {
+        if value as? NSNull != nil {
             self = .nil
             return
         }

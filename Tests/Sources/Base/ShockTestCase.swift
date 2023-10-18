@@ -19,5 +19,4 @@ class ShockTestCase: XCTestCase {
         server.stop()
         super.tearDown()
     }
-    
 }

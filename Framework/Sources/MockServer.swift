@@ -1,4 +1,4 @@
-//  MockAPI.swift
+//  MockServer.swift
 
 import Foundation
 
@@ -9,12 +9,18 @@ public class MockServer {
     
     private var httpServer: MockNIOHttpServer
     private var socketServer: MockNIOSocketServer?
-    private let responseFactory: ResponseFactory
+    private let responseFactory: MockHTTPResponseFactory
 
     public var selectedHTTPPort = 0
     public var selectedSocketPort = 0
     
     public var loggingClosure: ((String?) -> Void)?
+    
+    public enum MissingRouteHandlingPolicy {
+        case assert
+        case return404
+    }
+    public var missingRouteHandlingPolicy: MissingRouteHandlingPolicy
     
     public convenience init(port: Int = 9000, bundle: Bundle = Bundle.main) {
         self.init(portRange: port...port, bundle: bundle)
@@ -22,8 +28,9 @@ public class MockServer {
     
     public init(portRange: ClosedRange<Int>, bundle: Bundle = Bundle.main) {
         self.portRange = portRange
-        self.responseFactory = ResponseFactory(bundle: bundle)
+        self.responseFactory = MockHTTPResponseFactory(bundle: bundle)
         self.httpServer = MockNIOHttpServer(responseFactory: self.responseFactory)
+        self.missingRouteHandlingPolicy = .return404
     }
     
     // MARK: Server managements
@@ -66,16 +73,22 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
     }
     
     /// Indicates whether a 404 status should be sent for requests that do
-    /// not have a matching route
+    /// not have a matching route, alternatively an assertionFailure.
     public var shouldSendNotFoundForMissingRoutes: Bool {
         get {
-            httpServer.notFoundHandler != nil            
+            httpServer.notFoundHandler != nil
         }
         set {
             if newValue {
-                httpServer.notFoundHandler = { _, response in
-                    response.statusCode = 404
-                    response.responseBody = nil
+                httpServer.notFoundHandler = { [weak self] request, response in
+                    guard let self = self else { return }
+                    switch self.missingRouteHandlingPolicy {
+                    case .assert:
+                        assertionFailure("Not handled: \(request.method) \(request.path)")
+                    case .return404:
+                        response.statusCode = 404
+                        response.responseBody = nil
+                    }
                 }
             } else {
                 httpServer.notFoundHandler = nil
@@ -84,7 +97,7 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
     }
     
     public var hostURL: String {
-        return "http://localhost:\(selectedHTTPPort)"
+        "http://localhost:\(selectedHTTPPort)"
     }
     
     // MARK: Mock setup
@@ -98,14 +111,13 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
         default:
             break
         }
-
         
-        guard let _ = route.method, let _ = route.urlPath else {
+        guard route.method != nil, route.urlPath != nil else {
             self.loggingClosure?("ERROR: route was missing a field")
             return
         }
         
-        httpServer.register(route: route) { request, response in
+        httpServer.register(route: route) { _, response in
             
             switch route {
             case .redirect(_, let destination):
@@ -139,7 +151,6 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
             
             response.responseBody = data
         }
-        
     }
     
     public func setupSocket(route: MockSocketRoute) {
@@ -156,12 +167,11 @@ Run `netstat -anptcp | grep LISTEN` to check which ports are in use.")
     public func add(middleware: Middleware) {
         httpServer.add(middleware: middleware)
     }
-    
 }
 
 // MARK: Utils
 
-fileprivate func dictionary(from query: [(String, String)]) -> [String: String] {
+private func dictionary(from query: [(String, String)]) -> [String: String] {
     var dict = [String: String]()
     query.forEach { dict[$0.0] = $0.1 }
     return dict
@@ -188,5 +198,4 @@ fileprivate extension Dictionary where Key == String, Value == String {
         }
         return true
     }
-    
 }

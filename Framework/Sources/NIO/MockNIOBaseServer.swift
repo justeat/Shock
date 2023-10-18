@@ -1,4 +1,4 @@
-//  MockNIOServer.swift
+//  MockNIOBaseServer.swift
 
 import Foundation
 import NIO
@@ -19,7 +19,7 @@ class MockNIOBaseServer {
         self.threadPool = NIOThreadPool(numberOfThreads: 6)
     }
     
-    func start(_ port: Int, childChannelInitializer: @escaping (Channel) -> EventLoopFuture<Void>) throws -> Void {
+    func start(_ port: Int, childChannelInitializer: @escaping (Channel) -> EventLoopFuture<Void>) throws {
         threadPool.start()
         
         let socketBootstrap = ServerBootstrap(group: group)

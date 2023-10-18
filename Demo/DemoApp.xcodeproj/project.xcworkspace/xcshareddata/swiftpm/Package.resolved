@@ -5,17 +5,26 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRMustache.swift",
       "state" : {
-        "revision" : "671e2c5234e829c1f337c9d300bd6d9b21d1c42a",
-        "version" : "4.0.1"
+        "revision" : "edbe65da33671ca1e93e0751cbbeffc893b48da8",
+        "version" : "4.1.0"
       }
     },
     {
-      "identity" : "justlog",
+      "identity" : "swift-atomics",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/justeat/JustLog",
+      "location" : "https://github.com/apple/swift-atomics.git",
       "state" : {
-        "revision" : "b9bb34d2ae6d3d5e7d2ef678f588718ed96d643e",
-        "version" : "4.0.2"
+        "revision" : "cd142fd2f64be2100422d658e7411e39489da985",
+        "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "swift-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-collections.git",
+      "state" : {
+        "revision" : "a902f1823a7ff3c9ab2fba0f992396b948eda307",
+        "version" : "1.0.5"
       }
     },
     {
@@ -23,17 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio",
       "state" : {
-        "revision" : "124119f0bb12384cef35aa041d7c3a686108722d",
-        "version" : "2.40.0"
-      }
-    },
-    {
-      "identity" : "swiftybeaver",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftyBeaver/SwiftyBeaver",
-      "state" : {
-        "revision" : "12b5acf96d98f91d50de447369bd18df74600f1a",
-        "version" : "1.9.6"
+        "revision" : "f7c46552983b06b0958a1a4c8bc5199406ae4c8a",
+        "version" : "2.51.0"
       }
     }
   ],

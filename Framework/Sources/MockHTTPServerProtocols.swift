@@ -10,9 +10,8 @@ protocol MockHttpRouter {
 protocol MockHttpServer {
     var notFoundHandler: HandlerClosure? { get set }
     func register(route: MockHTTPRoute, handler: HandlerClosure?)
-    func start(_ port: Int, forceIPv4: Bool, priority: DispatchQoS.QoSClass) throws -> Void
+    func start(_ port: Int, forceIPv4: Bool, priority: DispatchQoS.QoSClass) throws
     func stop()
 }
 
 public protocol MockHttpRequest: CacheableRequest {}
-
