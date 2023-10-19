@@ -4,12 +4,12 @@ import Foundation
 import NIO
 
 class MockNIOSocketHandler: ChannelInboundHandler {
-    public typealias InboundIn = ByteBuffer
-    public typealias OutboundOut = ByteBuffer
-    public typealias LoggingClosure = (String?) -> Void
-    public typealias SocketDataHandler = (Data, LoggingClosure?) -> Void
+    typealias InboundIn = ByteBuffer
+    typealias OutboundOut = ByteBuffer
+    typealias LoggingClosure = (String?) -> Void
+    typealias SocketDataHandler = (Data, LoggingClosure?) -> Void
     
-    private var received: Data? = nil
+    private var received: Data?
     private var loggingClosure: LoggingClosure?
     private var dataHandler: SocketDataHandler?
     
@@ -19,7 +19,7 @@ class MockNIOSocketHandler: ChannelInboundHandler {
         self.loggingClosure = loggingClosure
     }
 
-    public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         var buffer = unwrapInboundIn(data)
         let readableBytes = buffer.readableBytes
         if readableBytes > 0, let received = buffer.readBytes(length: readableBytes) {
@@ -31,7 +31,7 @@ class MockNIOSocketHandler: ChannelInboundHandler {
         }
     }
 
-    public func channelReadComplete(context: ChannelHandlerContext) {
+    func channelReadComplete(context: ChannelHandlerContext) {
         if let data = self.received {
             dataHandler?(data, loggingClosure)
             if let separator = "\n".data(using: String.Encoding.utf8)?.first {
@@ -51,7 +51,7 @@ class MockNIOSocketHandler: ChannelInboundHandler {
         self.received = nil
     }
 
-    public func errorCaught(context: ChannelHandlerContext, error: Error) {
+    func errorCaught(context: ChannelHandlerContext, error: Error) {
         context.close(promise: nil)
     }
 }

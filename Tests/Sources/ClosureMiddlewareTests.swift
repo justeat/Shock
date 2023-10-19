@@ -11,7 +11,7 @@ class ClosureMiddlewareTests: ShockTestCase {
         let expectedHeaders = [ "X-Test-Header": "Test" ]
         let expectedStatusCode = 200
         
-        let middleware = ClosureMiddleware { request, response, next in
+        let middleware = ClosureMiddleware { _, response, next in
             response.statusCode = expectedStatusCode
             response.headers = expectedHeaders
             response.responseBody = expectedResponseBody.data(using: .utf8)

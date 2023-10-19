@@ -18,7 +18,7 @@ class TemplatedRouteTests: ShockTestCase {
         
         let expectation = self.expectation(description: "Expect 200 response with valid generated response body")
         
-        HTTPClient.get(url: "\(server.hostURL)/template") { code, body, headers, error in
+        HTTPClient.get(url: "\(server.hostURL)/template") { _, body, _, _ in
             expectation.fulfill()
             let data = body.data(using: .utf8)!
             let dict = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any?]
@@ -29,5 +29,4 @@ class TemplatedRouteTests: ShockTestCase {
         }
         self.waitForExpectations(timeout: 2.0, handler: nil)
     }
-    
 }

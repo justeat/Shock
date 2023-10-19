@@ -3,7 +3,7 @@
 import Foundation
 import XCTest
 
-fileprivate let session = URLSession.shared
+private let session = URLSession.shared
 
 typealias HTTPClientResult = (_ code: Int, _ response: String, _ headers: [String: String], _ error: Error?) -> Void
 
@@ -43,5 +43,4 @@ class HTTPClient {
         }
         task.resume()
     }
-    
 }

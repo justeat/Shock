@@ -9,10 +9,10 @@ public protocol MiddlewareRequestContext: MockHttpRequest {
     var path: String { get }
     var queryParams: [(String, String)] { get }
     var method: String { get }
-    var headers: [String : String] { get }
+    var headers: [String: String] { get }
     var body: [UInt8] { get }
     var address: String? { get }
-    var params: [String : String] { get }
+    var params: [String: String] { get }
 }
 
 public protocol MiddlewareResponseContext: AnyObject {
@@ -38,10 +38,10 @@ class MiddlewareService {
         let path: String
         let queryParams: [(String, String)]
         let method: String
-        let headers: [String : String]
+        let headers: [String: String]
         let body: [UInt8]
         let address: String?
-        let params: [String : String]
+        let params: [String: String]
         
         init(request: MockNIOHTTPRequest) {
             self.path = request.path
@@ -56,8 +56,8 @@ class MiddlewareService {
     
     private class _MiddlewareResponseContext: MiddlewareResponseContext {
         var statusCode: Int = 0
-        var headers: [String : String] = [:]
-        var responseBody: Data? = nil
+        var headers: [String: String] = [:]
+        var responseBody: Data?
     }
     
     private struct _MiddlewareContext: MiddlewareContext {
@@ -70,7 +70,7 @@ class MiddlewareService {
     private let middleware: [Middleware]
     private let notFoundHandler: HandlerClosure?
 
-    public init(middleware: [Middleware], notFoundHandler: HandlerClosure?) {
+    init(middleware: [Middleware], notFoundHandler: HandlerClosure?) {
         self.middleware = middleware
         self.notFoundHandler = notFoundHandler
     }

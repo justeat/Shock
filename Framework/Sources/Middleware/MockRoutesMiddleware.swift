@@ -6,9 +6,9 @@ struct MockRoutesMiddleware: Middleware {
         
     let router: MockNIOHTTPRouter
 
-    let responseFactory: ResponseFactory
+    let responseFactory: MockHTTPResponseFactory
     
-    init(router: MockNIOHTTPRouter, responseFactory: ResponseFactory) {
+    init(router: MockNIOHTTPRouter, responseFactory: MockHTTPResponseFactory) {
         self.router = router
         self.responseFactory = responseFactory
     }

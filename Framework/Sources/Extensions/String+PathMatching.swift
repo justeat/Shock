@@ -9,7 +9,7 @@ extension String {
     }
     
     private func pathMatches(_ other: String, tokenPrefix: Character) -> Bool {
-        let bothTemplates = self.contains() { $0 == tokenPrefix } && other.contains() { $0 == tokenPrefix }
+        let bothTemplates = self.contains { $0 == tokenPrefix } && other.contains { $0 == tokenPrefix }
         let parts = self.split(separator: "/")
         let otherParts = other.split(separator: "/")
         guard parts.count == otherParts.count else { return false }

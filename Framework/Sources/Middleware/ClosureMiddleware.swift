@@ -17,5 +17,4 @@ public struct ClosureMiddleware: Middleware {
     public func execute(withContext context: MiddlewareContext) {
         closure(context.requestContext, context.responseContext, context.next)
     }
-    
 }

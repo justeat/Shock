@@ -1,4 +1,4 @@
-//  HTTPResponseFactory.swift
+//  MockHTTPResponseFactory.swift
 
 import Foundation
 #if canImport(GRMustache)
@@ -8,7 +8,7 @@ typealias Template = GRMustacheTemplate
 import Mustache
 #endif
 
-class ResponseFactory {
+class MockHTTPResponseFactory {
     
     class TemplateHelper {
         
@@ -67,5 +67,4 @@ class ResponseFactory {
         guard let url = _url else { return nil }
         return try? Data(contentsOf: url)
     }
-    
 }

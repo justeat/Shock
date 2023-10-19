@@ -88,8 +88,8 @@ class MockHTTPMethodTests: XCTestCase {
         encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
         let route: MockHTTPRoute = .custom(method: .get,
                                            urlPath: "/my/api/endpoint",
-                                           query: ["queryKey" : "custom-header-value"],
-                                           requestHeaders: ["X-Custom-Header" : "custom-header-value"],
+                                           query: ["queryKey": "custom-header-value"],
+                                           requestHeaders: ["X-Custom-Header": "custom-header-value"],
                                            responseHeaders: ["Content-Type": "application/json"],
                                            code: 200,
                                            filename: "my-test-data.json")

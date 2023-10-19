@@ -10,12 +10,12 @@ class MockNIOHTTPHandler {
     
     private var httpRequest: HTTPRequestHead?
     private var handlerRequest: MockNIOHTTPRequest?
-    private var responseFactory: ResponseFactory
+    private var responseFactory: MockHTTPResponseFactory
     private var router: MockNIOHTTPRouter
     private var middleware: [Middleware]
     private var notFoundHandler: HandlerClosure?
     
-    init(responseFactory: ResponseFactory,
+    init(responseFactory: MockHTTPResponseFactory,
          router: MockNIOHTTPRouter,
          middleware: [Middleware],
          notFoundHandler: HandlerClosure?) {
@@ -60,7 +60,7 @@ class MockNIOHTTPHandler {
         let body = [UInt8]()
         let address = url.host
         var params = [String: String]()
-        var queryParams =  [(String, String)]()
+        var queryParams = [(String, String)]()
         if let queryItems = url.queryItems {
             params = queryItems.reduce(into: [String: String](), { $0[$1.name] = $1.value })
             queryParams = queryItems.reduce(into: [(String, String)](), { $0.append(($1.name, $1.value ?? "")) })
@@ -127,7 +127,7 @@ extension MockNIOHTTPHandler: ChannelInboundHandler {
             guard var handlerRequest = self.handlerRequest else { return }
             handlerRequest.body += bytes.readBytes(length: bytes.readableBytes) ?? []
             self.handlerRequest = handlerRequest
-        case .end(_):
+        case .end:
             guard self.httpRequest != nil else { return }
             guard let handlerRequest = self.handlerRequest else { return }
             guard let version = self.httpRequest?.version else { return }

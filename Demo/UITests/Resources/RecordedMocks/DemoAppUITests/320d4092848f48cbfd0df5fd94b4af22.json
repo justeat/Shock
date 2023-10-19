@@ -1,0 +1,12 @@
+{
+  "type" : "collection",
+  "routes" : [
+    {
+      "code" : 200,
+      "method" : "GET",
+      "urlPath" : "/api/breeds/image/random",
+      "type" : "simple",
+      "filename" : "2023-09-15-14-46-21_001_GET_api_breeds_image_random.json"
+    }
+  ]
+}

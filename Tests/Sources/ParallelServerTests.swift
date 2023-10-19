@@ -10,7 +10,7 @@ class ParallelServerTests: XCTestCase {
         
         var servers: [MockServer] = []
         
-        range.forEach { port in
+        range.forEach { _ in
             let server = MockServer(portRange: range, bundle: Bundle.module)
             server.start()
             servers.append(server)

@@ -43,26 +43,23 @@ class ViewController: UIViewController {
                 self.scrollView.contentOffset = CGPoint(x: 0, y: 0)
             }
         }
-        
     }
-
 }
 
 extension ViewController: UIPickerViewDataSource {
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
+        1
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return routes.count
+        routes.count
     }
 }
 
 extension ViewController: UIPickerViewDelegate {
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return routes.nameOfRoute(at: row)
+        routes.nameOfRoute(at: row)
     }
-    
 }
