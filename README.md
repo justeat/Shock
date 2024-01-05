@@ -1,5 +1,7 @@
 # Shock
 
+### Warning: This library is not supported by Just Eat Takeaway anymore and therefore considered deprecated. The repository has been archived.
+
 An HTTP mocking framework written in Swift.
 
 ## DemoApp
